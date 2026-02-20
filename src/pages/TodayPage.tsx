@@ -150,12 +150,12 @@ export default function TodayPage() {
         <div className="h-64">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={chartData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="hsl(215 28% 22%)" />
-              <XAxis dataKey="time" tick={{ fill: 'hsl(215 20% 55%)', fontSize: 12 }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fill: 'hsl(215 20% 55%)', fontSize: 12 }} axisLine={false} tickLine={false} />
+              <CartesianGrid strokeDasharray="3 3" stroke="hsl(214 20% 90%)" />
+              <XAxis dataKey="time" tick={{ fill: 'hsl(215 16% 47%)', fontSize: 12 }} axisLine={false} tickLine={false} />
+              <YAxis tick={{ fill: 'hsl(215 16% 47%)', fontSize: 12 }} axisLine={false} tickLine={false} />
               <Tooltip
-                contentStyle={{ backgroundColor: 'hsl(217 33% 17%)', border: '1px solid hsl(215 28% 22%)', borderRadius: '8px', color: 'hsl(210 40% 96%)' }}
-                labelStyle={{ color: 'hsl(210 40% 96%)' }}
+                contentStyle={{ backgroundColor: 'hsl(0 0% 100%)', border: '1px solid hsl(214 20% 90%)', borderRadius: '8px', color: 'hsl(222 47% 11%)' }}
+                labelStyle={{ color: 'hsl(222 47% 11%)' }}
               />
               <Legend wrapperStyle={{ fontSize: 12 }} />
               <Bar dataKey="new" name="Новые" fill="hsl(0 72% 51%)" radius={[4, 4, 0, 0]} />
