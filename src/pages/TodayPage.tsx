@@ -1,5 +1,25 @@
 import { AlertTriangle, Clock, Eye, ArrowRight, TrendingUp, BrainCircuit, RefreshCw } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+
+function useCountUp(end: number, duration = 800) {
+  const [value, setValue] = useState(0);
+  const prevEnd = useRef(0);
+  useEffect(() => {
+    if (end === prevEnd.current) return;
+    const start = prevEnd.current;
+    prevEnd.current = end;
+    if (end === 0) { setValue(0); return; }
+    const startTime = performance.now();
+    const tick = (now: number) => {
+      const progress = Math.min((now - startTime) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3); // easeOutCubic
+      setValue(Math.round(start + (end - start) * eased));
+      if (progress < 1) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  }, [end, duration]);
+  return value;
+}
 import { supabase } from '@/integrations/supabase/client';
 import { useBriefing } from '@/hooks/useBriefing';
 import StatusBadge from '@/components/StatusBadge';
@@ -8,15 +28,17 @@ import { useNavigate } from 'react-router-dom';
 import { chartDataDay, chartDataWeek } from '@/data/mock';
 
 function RedZoneCard({ title, total, critical, label, onClick }: { title: string; total: number; critical?: number; label: string; onClick: () => void }) {
+  const animTotal = useCountUp(total);
+  const animCritical = useCountUp(critical ?? 0);
   return (
     <button onClick={onClick} className="glass-card glass-card-hover p-6 text-left group w-full bg-danger-soft/40 border-danger/10 hover:border-danger/25">
       <div className="flex items-start justify-between mb-4">
         <span className="section-heading text-muted-foreground">{title}</span>
         <AlertTriangle className="w-4 h-4 text-danger/60" />
       </div>
-      <div className="kpi-value mb-1">{total}</div>
+      <div className="kpi-value mb-1">{animTotal}</div>
       {critical !== undefined && critical > 0 && (
-        <div className="text-[11px] text-danger/80 font-semibold">{label}: {critical}</div>
+        <div className="text-[11px] text-danger/80 font-semibold">{label}: {animCritical}</div>
       )}
       <div className="mt-4 flex items-center gap-1 text-[11px] text-muted-foreground/60 group-hover:text-primary transition-colors">
         Подробнее <ArrowRight className="w-3 h-3" />
