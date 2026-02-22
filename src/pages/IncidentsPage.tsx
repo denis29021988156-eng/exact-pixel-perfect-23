@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import type { Tables } from '@/integrations/supabase/types';
 import StatusBadge from '@/components/StatusBadge';
-import { Search, Filter, MapPin, User, Clock } from 'lucide-react';
+import CreateIncidentDialog from '@/components/forms/CreateIncidentDialog';
+import { Search, Filter, MapPin, User, Clock, Plus } from 'lucide-react';
 
 const incidentTypeLabels: Record<string, string> = {
   housing: 'ЖКХ', road: 'Дороги', social: 'Соцсфера', ecology: 'Экология', transport: 'Транспорт', other: 'Другое',
@@ -22,13 +23,16 @@ export default function IncidentsPage() {
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [incidents, setIncidents] = useState<Tables<'incidents'>[]>([]);
   const [loading, setLoading] = useState(true);
+  const [createOpen, setCreateOpen] = useState(false);
 
-  useEffect(() => {
+  const loadData = useCallback(() => {
     supabase.from('incidents').select('*').order('created_at', { ascending: false }).then(({ data }) => {
       setIncidents(data || []);
       setLoading(false);
     });
   }, []);
+
+  useEffect(() => { loadData(); }, [loadData]);
 
   const filtered = incidents.filter(i => {
     if (search && !i.title.toLowerCase().includes(search.toLowerCase()) && !(i.address || '').toLowerCase().includes(search.toLowerCase())) return false;
@@ -39,9 +43,14 @@ export default function IncidentsPage() {
 
   return (
     <div className="space-y-6 animate-slide-in">
-      <div>
-        <h1 className="text-2xl font-extrabold text-foreground">Инциденты</h1>
-        <p className="text-sm text-muted-foreground mt-0.5">Городские происшествия и аварии ЖКХ</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-extrabold text-foreground">Инциденты</h1>
+          <p className="text-sm text-muted-foreground mt-0.5">Городские происшествия и аварии ЖКХ</p>
+        </div>
+        <button onClick={() => setCreateOpen(true)} className="flex items-center gap-2 px-4 py-2.5 bg-primary text-primary-foreground text-sm font-medium rounded-lg hover:bg-primary/90 transition-colors">
+          <Plus className="w-4 h-4" /> Новый инцидент
+        </button>
       </div>
 
       <div className="glass-card p-4 flex flex-wrap gap-3 items-center">
@@ -104,6 +113,8 @@ export default function IncidentsPage() {
           )}
         </div>
       )}
+
+      <CreateIncidentDialog open={createOpen} onOpenChange={setCreateOpen} onCreated={loadData} />
     </div>
   );
 }

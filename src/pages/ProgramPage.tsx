@@ -1,8 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import type { Tables } from '@/integrations/supabase/types';
 import StatusBadge from '@/components/StatusBadge';
-import { FolderKanban, FileText, AlertCircle } from 'lucide-react';
+import CreateProjectDialog from '@/components/forms/CreateProjectDialog';
+import CreateContractDialog from '@/components/forms/CreateContractDialog';
+import { FolderKanban, FileText, AlertCircle, Plus } from 'lucide-react';
 
 const projStatusLabels: Record<string, string> = {
   on_track: 'В срок', risk: 'Риск', overdue: 'Просрочено', completed: 'Завершено',
@@ -19,8 +21,10 @@ export default function ProgramPage() {
   const [projects, setProjects] = useState<Tables<'projects'>[]>([]);
   const [contracts, setContracts] = useState<Tables<'contracts'>[]>([]);
   const [loading, setLoading] = useState(true);
+  const [projectDialogOpen, setProjectDialogOpen] = useState(false);
+  const [contractDialogOpen, setContractDialogOpen] = useState(false);
 
-  useEffect(() => {
+  const loadData = useCallback(() => {
     Promise.all([
       supabase.from('projects').select('*').order('created_at', { ascending: false }),
       supabase.from('contracts').select('*').order('created_at', { ascending: false }),
@@ -31,6 +35,8 @@ export default function ProgramPage() {
     });
   }, []);
 
+  useEffect(() => { loadData(); }, [loadData]);
+
   const formatAmount = (n: number | null) => {
     if (!n) return '—';
     if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)} млн ₽`;
@@ -40,9 +46,17 @@ export default function ProgramPage() {
 
   return (
     <div className="space-y-6 animate-slide-in">
-      <div>
-        <h1 className="text-2xl font-extrabold text-foreground">Программа</h1>
-        <p className="text-sm text-muted-foreground mt-0.5">Нацпроекты, стройки и контракты</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-extrabold text-foreground">Программа</h1>
+          <p className="text-sm text-muted-foreground mt-0.5">Нацпроекты, стройки и контракты</p>
+        </div>
+        <button
+          onClick={() => tab === 'projects' ? setProjectDialogOpen(true) : setContractDialogOpen(true)}
+          className="flex items-center gap-2 px-4 py-2.5 bg-primary text-primary-foreground text-sm font-medium rounded-lg hover:bg-primary/90 transition-colors"
+        >
+          <Plus className="w-4 h-4" /> {tab === 'projects' ? 'Новый проект' : 'Новый контракт'}
+        </button>
       </div>
 
       <div className="flex bg-surface rounded-lg p-1 w-fit">
@@ -115,6 +129,9 @@ export default function ProgramPage() {
           {contracts.length === 0 && <div className="glass-card p-12 text-center"><p className="text-muted-foreground">Контрактов нет</p></div>}
         </div>
       )}
+
+      <CreateProjectDialog open={projectDialogOpen} onOpenChange={setProjectDialogOpen} onCreated={loadData} />
+      <CreateContractDialog open={contractDialogOpen} onOpenChange={setContractDialogOpen} onCreated={loadData} />
     </div>
   );
 }
