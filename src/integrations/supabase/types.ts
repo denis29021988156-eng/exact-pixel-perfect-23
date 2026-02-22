@@ -14,16 +14,272 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      contracts: {
+        Row: {
+          amount: number | null
+          contractor: string | null
+          created_at: string
+          deadline: string | null
+          department: string | null
+          id: string
+          name: string
+          risk_level: string | null
+          status: string | null
+          updated_at: string
+        }
+        Insert: {
+          amount?: number | null
+          contractor?: string | null
+          created_at?: string
+          deadline?: string | null
+          department?: string | null
+          id?: string
+          name: string
+          risk_level?: string | null
+          status?: string | null
+          updated_at?: string
+        }
+        Update: {
+          amount?: number | null
+          contractor?: string | null
+          created_at?: string
+          deadline?: string | null
+          department?: string | null
+          id?: string
+          name?: string
+          risk_level?: string | null
+          status?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      incidents: {
+        Row: {
+          address: string | null
+          created_at: string
+          created_by: string | null
+          department: string | null
+          description: string | null
+          id: string
+          responsible: string | null
+          severity: Database["public"]["Enums"]["incident_severity"]
+          sla_deadline: string | null
+          sla_overdue: boolean | null
+          social_object: boolean | null
+          status: Database["public"]["Enums"]["incident_status"]
+          title: string
+          type: Database["public"]["Enums"]["incident_type"]
+          updated_at: string
+        }
+        Insert: {
+          address?: string | null
+          created_at?: string
+          created_by?: string | null
+          department?: string | null
+          description?: string | null
+          id?: string
+          responsible?: string | null
+          severity?: Database["public"]["Enums"]["incident_severity"]
+          sla_deadline?: string | null
+          sla_overdue?: boolean | null
+          social_object?: boolean | null
+          status?: Database["public"]["Enums"]["incident_status"]
+          title: string
+          type?: Database["public"]["Enums"]["incident_type"]
+          updated_at?: string
+        }
+        Update: {
+          address?: string | null
+          created_at?: string
+          created_by?: string | null
+          department?: string | null
+          description?: string | null
+          id?: string
+          responsible?: string | null
+          severity?: Database["public"]["Enums"]["incident_severity"]
+          sla_deadline?: string | null
+          sla_overdue?: boolean | null
+          social_object?: boolean | null
+          status?: Database["public"]["Enums"]["incident_status"]
+          title?: string
+          type?: Database["public"]["Enums"]["incident_type"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          department: string | null
+          full_name: string
+          id: string
+          position: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          department?: string | null
+          full_name?: string
+          id?: string
+          position?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          department?: string | null
+          full_name?: string
+          id?: string
+          position?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      projects: {
+        Row: {
+          blocker: string | null
+          budget_spent: number | null
+          budget_total: number | null
+          created_at: string
+          department: string | null
+          description: string | null
+          id: string
+          name: string
+          planned_end: string | null
+          planned_start: string | null
+          progress: number | null
+          responsible: string | null
+          status: Database["public"]["Enums"]["project_status"]
+          updated_at: string
+        }
+        Insert: {
+          blocker?: string | null
+          budget_spent?: number | null
+          budget_total?: number | null
+          created_at?: string
+          department?: string | null
+          description?: string | null
+          id?: string
+          name: string
+          planned_end?: string | null
+          planned_start?: string | null
+          progress?: number | null
+          responsible?: string | null
+          status?: Database["public"]["Enums"]["project_status"]
+          updated_at?: string
+        }
+        Update: {
+          blocker?: string | null
+          budget_spent?: number | null
+          budget_total?: number | null
+          created_at?: string
+          department?: string | null
+          description?: string | null
+          id?: string
+          name?: string
+          planned_end?: string | null
+          planned_start?: string | null
+          progress?: number | null
+          responsible?: string | null
+          status?: Database["public"]["Enums"]["project_status"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      tasks: {
+        Row: {
+          assigned_to: string | null
+          created_at: string
+          created_by_name: string | null
+          deadline: string | null
+          department: string | null
+          description: string | null
+          id: string
+          overdue: boolean | null
+          responsible: string | null
+          status: Database["public"]["Enums"]["task_status"]
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          assigned_to?: string | null
+          created_at?: string
+          created_by_name?: string | null
+          deadline?: string | null
+          department?: string | null
+          description?: string | null
+          id?: string
+          overdue?: boolean | null
+          responsible?: string | null
+          status?: Database["public"]["Enums"]["task_status"]
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          assigned_to?: string | null
+          created_at?: string
+          created_by_name?: string | null
+          deadline?: string | null
+          department?: string | null
+          description?: string | null
+          id?: string
+          overdue?: boolean | null
+          responsible?: string | null
+          status?: Database["public"]["Enums"]["task_status"]
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "mayor" | "deputy" | "employee"
+      incident_severity: "low" | "medium" | "high"
+      incident_status: "new" | "in_progress" | "resolved" | "closed"
+      incident_type:
+        | "housing"
+        | "road"
+        | "social"
+        | "ecology"
+        | "transport"
+        | "other"
+      project_status: "on_track" | "risk" | "overdue" | "completed"
+      task_status: "new" | "in_progress" | "completed" | "cancelled"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +406,20 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["mayor", "deputy", "employee"],
+      incident_severity: ["low", "medium", "high"],
+      incident_status: ["new", "in_progress", "resolved", "closed"],
+      incident_type: [
+        "housing",
+        "road",
+        "social",
+        "ecology",
+        "transport",
+        "other",
+      ],
+      project_status: ["on_track", "risk", "overdue", "completed"],
+      task_status: ["new", "in_progress", "completed", "cancelled"],
+    },
   },
 } as const
