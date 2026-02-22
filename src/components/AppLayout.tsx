@@ -1,6 +1,7 @@
 import { ReactNode } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import CityCopilot from '@/components/CityCopilot';
 import { 
   LayoutDashboard, 
   AlertTriangle, 
@@ -84,6 +85,8 @@ export default function AppLayout({ children }: { children: ReactNode }) {
           {children}
         </div>
       </main>
+
+      <CityCopilot />
     </div>
   );
 }

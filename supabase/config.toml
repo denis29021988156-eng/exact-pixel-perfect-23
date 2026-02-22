@@ -1,1 +1,7 @@
 project_id = "ackkitknwdjntrhwasqm"
+
+[functions.city-briefing]
+verify_jwt = false
+
+[functions.city-copilot]
+verify_jwt = false
