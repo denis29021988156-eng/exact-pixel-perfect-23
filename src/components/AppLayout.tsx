@@ -1,6 +1,5 @@
 import { ReactNode, useState, useEffect } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-import { useAuth } from '@/contexts/AuthContext';
 import CityCopilot from '@/components/CityCopilot';
 import { supabase } from '@/integrations/supabase/client';
 import { 
@@ -11,17 +10,16 @@ import {
   BookOpen,
   Map,
   Shield,
-  LogOut,
   BrainCircuit
 } from 'lucide-react';
 
 const navItems = [
-  { path: '/', label: 'Сегодня', icon: LayoutDashboard },
-  { path: '/incidents', label: 'Инциденты', icon: AlertTriangle },
-  { path: '/map', label: 'Карта', icon: Map },
-  { path: '/program', label: 'Программа', icon: FolderKanban },
-  { path: '/tasks', label: 'Поручения', icon: ClipboardCheck },
-  { path: '/cheatsheet', label: 'Шпаргалка', icon: BookOpen },
+  { path: '/app', label: 'Сегодня', icon: LayoutDashboard },
+  { path: '/app/incidents', label: 'Инциденты', icon: AlertTriangle },
+  { path: '/app/map', label: 'Карта', icon: Map },
+  { path: '/app/program', label: 'Программа', icon: FolderKanban },
+  { path: '/app/tasks', label: 'Поручения', icon: ClipboardCheck },
+  { path: '/app/cheatsheet', label: 'Шпаргалка', icon: BookOpen },
 ];
 
 function AIStatusIndicator() {
@@ -51,9 +49,6 @@ function AIStatusIndicator() {
 
 export default function AppLayout({ children }: { children: ReactNode }) {
   const location = useLocation();
-  const { user, userRole, signOut } = useAuth();
-  const initials = user?.user_metadata?.full_name?.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase() || 'U';
-  const roleLabels: Record<string, string> = { mayor: 'Мэр', deputy: 'Заместитель', employee: 'Сотрудник' };
 
   return (
     <div className="flex h-screen overflow-hidden bg-background">
@@ -73,7 +68,9 @@ export default function AppLayout({ children }: { children: ReactNode }) {
         {/* Nav */}
         <nav className="flex-1 py-6 space-y-1 px-3">
           {navItems.map((item) => {
-            const isActive = location.pathname === item.path;
+            const isActive = item.path === '/app' 
+              ? location.pathname === '/app' || location.pathname === '/app/'
+              : location.pathname.startsWith(item.path);
             return (
               <NavLink
                 key={item.path}
@@ -91,19 +88,16 @@ export default function AppLayout({ children }: { children: ReactNode }) {
           })}
         </nav>
 
-        {/* User */}
+        {/* Demo badge */}
         <div className="p-3">
           <div className="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-surface-muted/50">
             <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-              <span className="text-xs font-bold text-primary">{initials}</span>
+              <BrainCircuit className="w-4 h-4 text-primary" />
             </div>
             <div className="hidden lg:block flex-1 min-w-0">
-              <p className="text-xs font-medium text-foreground truncate">{user?.user_metadata?.full_name || user?.email}</p>
-              <p className="text-[10px] text-muted-foreground/60">{roleLabels[userRole || 'employee'] || 'Сотрудник'}</p>
+              <p className="text-xs font-medium text-foreground">Демо-режим</p>
+              <p className="text-[10px] text-muted-foreground/60">Публичный доступ</p>
             </div>
-            <button onClick={signOut} className="hidden lg:block text-muted-foreground/50 hover:text-foreground transition-colors" title="Выйти">
-              <LogOut className="w-4 h-4" />
-            </button>
           </div>
         </div>
       </aside>
