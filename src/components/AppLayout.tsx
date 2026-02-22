@@ -23,26 +23,50 @@ const navItems = [
 ];
 
 function AIStatusIndicator() {
-  const [riskLevel, setRiskLevel] = useState<'normal' | 'elevated'>('normal');
+  const [status, setStatus] = useState<'active' | 'elevated' | 'unavailable'>('active');
+  const [lastUpdate, setLastUpdate] = useState<Date>(new Date());
 
   useEffect(() => {
-    supabase.from('incidents').select('id', { count: 'exact', head: true })
-      .eq('severity', 'high').neq('status', 'closed')
-      .then(({ count }) => {
-        setRiskLevel((count || 0) >= 3 ? 'elevated' : 'normal');
-      });
+    const check = () => {
+      supabase.from('incidents').select('id', { count: 'exact', head: true })
+        .eq('severity', 'high').neq('status', 'closed')
+        .then(({ count, error }) => {
+          if (error) {
+            setStatus('unavailable');
+          } else {
+            setStatus((count || 0) >= 3 ? 'elevated' : 'active');
+            setLastUpdate(new Date());
+          }
+        });
+    };
+    check();
+    const interval = setInterval(check, 60000); // refresh every minute
+    return () => clearInterval(interval);
   }, []);
 
-  const isElevated = riskLevel === 'elevated';
+  const minutesAgo = Math.round((Date.now() - lastUpdate.getTime()) / 60000);
+  const statusConfig = {
+    active: { color: 'bg-success', label: 'AI Active', textColor: 'text-muted-foreground' },
+    elevated: { color: 'bg-warning', label: 'Elevated Risk', textColor: 'text-warning' },
+    unavailable: { color: 'bg-danger', label: 'AI Unavailable', textColor: 'text-danger' },
+  };
+  const cfg = statusConfig[status];
 
   return (
-    <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-surface-muted">
-      <div className="relative">
-        <div className={`w-2 h-2 rounded-full ${isElevated ? 'bg-warning' : 'bg-success'} ai-pulse`} />
+    <div className="flex items-center gap-3">
+      {minutesAgo > 0 && (
+        <span className="text-[10px] text-muted-foreground/50">
+          Updated {minutesAgo}m ago
+        </span>
+      )}
+      <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-surface-muted">
+        <div className="relative">
+          <div className={`w-2 h-2 rounded-full ${cfg.color} ai-pulse`} />
+        </div>
+        <span className={`text-[10px] font-semibold tracking-wide ${cfg.textColor}`}>
+          {cfg.label}
+        </span>
       </div>
-      <span className="text-[10px] font-semibold tracking-wide text-muted-foreground">
-        {isElevated ? 'Elevated Risk' : 'AI Active'}
-      </span>
     </div>
   );
 }
