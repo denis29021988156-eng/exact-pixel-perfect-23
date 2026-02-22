@@ -1,9 +1,11 @@
-import { AlertTriangle, Clock, Eye, ArrowRight, TrendingUp, TrendingDown } from 'lucide-react';
-import { useState } from 'react';
-import { incidents, tasks, projects, chartDataDay, chartDataWeek } from '@/data/mock';
+import { AlertTriangle, Clock, Eye, ArrowRight, TrendingUp, Sparkles, RefreshCw } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { useBriefing } from '@/hooks/useBriefing';
 import StatusBadge from '@/components/StatusBadge';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { useNavigate } from 'react-router-dom';
+import { chartDataDay, chartDataWeek } from '@/data/mock';
 
 function RedZoneCard({ title, total, critical, label, onClick }: { title: string; total: number; critical?: number; label: string; onClick: () => void }) {
   return (
@@ -13,7 +15,7 @@ function RedZoneCard({ title, total, critical, label, onClick }: { title: string
         <AlertTriangle className="w-4 h-4 text-danger" />
       </div>
       <div className="text-3xl font-extrabold text-foreground mb-1">{total}</div>
-      {critical !== undefined && (
+      {critical !== undefined && critical > 0 && (
         <div className="text-xs text-danger font-semibold">{label}: {critical}</div>
       )}
       <div className="mt-3 flex items-center gap-1 text-xs text-muted-foreground group-hover:text-primary transition-colors">
@@ -42,23 +44,76 @@ function TodoItem({ title, dept, responsible, deadline, overdue }: { title: stri
 export default function TodayPage() {
   const [chartPeriod, setChartPeriod] = useState<'day' | 'week'>('day');
   const navigate = useNavigate();
+  const { data: briefing, loading: briefingLoading, generate: generateBriefing } = useBriefing();
 
-  const activeIncidents = incidents.filter(i => i.status !== 'closed');
-  const criticalIncidents = incidents.filter(i => i.severity === 'high' && i.status !== 'closed');
-  const overdueIncidents = incidents.filter(i => i.slaOverdue);
-  const socialAtRisk = incidents.filter(i => i.socialObject && i.status !== 'closed');
-  const repeatedIncidents = 3; // mock
+  // Live stats from DB
+  const [stats, setStats] = useState({
+    activeIncidents: 0,
+    criticalIncidents: 0,
+    overdueIncidents: 0,
+    socialAtRisk: 0,
+    overdueTasks: 0,
+  });
+  const [urgentItems, setUrgentItems] = useState<any[]>([]);
+  const [todayItems, setTodayItems] = useState<any[]>([]);
+  const [riskProjects, setRiskProjects] = useState<any[]>([]);
+  const [dataLoading, setDataLoading] = useState(true);
 
-  const urgentItems = [
-    ...overdueIncidents.map(i => ({ title: i.title, dept: i.department.split(' ').slice(1).join(' '), responsible: i.responsible, deadline: i.slaDeadline.split('T')[0], overdue: true })),
-    ...tasks.filter(t => t.overdue && t.status !== 'completed').map(t => ({ title: t.title, dept: t.department.split(' ').slice(1).join(' '), responsible: t.responsible, deadline: t.deadline, overdue: true })),
-  ];
+  useEffect(() => {
+    loadData();
+  }, []);
 
-  const todayItems = tasks.filter(t => t.deadline === '2026-02-20' && !t.overdue && t.status !== 'completed')
-    .map(t => ({ title: t.title, dept: t.department.split(' ').slice(1).join(' '), responsible: t.responsible, deadline: t.deadline, overdue: false }));
+  async function loadData() {
+    setDataLoading(true);
+    const today = new Date().toISOString().split('T')[0];
+    
+    const [incRes, taskRes, projRes] = await Promise.all([
+      supabase.from('incidents').select('*').neq('status', 'closed'),
+      supabase.from('tasks').select('*').neq('status', 'completed'),
+      supabase.from('projects').select('*'),
+    ]);
 
-  const riskProjects = projects.filter(p => p.status === 'risk' || p.status === 'overdue')
-    .map(p => ({ title: p.name, dept: p.department.split(' ').slice(1).join(' '), responsible: p.responsible, deadline: p.plannedEnd, overdue: p.status === 'overdue' }));
+    const incidents = incRes.data || [];
+    const tasks = taskRes.data || [];
+    const projects = projRes.data || [];
+
+    setStats({
+      activeIncidents: incidents.length,
+      criticalIncidents: incidents.filter(i => i.severity === 'high').length,
+      overdueIncidents: incidents.filter(i => i.sla_overdue).length,
+      socialAtRisk: incidents.filter(i => i.social_object).length,
+      overdueTasks: tasks.filter(t => t.overdue).length,
+    });
+
+    // Urgent: overdue incidents + overdue tasks
+    const urgent = [
+      ...incidents.filter(i => i.sla_overdue).map(i => ({
+        title: i.title, dept: i.department || '', responsible: i.responsible || '',
+        deadline: i.sla_deadline ? new Date(i.sla_deadline).toLocaleDateString('ru-RU') : '', overdue: true,
+      })),
+      ...tasks.filter(t => t.overdue).map(t => ({
+        title: t.title, dept: t.department || '', responsible: t.responsible || '',
+        deadline: t.deadline || '', overdue: true,
+      })),
+    ];
+    setUrgentItems(urgent);
+
+    // Today items
+    const todayTasks = tasks.filter(t => t.deadline === today && !t.overdue).map(t => ({
+      title: t.title, dept: t.department || '', responsible: t.responsible || '',
+      deadline: t.deadline || '', overdue: false,
+    }));
+    setTodayItems(todayTasks);
+
+    // Risk projects
+    const risky = projects.filter(p => p.status === 'risk' || p.status === 'overdue').map(p => ({
+      title: p.name, dept: p.department || '', responsible: p.responsible || '',
+      deadline: p.planned_end || '', overdue: p.status === 'overdue',
+    }));
+    setRiskProjects(risky);
+
+    setDataLoading(false);
+  }
 
   const chartData = chartPeriod === 'day' ? chartDataDay : chartDataWeek;
 
@@ -68,12 +123,44 @@ export default function TodayPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-extrabold text-foreground">Сегодня</h1>
-          <p className="text-sm text-muted-foreground mt-0.5">20 февраля 2026 · Четверг</p>
+          <p className="text-sm text-muted-foreground mt-0.5">
+            {new Date().toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric', weekday: 'long' })}
+          </p>
         </div>
         <div className="flex items-center gap-2 text-xs text-muted-foreground">
           <Clock className="w-4 h-4" />
-          Обновлено 5 мин назад
+          {dataLoading ? 'Загрузка...' : 'Данные актуальны'}
         </div>
+      </div>
+
+      {/* AI Briefing Panel */}
+      <div className="glass-card glow-primary p-5">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-sm font-bold text-foreground flex items-center gap-2">
+            <Sparkles className="w-4 h-4 text-primary" />
+            AI-сводка для руководства
+          </h2>
+          <button
+            onClick={generateBriefing}
+            disabled={briefingLoading}
+            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors disabled:opacity-50"
+          >
+            <RefreshCw className={`w-3 h-3 ${briefingLoading ? 'animate-spin' : ''}`} />
+            {briefingLoading ? 'Генерация...' : 'Сгенерировать'}
+          </button>
+        </div>
+        {briefing ? (
+          <div className="text-sm text-foreground whitespace-pre-line leading-relaxed">
+            {briefing.briefing}
+            <p className="text-xs text-muted-foreground mt-3">
+              Сгенерировано: {new Date(briefing.generatedAt).toLocaleTimeString('ru-RU')}
+            </p>
+          </div>
+        ) : (
+          <p className="text-sm text-muted-foreground">
+            Нажмите «Сгенерировать» для получения AI-анализа текущей ситуации в городе.
+          </p>
+        )}
       </div>
 
       {/* Red Zone */}
@@ -83,10 +170,10 @@ export default function TodayPage() {
           Красная зона
         </h2>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <RedZoneCard title="Инциденты в работе" total={activeIncidents.length} critical={criticalIncidents.length} label="Критических" onClick={() => navigate('/incidents')} />
-          <RedZoneCard title="Просрочено SLA" total={overdueIncidents.length} critical={undefined} label="" onClick={() => navigate('/incidents')} />
-          <RedZoneCard title="Соцобъекты под риском" total={socialAtRisk.length} critical={undefined} label="" onClick={() => navigate('/incidents')} />
-          <RedZoneCard title="Повторные инциденты" total={repeatedIncidents} critical={undefined} label="" onClick={() => navigate('/incidents')} />
+          <RedZoneCard title="Инциденты в работе" total={stats.activeIncidents} critical={stats.criticalIncidents} label="Критических" onClick={() => navigate('/incidents')} />
+          <RedZoneCard title="Просрочено SLA" total={stats.overdueIncidents} critical={undefined} label="" onClick={() => navigate('/incidents')} />
+          <RedZoneCard title="Соцобъекты под риском" total={stats.socialAtRisk} critical={undefined} label="" onClick={() => navigate('/incidents')} />
+          <RedZoneCard title="Просроченные задачи" total={stats.overdueTasks} critical={undefined} label="" onClick={() => navigate('/tasks')} />
         </div>
       </div>
 
@@ -122,6 +209,10 @@ export default function TodayPage() {
               {riskProjects.map((item, i) => <TodoItem key={`r-${i}`} {...item} />)}
             </div>
           </div>
+        )}
+
+        {urgentItems.length === 0 && todayItems.length === 0 && riskProjects.length === 0 && (
+          <p className="text-sm text-muted-foreground">Нет срочных задач. Добавьте данные через формы.</p>
         )}
       </div>
 
