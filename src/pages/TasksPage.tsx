@@ -1,16 +1,26 @@
-import { useState } from 'react';
-import { tasks, departments } from '@/data/mock';
+import { useState, useEffect } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import type { Tables } from '@/integrations/supabase/types';
 import StatusBadge from '@/components/StatusBadge';
 import { ClipboardCheck, Search, Filter, User, Calendar } from 'lucide-react';
 
-const statusLabels: Record<string, string> = { new: 'Новое', in_progress: 'В работе', on_control: 'На контроле', completed: 'Выполнено' };
+const statusLabels: Record<string, string> = { new: 'Новое', in_progress: 'В работе', completed: 'Выполнено', cancelled: 'Отменено' };
 const statusVariants: Record<string, 'danger' | 'warning' | 'success' | 'info' | 'muted'> = {
-  new: 'info', in_progress: 'warning', on_control: 'muted', completed: 'success',
+  new: 'info', in_progress: 'warning', completed: 'success', cancelled: 'muted',
 };
 
 export default function TasksPage() {
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [search, setSearch] = useState('');
+  const [tasks, setTasks] = useState<Tables<'tasks'>[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    supabase.from('tasks').select('*').order('created_at', { ascending: false }).then(({ data }) => {
+      setTasks(data || []);
+      setLoading(false);
+    });
+  }, []);
 
   const filtered = tasks.filter(t => {
     if (statusFilter !== 'all' && t.status !== statusFilter) return false;
@@ -45,36 +55,39 @@ export default function TasksPage() {
         </div>
       </div>
 
-      <div className="space-y-3">
-        {filtered.map(t => (
-          <div key={t.id} className={`glass-card p-5 ${t.overdue ? 'border-l-2 border-l-danger' : ''}`}>
-            <div className="flex items-start justify-between gap-4">
-              <div className="flex-1">
-                <div className="flex items-center gap-2 mb-1.5">
-                  <span className="text-xs font-mono text-muted-foreground">{t.id}</span>
-                  <StatusBadge variant={statusVariants[t.status]}>{statusLabels[t.status]}</StatusBadge>
-                  {t.overdue && <StatusBadge variant="danger" pulse>Просрочено</StatusBadge>}
+      {loading ? (
+        <div className="glass-card p-12 text-center"><p className="text-muted-foreground">Загрузка...</p></div>
+      ) : (
+        <div className="space-y-3">
+          {filtered.map(t => (
+            <div key={t.id} className={`glass-card p-5 ${t.overdue ? 'border-l-2 border-l-danger' : ''}`}>
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-1.5">
+                    <StatusBadge variant={statusVariants[t.status]}>{statusLabels[t.status]}</StatusBadge>
+                    {t.overdue && <StatusBadge variant="danger" pulse>Просрочено</StatusBadge>}
+                  </div>
+                  <h3 className="text-sm font-bold text-foreground">{t.title}</h3>
+                  <div className="flex flex-wrap items-center gap-4 mt-2 text-xs text-muted-foreground">
+                    {t.responsible && <span className="flex items-center gap-1"><User className="w-3.5 h-3.5" />{t.responsible}</span>}
+                    {t.department && <span className="flex items-center gap-1"><ClipboardCheck className="w-3.5 h-3.5" />{t.department}</span>}
+                    {t.deadline && <span className="flex items-center gap-1"><Calendar className="w-3.5 h-3.5" />Срок: {t.deadline}</span>}
+                  </div>
                 </div>
-                <h3 className="text-sm font-bold text-foreground">{t.title}</h3>
-                <div className="flex flex-wrap items-center gap-4 mt-2 text-xs text-muted-foreground">
-                  <span className="flex items-center gap-1"><User className="w-3.5 h-3.5" />{t.responsible}</span>
-                  <span className="flex items-center gap-1"><ClipboardCheck className="w-3.5 h-3.5" />{t.department.split(' ').slice(1, 3).join(' ')}</span>
-                  <span className="flex items-center gap-1"><Calendar className="w-3.5 h-3.5" />Срок: {t.deadline}</span>
+                <div className="text-right flex-shrink-0">
+                  {t.created_by_name && <p className="text-[10px] text-muted-foreground">Автор: {t.created_by_name}</p>}
+                  <p className="text-[10px] text-muted-foreground">{new Date(t.created_at).toLocaleDateString('ru-RU')}</p>
                 </div>
-              </div>
-              <div className="text-right flex-shrink-0">
-                <p className="text-[10px] text-muted-foreground">Автор: {t.createdBy}</p>
-                <p className="text-[10px] text-muted-foreground">{t.createdAt}</p>
               </div>
             </div>
-          </div>
-        ))}
-        {filtered.length === 0 && (
-          <div className="glass-card p-12 text-center">
-            <p className="text-muted-foreground">Поручений не найдено</p>
-          </div>
-        )}
-      </div>
+          ))}
+          {filtered.length === 0 && (
+            <div className="glass-card p-12 text-center">
+              <p className="text-muted-foreground">Поручений не найдено</p>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
