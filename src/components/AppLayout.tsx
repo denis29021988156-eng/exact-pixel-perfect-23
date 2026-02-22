@@ -31,20 +31,20 @@ export default function AppLayout({ children }: { children: ReactNode }) {
   return (
     <div className="flex h-screen overflow-hidden">
       {/* Sidebar */}
-      <aside className="w-20 lg:w-64 flex-shrink-0 bg-sidebar flex flex-col border-r border-sidebar-border">
+      <aside className="w-20 lg:w-64 flex-shrink-0 bg-sidebar flex flex-col border-r border-sidebar-border/60">
         {/* Logo */}
-        <div className="h-16 flex items-center gap-3 px-4 border-b border-sidebar-border">
+        <div className="h-16 flex items-center gap-3 px-4">
           <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center flex-shrink-0">
             <Shield className="w-5 h-5 text-primary-foreground" />
           </div>
           <div className="hidden lg:block">
-            <h1 className="text-sm font-bold text-foreground leading-tight">Планшет мэра</h1>
-            <p className="text-[10px] text-muted-foreground">Ситуационный центр</p>
+            <h1 className="text-sm font-bold text-foreground leading-tight tracking-tight">Планшет мэра</h1>
+            <p className="text-[10px] text-muted-foreground/70">Ситуационный центр</p>
           </div>
         </div>
 
         {/* Nav */}
-        <nav className="flex-1 py-4 space-y-1 px-2">
+        <nav className="flex-1 py-4 space-y-0.5 px-2">
           {navItems.map((item) => {
             const isActive = location.pathname === item.path;
             return (
@@ -53,11 +53,11 @@ export default function AppLayout({ children }: { children: ReactNode }) {
                 to={item.path}
                 className={`flex items-center gap-3 px-3 py-3 rounded-lg transition-all text-sm font-medium
                   ${isActive 
-                    ? 'bg-sidebar-accent text-sidebar-primary-foreground' 
+                    ? 'bg-primary/10 text-primary' 
                     : 'text-sidebar-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground'
                   }`}
               >
-                <item.icon className={`w-5 h-5 flex-shrink-0 ${isActive ? 'text-primary' : ''}`} />
+                <item.icon className={`w-[22px] h-[22px] flex-shrink-0 ${isActive ? 'text-primary' : ''}`} />
                 <span className="hidden lg:block">{item.label}</span>
               </NavLink>
             );
@@ -65,14 +65,14 @@ export default function AppLayout({ children }: { children: ReactNode }) {
         </nav>
 
         {/* User */}
-        <div className="p-3 border-t border-sidebar-border">
+        <div className="p-3 border-t border-sidebar-border/60">
           <div className="flex items-center gap-3 px-2">
-            <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
+            <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
               <span className="text-xs font-bold text-primary">{initials}</span>
             </div>
             <div className="hidden lg:block flex-1 min-w-0">
               <p className="text-xs font-medium text-foreground truncate">{user?.user_metadata?.full_name || user?.email}</p>
-              <p className="text-[10px] text-muted-foreground">{roleLabels[userRole || 'employee'] || 'Сотрудник'}</p>
+              <p className="text-[10px] text-muted-foreground/70">{roleLabels[userRole || 'employee'] || 'Сотрудник'}</p>
             </div>
             <button onClick={signOut} className="hidden lg:block text-muted-foreground hover:text-foreground transition-colors" title="Выйти">
               <LogOut className="w-4 h-4" />
@@ -83,7 +83,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
 
       {/* Main */}
       <main className="flex-1 overflow-y-auto">
-        <div className="p-6 max-w-7xl mx-auto">
+        <div className="p-6 max-w-7xl mx-auto animate-fade-in">
           {children}
         </div>
       </main>

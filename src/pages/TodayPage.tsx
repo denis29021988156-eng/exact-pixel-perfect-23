@@ -9,16 +9,16 @@ import { chartDataDay, chartDataWeek } from '@/data/mock';
 
 function RedZoneCard({ title, total, critical, label, onClick }: { title: string; total: number; critical?: number; label: string; onClick: () => void }) {
   return (
-    <button onClick={onClick} className="glass-card glow-danger p-5 text-left hover:border-danger/40 transition-all group w-full">
+    <button onClick={onClick} className="glass-card glass-card-hover glow-danger p-5 text-left hover:border-danger/40 group w-full">
       <div className="flex items-start justify-between mb-3">
-        <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">{title}</span>
+        <span className="meta-text uppercase tracking-wider font-medium">{title}</span>
         <AlertTriangle className="w-4 h-4 text-danger" />
       </div>
-      <div className="text-3xl font-extrabold text-foreground mb-1">{total}</div>
+      <div className="kpi-value mb-1">{total}</div>
       {critical !== undefined && critical > 0 && (
-        <div className="text-xs text-danger font-semibold">{label}: {critical}</div>
+        <div className="text-[11px] text-danger font-semibold">{label}: {critical}</div>
       )}
-      <div className="mt-3 flex items-center gap-1 text-xs text-muted-foreground group-hover:text-primary transition-colors">
+      <div className="mt-3 flex items-center gap-1 text-[11px] text-muted-foreground group-hover:text-primary transition-colors">
         Подробнее <ArrowRight className="w-3 h-3" />
       </div>
     </button>
@@ -27,14 +27,14 @@ function RedZoneCard({ title, total, critical, label, onClick }: { title: string
 
 function TodoItem({ title, dept, responsible, deadline, overdue }: { title: string; dept: string; responsible: string; deadline: string; overdue: boolean }) {
   return (
-    <div className="flex items-center gap-4 p-3 rounded-lg bg-surface hover:bg-surface-elevated transition-colors">
+    <div className="flex items-center gap-4 px-3 py-3.5 rounded-lg bg-surface hover:bg-surface-elevated transition-colors">
       <div className={`w-2 h-2 rounded-full flex-shrink-0 ${overdue ? 'bg-danger' : 'bg-warning'}`} />
       <div className="flex-1 min-w-0">
         <p className="text-sm font-medium text-foreground truncate">{title}</p>
-        <p className="text-xs text-muted-foreground">{dept} · {responsible}</p>
+        <p className="meta-text mt-0.5">{dept} · {responsible}</p>
       </div>
       <div className="flex items-center gap-2 flex-shrink-0">
-        <span className="text-xs text-muted-foreground">{deadline}</span>
+        <span className="meta-text">{deadline}</span>
         {overdue && <StatusBadge variant="danger">Просрочено</StatusBadge>}
       </div>
     </div>
@@ -118,18 +118,21 @@ export default function TodayPage() {
   const chartData = chartPeriod === 'day' ? chartDataDay : chartDataWeek;
 
   return (
-    <div className="space-y-6 animate-slide-in">
+    <div className="space-y-6 animate-fade-in">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-extrabold text-foreground">Сегодня</h1>
-          <p className="text-sm text-muted-foreground mt-0.5">
+          <h1 className="text-2xl font-extrabold text-foreground tracking-tight">Сегодня</h1>
+          <p className="meta-text mt-1">
             {new Date().toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric', weekday: 'long' })}
           </p>
         </div>
-        <div className="flex items-center gap-2 text-xs text-muted-foreground">
-          <Clock className="w-4 h-4" />
-          {dataLoading ? 'Загрузка...' : 'Данные актуальны'}
+        <div className="flex items-center gap-2 text-[11px] text-muted-foreground">
+          {dataLoading ? (
+            <><Clock className="w-3.5 h-3.5" /> Загрузка...</>
+          ) : (
+            <><span className="w-1.5 h-1.5 rounded-full bg-success animate-pulse" /><span>Live</span> · Данные синхронизированы</>
+          )}
         </div>
       </div>
 
@@ -164,9 +167,9 @@ export default function TodayPage() {
       </div>
 
       {/* Red Zone */}
-      <div>
-        <h2 className="text-xs font-bold text-danger uppercase tracking-widest mb-3 flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full bg-danger animate-pulse-danger" />
+      <div className="red-zone-panel section-divider pt-6">
+        <h2 className="text-[10px] font-bold text-danger uppercase tracking-widest mb-3 flex items-center gap-2">
+          <span className="w-1.5 h-1.5 rounded-full bg-danger animate-pulse" />
           Красная зона
         </h2>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
@@ -178,7 +181,7 @@ export default function TodayPage() {
       </div>
 
       {/* What to do today */}
-      <div className="glass-card p-5">
+      <div className="glass-card p-5 section-divider">
         <h2 className="text-sm font-bold text-foreground mb-4 flex items-center gap-2">
           <Eye className="w-4 h-4 text-primary" />
           Что сделать сегодня
@@ -217,7 +220,7 @@ export default function TodayPage() {
       </div>
 
       {/* Chart */}
-      <div className="glass-card p-5">
+      <div className="glass-card p-5 section-divider">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-sm font-bold text-foreground flex items-center gap-2">
             <TrendingUp className="w-4 h-4 text-primary" />

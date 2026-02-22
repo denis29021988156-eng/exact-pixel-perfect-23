@@ -20,14 +20,14 @@ interface StatusBadgeProps {
 export default function StatusBadge({ variant, children, pulse, className }: StatusBadgeProps) {
   return (
     <span className={cn(
-      'inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold rounded-full border',
+      'inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-semibold rounded-full border',
       variantStyles[variant],
       pulse && 'animate-pulse-danger',
       className
     )}>
       {(variant === 'danger' || variant === 'warning') && (
         <span className={cn(
-          'w-1.5 h-1.5 rounded-full',
+          'w-1 h-1 rounded-full',
           variant === 'danger' ? 'bg-danger' : 'bg-warning'
         )} />
       )}
