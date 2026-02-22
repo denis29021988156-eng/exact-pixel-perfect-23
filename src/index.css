@@ -99,7 +99,11 @@
 
 @layer utilities {
   .glass-card {
-    @apply bg-card border border-border rounded-xl shadow-sm;
+    @apply bg-card border border-border rounded-xl shadow-sm transition-all duration-200;
+  }
+  .glass-card-hover:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px -8px hsl(var(--foreground) / 0.08);
   }
   .glow-danger {
     box-shadow: 0 0 20px -5px hsl(var(--danger) / 0.15);
@@ -112,5 +116,22 @@
   }
   .glow-primary {
     box-shadow: 0 0 20px -5px hsl(var(--primary) / 0.15);
+  }
+  .section-divider {
+    @apply border-t border-foreground/[0.05];
+  }
+  .kpi-value {
+    @apply text-4xl font-extrabold tracking-tight text-foreground;
+    letter-spacing: -0.025em;
+  }
+  .meta-text {
+    @apply text-[11px] text-muted-foreground/80;
+  }
+  .red-zone-panel {
+    @apply relative pl-4;
+  }
+  .red-zone-panel::before {
+    content: '';
+    @apply absolute left-0 top-0 bottom-0 w-1 rounded-full bg-danger/70;
   }
 }
