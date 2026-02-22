@@ -45,58 +45,58 @@ export default function ProgramPage() {
   };
 
   return (
-    <div className="space-y-6 animate-fade-in-up">
+    <div className="space-y-8 animate-fade-in-up">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-extrabold text-foreground">Программа</h1>
-          <p className="text-sm text-muted-foreground mt-0.5">Нацпроекты, стройки и контракты</p>
+          <h1 className="section-heading text-2xl">Программа</h1>
+          <p className="meta-text mt-1">Нацпроекты, стройки и контракты</p>
         </div>
         <button
           onClick={() => tab === 'projects' ? setProjectDialogOpen(true) : setContractDialogOpen(true)}
-          className="flex items-center gap-2 px-4 py-2.5 bg-primary text-primary-foreground text-sm font-medium rounded-lg hover:bg-primary/90 transition-colors"
+          className="flex items-center gap-2 px-5 py-2.5 bg-primary text-primary-foreground text-sm font-semibold rounded-xl hover:bg-primary/90 transition-all shadow-sm"
         >
           <Plus className="w-4 h-4" /> {tab === 'projects' ? 'Новый проект' : 'Новый контракт'}
         </button>
       </div>
 
-      <div className="flex bg-surface rounded-lg p-1 w-fit">
-        <button onClick={() => setTab('projects')} className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-md transition-colors ${tab === 'projects' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground'}`}>
+      <div className="flex bg-surface border border-border rounded-xl p-1 w-fit">
+        <button onClick={() => setTab('projects')} className={`flex items-center gap-2 px-5 py-2.5 text-sm font-semibold rounded-lg transition-all ${tab === 'projects' ? 'bg-primary text-primary-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}>
           <FolderKanban className="w-4 h-4" /> Объекты ({projects.length})
         </button>
-        <button onClick={() => setTab('contracts')} className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-md transition-colors ${tab === 'contracts' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground'}`}>
+        <button onClick={() => setTab('contracts')} className={`flex items-center gap-2 px-5 py-2.5 text-sm font-semibold rounded-lg transition-all ${tab === 'contracts' ? 'bg-primary text-primary-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}>
           <FileText className="w-4 h-4" /> Контракты ({contracts.length})
         </button>
       </div>
 
       {loading ? (
-        <div className="glass-card p-12 text-center"><p className="text-muted-foreground">Загрузка...</p></div>
+        <div className="glass-card p-16 text-center"><p className="text-muted-foreground">Загрузка...</p></div>
       ) : tab === 'projects' ? (
         <div className="space-y-3">
           {projects.map(p => (
-            <div key={p.id} className={`glass-card p-5 ${p.status === 'overdue' ? 'border-l-2 border-l-danger' : p.status === 'risk' ? 'border-l-2 border-l-warning' : ''}`}>
+            <div key={p.id} className={`glass-card glass-card-hover p-6 ${p.status === 'overdue' ? 'border-l-[3px] border-l-danger' : p.status === 'risk' ? 'border-l-[3px] border-l-warning' : ''}`}>
               <div className="flex items-start justify-between gap-4">
                 <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-1.5">
+                  <div className="flex items-center gap-2 mb-2">
                     <StatusBadge variant={projStatusVariants[p.status]}>{projStatusLabels[p.status]}</StatusBadge>
                   </div>
-                  <h3 className="text-sm font-bold text-foreground">{p.name}</h3>
-                  <p className="text-xs text-muted-foreground mt-1">{p.department} · {p.responsible}</p>
+                  <h3 className="text-sm font-bold text-foreground leading-snug">{p.name}</h3>
+                  <p className="meta-text mt-1.5">{p.department} · {p.responsible}</p>
                   {p.blocker && (
-                    <div className="mt-2 flex items-center gap-1.5 text-xs text-danger">
-                      <AlertCircle className="w-3 h-3 flex-shrink-0" /> {p.blocker}
+                    <div className="mt-2.5 flex items-center gap-1.5 text-xs text-danger">
+                      <AlertCircle className="w-3.5 h-3.5 flex-shrink-0" /> {p.blocker}
                     </div>
                   )}
                 </div>
                 <div className="text-right flex-shrink-0">
-                  {p.planned_end && <div className="text-xs text-muted-foreground mb-2">до {p.planned_end}</div>}
-                  <div className="w-24">
-                    <div className="flex justify-between text-[10px] text-muted-foreground mb-1">
+                  {p.planned_end && <div className="meta-text mb-2">до {p.planned_end}</div>}
+                  <div className="w-28">
+                    <div className="flex justify-between meta-text mb-1">
                       <span>Прогресс</span>
-                      <span>{p.progress ?? 0}%</span>
+                      <span className="font-semibold text-foreground">{p.progress ?? 0}%</span>
                     </div>
-                    <div className="h-2 bg-surface rounded-full overflow-hidden">
+                    <div className="h-2 bg-surface-muted rounded-full overflow-hidden">
                       <div
-                        className={`h-full rounded-full transition-all ${p.status === 'overdue' ? 'bg-danger' : p.status === 'risk' ? 'bg-warning' : 'bg-success'}`}
+                        className={`h-full rounded-full transition-all duration-500 ${p.status === 'overdue' ? 'bg-danger' : p.status === 'risk' ? 'bg-warning' : 'bg-success'}`}
                         style={{ width: `${p.progress ?? 0}%` }}
                       />
                     </div>
@@ -105,28 +105,28 @@ export default function ProgramPage() {
               </div>
             </div>
           ))}
-          {projects.length === 0 && <div className="glass-card p-12 text-center"><p className="text-muted-foreground">Проектов нет</p></div>}
+          {projects.length === 0 && <div className="glass-card p-16 text-center"><p className="text-muted-foreground">Проектов нет</p></div>}
         </div>
       ) : (
         <div className="space-y-3">
           {contracts.map(c => (
-            <div key={c.id} className={`glass-card p-5 ${c.risk_level === 'high' ? 'border-l-2 border-l-danger' : c.risk_level === 'medium' ? 'border-l-2 border-l-warning' : ''}`}>
+            <div key={c.id} className={`glass-card glass-card-hover p-6 ${c.risk_level === 'high' ? 'border-l-[3px] border-l-danger' : c.risk_level === 'medium' ? 'border-l-[3px] border-l-warning' : ''}`}>
               <div className="flex items-start justify-between gap-4">
                 <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-1.5">
+                  <div className="flex items-center gap-2 mb-2">
                     <StatusBadge variant={riskVariants[c.risk_level || 'low']}>{riskLabels[c.risk_level || 'low']}</StatusBadge>
-                    {c.status && <span className="text-xs px-2 py-0.5 rounded bg-surface text-muted-foreground">{c.status}</span>}
+                    {c.status && <span className="text-[11px] px-2.5 py-1 rounded-lg bg-surface-muted text-muted-foreground font-medium">{c.status}</span>}
                   </div>
-                  <h3 className="text-sm font-bold text-foreground">{c.name}</h3>
-                  <p className="text-xs text-muted-foreground mt-1">{c.contractor} · {formatAmount(c.amount)}</p>
+                  <h3 className="text-sm font-bold text-foreground leading-snug">{c.name}</h3>
+                  <p className="meta-text mt-1.5">{c.contractor} · {formatAmount(c.amount)}</p>
                 </div>
-                <div className="text-right flex-shrink-0 text-xs text-muted-foreground">
+                <div className="text-right flex-shrink-0 meta-text">
                   {c.deadline && `до ${c.deadline}`}
                 </div>
               </div>
             </div>
           ))}
-          {contracts.length === 0 && <div className="glass-card p-12 text-center"><p className="text-muted-foreground">Контрактов нет</p></div>}
+          {contracts.length === 0 && <div className="glass-card p-16 text-center"><p className="text-muted-foreground">Контрактов нет</p></div>}
         </div>
       )}
 
