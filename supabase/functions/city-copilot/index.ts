@@ -9,17 +9,20 @@ const corsHeaders = {
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
+  const startTime = Date.now();
+  const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+  const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+  const supabase = createClient(supabaseUrl, supabaseKey);
+
   try {
     const { messages } = await req.json();
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
-    // Fetch city context
-    const supabase = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
-    );
+    // Trim to last 6 messages (3 pairs) to control context size
+    const trimmedMessages = messages?.slice(-6) || [];
 
+    // Fetch and aggregate city data
     const [incidentsRes, tasksRes, projectsRes, contractsRes] = await Promise.all([
       supabase.from("incidents").select("*").in("status", ["new", "in_progress"]).limit(50),
       supabase.from("tasks").select("*").neq("status", "completed").limit(50),
@@ -27,53 +30,86 @@ serve(async (req) => {
       supabase.from("contracts").select("*").limit(30),
     ]);
 
-    const today = new Date().toLocaleDateString("ru-RU");
-    const contextParts: string[] = [`Сегодня: ${today}`];
+    const incidents = incidentsRes.data || [];
+    const tasks = tasksRes.data || [];
+    const projects = projectsRes.data || [];
+    const contracts = contractsRes.data || [];
 
-    if (incidentsRes.data?.length) {
-      const critical = incidentsRes.data.filter(i => i.severity === "high");
-      const overdue = incidentsRes.data.filter(i => i.sla_overdue);
-      contextParts.push(`ИНЦИДЕНТЫ (${incidentsRes.data.length} активных, ${critical.length} критических, ${overdue.length} просроченных):`);
-      incidentsRes.data.slice(0, 20).forEach(i => {
-        contextParts.push(`- [${i.severity}/${i.status}] ${i.title} | ${i.department || "—"} | ${i.responsible || "—"} | SLA просрочен: ${i.sla_overdue ? "ДА" : "нет"}`);
+    // Deterministic Risk Index
+    const criticalIncidents = incidents.filter((i: any) => i.severity === "high").length;
+    const overdueIncidents = incidents.filter((i: any) => i.sla_overdue).length;
+    const overdueTasks = tasks.filter((t: any) => t.overdue).length;
+    const highRiskProjects = projects.filter((p: any) => p.status === "risk" || p.status === "overdue").length;
+    const overdueRatio = incidents.length > 0 ? overdueIncidents / incidents.length : 0;
+    const trendFactor = overdueRatio > 0.3 ? 1 : overdueRatio > 0.1 ? 0.5 : 0;
+    const riskIndex = Math.min(Math.round(
+      (criticalIncidents * 0.4) + (overdueTasks * 0.3) + (highRiskProjects * 0.2) + (trendFactor * 10 * 0.1)
+    ), 100);
+
+    const deptSet = new Set<string>();
+    incidents.forEach((i: any) => {
+      if ((i.severity === "high" || i.sla_overdue) && i.department) deptSet.add(i.department);
+    });
+
+    // Aggregated context for LLM
+    const aggregatedData = {
+      date: new Date().toLocaleDateString("ru-RU"),
+      cityRiskIndex: riskIndex,
+      activeIncidents: incidents.length,
+      criticalIncidents,
+      overdueIncidents,
+      activeTasks: tasks.length,
+      overdueTasks,
+      totalProjects: projects.length,
+      highRiskProjects,
+      activeContracts: contracts.length,
+      highRiskContracts: contracts.filter((c: any) => c.risk_level === "high").length,
+      departmentsAtRisk: Array.from(deptSet),
+    };
+
+    // Detailed context for copilot (more info than briefing but still structured)
+    const detailContext: string[] = [];
+    if (criticalIncidents > 0) {
+      detailContext.push("КРИТИЧЕСКИЕ ИНЦИДЕНТЫ:");
+      incidents.filter((i: any) => i.severity === "high").slice(0, 10).forEach((i: any) => {
+        detailContext.push(`- [${i.status}] ${i.title} | ${i.department || "—"} | ${i.responsible || "—"} | SLA просрочен: ${i.sla_overdue ? "ДА" : "нет"}`);
+      });
+    }
+    if (overdueTasks > 0) {
+      detailContext.push("\nПРОСРОЧЕННЫЕ ПОРУЧЕНИЯ:");
+      tasks.filter((t: any) => t.overdue).slice(0, 10).forEach((t: any) => {
+        detailContext.push(`- ${t.title} | ${t.responsible || "—"} | Срок: ${t.deadline || "—"}`);
+      });
+    }
+    if (highRiskProjects > 0) {
+      detailContext.push("\nПРОЕКТЫ С РИСКАМИ:");
+      projects.filter((p: any) => p.status === "risk" || p.status === "overdue").slice(0, 10).forEach((p: any) => {
+        detailContext.push(`- [${p.status}] ${p.name} | ${p.progress}% | Блокер: ${p.blocker || "нет"}`);
       });
     }
 
-    if (tasksRes.data?.length) {
-      const overdue = tasksRes.data.filter(t => t.overdue);
-      contextParts.push(`\nПОРУЧЕНИЯ (${tasksRes.data.length} активных, ${overdue.length} просроченных):`);
-      tasksRes.data.slice(0, 15).forEach(t => {
-        contextParts.push(`- [${t.status}] ${t.title} | ${t.responsible || "—"} | Срок: ${t.deadline || "—"} | Просрочено: ${t.overdue ? "ДА" : "нет"}`);
-      });
-    }
+    const systemPrompt = `Ты — City Copilot, AI-ассистент мэра города. Ты работаешь в интерактивном режиме.
 
-    if (projectsRes.data?.length) {
-      const risky = projectsRes.data.filter(p => p.status === "risk" || p.status === "overdue");
-      contextParts.push(`\nПРОЕКТЫ (${projectsRes.data.length} всего, ${risky.length} с рисками):`);
-      projectsRes.data.slice(0, 15).forEach(p => {
-        contextParts.push(`- [${p.status}] ${p.name} | ${p.progress}% | ${p.department || "—"} | Блокер: ${p.blocker || "нет"}`);
-      });
-    }
+АГРЕГИРОВАННЫЕ ДАННЫЕ:
+${JSON.stringify(aggregatedData, null, 2)}
 
-    if (contractsRes.data?.length) {
-      contextParts.push(`\nКОНТРАКТЫ (${contractsRes.data.length}):`);
-      contractsRes.data.slice(0, 10).forEach(c => {
-        contextParts.push(`- [${c.status}/${c.risk_level}] ${c.name} | ${c.contractor || "—"} | ${c.amount ? c.amount.toLocaleString() + " ₽" : "—"}`);
-      });
-    }
-
-    const systemPrompt = `Ты — City Copilot, AI-ассистент мэра города. Ты имеешь доступ к актуальным данным ситуационного центра.
-
-ТВОИ ДАННЫЕ:
-${contextParts.join("\n")}
+${detailContext.length > 0 ? "ДЕТАЛИ:\n" + detailContext.join("\n") : ""}
 
 ПРАВИЛА:
 - Отвечай на русском языке, кратко и по делу.
-- Используй данные из контекста для ответов.
-- Можешь анализировать ситуацию, находить риски, давать рекомендации.
+- Используй ТОЛЬКО данные из контекста.
+- ЗАПРЕЩЕНО выдумывать данные, цифры, имена.
+- Если данных нет — ответь: "Недостаточно данных для анализа."
+- Можешь задавать уточняющие вопросы.
+- Форматируй ответы с помощью markdown.
 - При запросе "доклад" или "сводка" — формируй структурированный отчёт.
 - Поддерживай команды: "что критично", "риски", "просроченные", "статус проекта X", "подготовь доклад".
-- Форматируй ответы с помощью markdown.`;
+- City Risk Index: ${riskIndex}/100 — это детерминированный показатель, интерпретируй его.
+
+ФОРМАТ ОТВЕТА — когда уместно, включай в конец блок с рекомендуемыми действиями:
+При рекомендации действий используй формат:
+**Рекомендуемые действия:**
+1. [действие] — приоритет: высокий/средний/низкий`;
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -83,9 +119,12 @@ ${contextParts.join("\n")}
       },
       body: JSON.stringify({
         model: "google/gemini-3-flash-preview",
+        temperature: 0.3,
+        top_p: 0.8,
+        max_tokens: 2048,
         messages: [
           { role: "system", content: systemPrompt },
-          ...messages,
+          ...trimmedMessages,
         ],
         stream: true,
       }),
@@ -107,11 +146,32 @@ ${contextParts.join("\n")}
       throw new Error("AI gateway error");
     }
 
+    // Log to ai_logs (async, don't block stream)
+    const lastUserMsg = trimmedMessages.filter((m: any) => m.role === "user").pop();
+    supabase.from("ai_logs").insert({
+      module: "copilot",
+      input_summary: lastUserMsg?.content?.slice(0, 300) || "stream request",
+      output_summary: "streaming response",
+      error_flag: false,
+      risk_index: riskIndex,
+      duration_ms: Date.now() - startTime,
+    }).then(() => {}).catch(() => {});
+
     return new Response(response.body, {
       headers: { ...corsHeaders, "Content-Type": "text/event-stream" },
     });
   } catch (e) {
+    const durationMs = Date.now() - startTime;
     console.error("city-copilot error:", e);
+
+    supabase.from("ai_logs").insert({
+      module: "copilot",
+      input_summary: "error",
+      output_summary: e instanceof Error ? e.message : "Unknown error",
+      error_flag: true,
+      duration_ms: durationMs,
+    }).then(() => {}).catch(() => {});
+
     return new Response(JSON.stringify({ error: e instanceof Error ? e.message : "Unknown error" }), {
       status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
     });

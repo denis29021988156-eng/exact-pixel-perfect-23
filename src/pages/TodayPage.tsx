@@ -1,4 +1,5 @@
 import { AlertTriangle, Clock, Eye, ArrowRight, TrendingUp, BrainCircuit, RefreshCw } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
 import { useState, useEffect, useRef } from 'react';
 
 function useCountUp(end: number, duration = 800) {
@@ -162,6 +163,16 @@ export default function TodayPage() {
               <BrainCircuit className="w-4 h-4 text-primary" />
             </div>
             AI-сводка для руководства
+            {briefing?.riskIndex !== undefined && (
+              <span className={`ml-2 px-2 py-0.5 rounded-lg text-[10px] font-bold ${
+                briefing.riskIndex > 70 ? 'bg-danger/10 text-danger' :
+                briefing.riskIndex > 40 ? 'bg-warning/10 text-warning' :
+                briefing.riskIndex > 15 ? 'bg-primary/10 text-primary' :
+                'bg-success/10 text-success'
+              }`}>
+                Risk Index: {briefing.riskIndex}/100
+              </span>
+            )}
           </h2>
           <button
             onClick={generateBriefing}
@@ -174,7 +185,9 @@ export default function TodayPage() {
         </div>
         {briefing ? (
           <div className="text-sm text-foreground/90 whitespace-pre-line leading-relaxed">
-            {briefing.briefing}
+            <div className="prose prose-sm max-w-none">
+              <ReactMarkdown>{briefing.briefing}</ReactMarkdown>
+            </div>
             <p className="meta-text mt-4">
               Сгенерировано: {new Date(briefing.generatedAt).toLocaleTimeString('ru-RU')}
             </p>

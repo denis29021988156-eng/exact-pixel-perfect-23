@@ -4,6 +4,7 @@ import ReactMarkdown from 'react-markdown';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { trimMessages } from '@/lib/ai/conversationState';
 
 type Msg = { role: 'user' | 'assistant'; content: string };
 
@@ -11,9 +12,9 @@ const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/city-copilot
 
 const quickCommands = [
   { label: 'Что критично?', msg: 'Что сейчас критично в городе?' },
-  { label: 'Риски', msg: 'Покажи все текущие риски' },
+  { label: 'Риски', msg: 'Покажи все текущие риски и Risk Index' },
   { label: 'Просроченные', msg: 'Какие инциденты и поручения просрочены?' },
-  { label: 'Доклад', msg: 'Подготовь краткий доклад по текущей ситуации' },
+  { label: 'Доклад', msg: 'Подготовь краткий доклад по текущей ситуации с рекомендуемыми действиями' },
 ];
 
 export default function CityCopilot() {
@@ -43,13 +44,16 @@ export default function CityCopilot() {
     let assistantSoFar = '';
 
     try {
+      // Trim messages for context control (last 6)
+      const messagesToSend = trimMessages(allMessages);
+
       const resp = await fetch(CHAT_URL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
         },
-        body: JSON.stringify({ messages: allMessages }),
+        body: JSON.stringify({ messages: messagesToSend }),
       });
 
       if (!resp.ok || !resp.body) {
@@ -132,7 +136,7 @@ export default function CityCopilot() {
           </div>
           <div>
             <h3 className="text-sm font-semibold text-foreground">City Copilot</h3>
-            <p className="text-[10px] text-muted-foreground">AI-ассистент мэра</p>
+            <p className="text-[10px] text-muted-foreground">AI-ассистент · temp 0.3 · контекст: {Math.min(messages.length, 6)} msg</p>
           </div>
         </div>
         <Button variant="ghost" size="icon" onClick={() => setOpen(false)} className="h-8 w-8">
