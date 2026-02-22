@@ -61,6 +61,8 @@ export type Database = {
           department: string | null
           description: string | null
           id: string
+          lat: number | null
+          lng: number | null
           responsible: string | null
           severity: Database["public"]["Enums"]["incident_severity"]
           sla_deadline: string | null
@@ -78,6 +80,8 @@ export type Database = {
           department?: string | null
           description?: string | null
           id?: string
+          lat?: number | null
+          lng?: number | null
           responsible?: string | null
           severity?: Database["public"]["Enums"]["incident_severity"]
           sla_deadline?: string | null
@@ -95,6 +99,8 @@ export type Database = {
           department?: string | null
           description?: string | null
           id?: string
+          lat?: number | null
+          lng?: number | null
           responsible?: string | null
           severity?: Database["public"]["Enums"]["incident_severity"]
           sla_deadline?: string | null

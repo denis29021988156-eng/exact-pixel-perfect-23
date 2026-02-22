@@ -10,6 +10,7 @@ import IncidentsPage from "./pages/IncidentsPage";
 import ProgramPage from "./pages/ProgramPage";
 import TasksPage from "./pages/TasksPage";
 import CheatsheetPage from "./pages/CheatsheetPage";
+import MapPage from "./pages/MapPage";
 import AuthPage from "./pages/AuthPage";
 import NotFound from "./pages/NotFound";
 
@@ -38,6 +39,7 @@ function ProtectedRoutes() {
         <Route path="/incidents" element={<IncidentsPage />} />
         <Route path="/program" element={<ProgramPage />} />
         <Route path="/tasks" element={<TasksPage />} />
+        <Route path="/map" element={<MapPage />} />
         <Route path="/cheatsheet" element={<CheatsheetPage />} />
         <Route path="*" element={<NotFound />} />
       </Routes>

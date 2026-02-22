@@ -8,6 +8,7 @@ import {
   FolderKanban, 
   ClipboardCheck, 
   BookOpen,
+  Map,
   Shield,
   LogOut
 } from 'lucide-react';
@@ -15,6 +16,7 @@ import {
 const navItems = [
   { path: '/', label: 'Сегодня', icon: LayoutDashboard },
   { path: '/incidents', label: 'Инциденты', icon: AlertTriangle },
+  { path: '/map', label: 'Карта', icon: Map },
   { path: '/program', label: 'Программа', icon: FolderKanban },
   { path: '/tasks', label: 'Поручения', icon: ClipboardCheck },
   { path: '/cheatsheet', label: 'Шпаргалка', icon: BookOpen },
