@@ -103,7 +103,7 @@ export default function MapPage() {
   };
 
   return (
-    <div className="space-y-4 animate-slide-in">
+    <div className="space-y-4 animate-fade-in-up">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-extrabold text-foreground">Карта города</h1>

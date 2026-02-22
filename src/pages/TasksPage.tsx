@@ -33,7 +33,7 @@ export default function TasksPage() {
   });
 
   return (
-    <div className="space-y-6 animate-slide-in">
+    <div className="space-y-6 animate-fade-in-up">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-extrabold text-foreground">Личные поручения</h1>
