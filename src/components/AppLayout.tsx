@@ -1,12 +1,14 @@
 import { ReactNode } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
 import { 
   LayoutDashboard, 
   AlertTriangle, 
   FolderKanban, 
   ClipboardCheck, 
   BookOpen,
-  Shield
+  Shield,
+  LogOut
 } from 'lucide-react';
 
 const navItems = [
@@ -19,6 +21,9 @@ const navItems = [
 
 export default function AppLayout({ children }: { children: ReactNode }) {
   const location = useLocation();
+  const { user, userRole, signOut } = useAuth();
+  const initials = user?.user_metadata?.full_name?.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase() || 'U';
+  const roleLabels: Record<string, string> = { mayor: 'Мэр', deputy: 'Заместитель', employee: 'Сотрудник' };
 
   return (
     <div className="flex h-screen overflow-hidden">
@@ -60,12 +65,15 @@ export default function AppLayout({ children }: { children: ReactNode }) {
         <div className="p-3 border-t border-sidebar-border">
           <div className="flex items-center gap-3 px-2">
             <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
-              <span className="text-xs font-bold text-primary">МЭ</span>
+              <span className="text-xs font-bold text-primary">{initials}</span>
             </div>
-            <div className="hidden lg:block">
-              <p className="text-xs font-medium text-foreground">Мэр города</p>
-              <p className="text-[10px] text-muted-foreground">Администратор</p>
+            <div className="hidden lg:block flex-1 min-w-0">
+              <p className="text-xs font-medium text-foreground truncate">{user?.user_metadata?.full_name || user?.email}</p>
+              <p className="text-[10px] text-muted-foreground">{roleLabels[userRole || 'employee'] || 'Сотрудник'}</p>
             </div>
+            <button onClick={signOut} className="hidden lg:block text-muted-foreground hover:text-foreground transition-colors" title="Выйти">
+              <LogOut className="w-4 h-4" />
+            </button>
           </div>
         </div>
       </aside>
