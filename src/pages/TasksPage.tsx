@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import type { Tables } from '@/integrations/supabase/types';
 import StatusBadge from '@/components/StatusBadge';
-import { ClipboardCheck, Search, Filter, User, Calendar } from 'lucide-react';
+import CreateTaskDialog from '@/components/forms/CreateTaskDialog';
+import { ClipboardCheck, Search, Filter, User, Calendar, Plus } from 'lucide-react';
 
 const statusLabels: Record<string, string> = { new: 'Новое', in_progress: 'В работе', completed: 'Выполнено', cancelled: 'Отменено' };
 const statusVariants: Record<string, 'danger' | 'warning' | 'success' | 'info' | 'muted'> = {
@@ -14,13 +15,16 @@ export default function TasksPage() {
   const [search, setSearch] = useState('');
   const [tasks, setTasks] = useState<Tables<'tasks'>[]>([]);
   const [loading, setLoading] = useState(true);
+  const [createOpen, setCreateOpen] = useState(false);
 
-  useEffect(() => {
+  const loadData = useCallback(() => {
     supabase.from('tasks').select('*').order('created_at', { ascending: false }).then(({ data }) => {
       setTasks(data || []);
       setLoading(false);
     });
   }, []);
+
+  useEffect(() => { loadData(); }, [loadData]);
 
   const filtered = tasks.filter(t => {
     if (statusFilter !== 'all' && t.status !== statusFilter) return false;
@@ -35,8 +39,8 @@ export default function TasksPage() {
           <h1 className="text-2xl font-extrabold text-foreground">Личные поручения</h1>
           <p className="text-sm text-muted-foreground mt-0.5">Поручения мэра и эскалации</p>
         </div>
-        <button className="px-4 py-2.5 bg-primary text-primary-foreground text-sm font-medium rounded-lg hover:bg-primary/90 transition-colors">
-          + Новое поручение
+        <button onClick={() => setCreateOpen(true)} className="flex items-center gap-2 px-4 py-2.5 bg-primary text-primary-foreground text-sm font-medium rounded-lg hover:bg-primary/90 transition-colors">
+          <Plus className="w-4 h-4" /> Новое поручение
         </button>
       </div>
 
@@ -88,6 +92,8 @@ export default function TasksPage() {
           )}
         </div>
       )}
+
+      <CreateTaskDialog open={createOpen} onOpenChange={setCreateOpen} onCreated={loadData} />
     </div>
   );
 }
