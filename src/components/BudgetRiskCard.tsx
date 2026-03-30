@@ -4,7 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import StatusBadge from '@/components/StatusBadge';
 
 interface ContractRisk {
-  contract_id: string;
+  id: string;
   name: string;
   execution_rate: number;
   risk_of_non_execution: number;
