@@ -4,8 +4,9 @@ import type { Tables } from '@/integrations/supabase/types';
 import StatusBadge from '@/components/StatusBadge';
 import CreateProjectDialog from '@/components/forms/CreateProjectDialog';
 import CreateContractDialog from '@/components/forms/CreateContractDialog';
-import { FolderKanban, FileText, AlertCircle, Plus } from 'lucide-react';
+import { FolderKanban, FileText, AlertCircle, Plus, Shield } from 'lucide-react';
 import { useCanManage } from '@/hooks/useCanManage';
+import PermissionGate from '@/components/PermissionGate';
 
 const projStatusLabels: Record<string, string> = {
   on_track: 'В срок', risk: 'Риск', overdue: 'Просрочено', completed: 'Завершено',
@@ -82,6 +83,12 @@ export default function ProgramPage() {
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-2">
                     <StatusBadge variant={projStatusVariants[p.status]}>{projStatusLabels[p.status]}</StatusBadge>
+                    {(p as any).political_sensitivity === 'high' && (
+                      <StatusBadge variant="danger"><Shield className="w-3 h-3 inline mr-0.5" />Полит. чувств.</StatusBadge>
+                    )}
+                    {(p as any).political_sensitivity === 'medium' && (
+                      <StatusBadge variant="warning"><Shield className="w-3 h-3 inline mr-0.5" />Внимание</StatusBadge>
+                    )}
                   </div>
                   <h3 className="text-sm font-bold text-foreground leading-snug">{p.name}</h3>
                   <p className="meta-text mt-1.5">{p.department} · {p.responsible}</p>
@@ -120,6 +127,12 @@ export default function ProgramPage() {
                   <div className="flex items-center gap-2 mb-2">
                     <StatusBadge variant={riskVariants[c.risk_level || 'low']}>{riskLabels[c.risk_level || 'low']}</StatusBadge>
                     {c.status && <span className="text-[11px] px-2.5 py-1 rounded-lg bg-surface-muted text-muted-foreground font-medium">{c.status}</span>}
+                    {(c as any).political_sensitivity === 'high' && (
+                      <StatusBadge variant="danger"><Shield className="w-3 h-3 inline mr-0.5" />Полит. чувств.</StatusBadge>
+                    )}
+                    {(c as any).political_sensitivity === 'medium' && (
+                      <StatusBadge variant="warning"><Shield className="w-3 h-3 inline mr-0.5" />Внимание</StatusBadge>
+                    )}
                   </div>
                   <h3 className="text-sm font-bold text-foreground leading-snug">{c.name}</h3>
                   <p className="meta-text mt-1.5">{c.contractor} · {formatAmount(c.amount)}</p>

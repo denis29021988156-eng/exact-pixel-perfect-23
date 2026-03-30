@@ -3,7 +3,8 @@ import { supabase } from '@/integrations/supabase/client';
 import type { Tables } from '@/integrations/supabase/types';
 import StatusBadge from '@/components/StatusBadge';
 import CreateIncidentDialog from '@/components/forms/CreateIncidentDialog';
-import { Search, Filter, MapPin, User, Clock, Plus } from 'lucide-react';
+import PermissionGate from '@/components/PermissionGate';
+import { Search, Filter, MapPin, User, Clock, Plus, Shield } from 'lucide-react';
 
 
 const incidentTypeLabels: Record<string, string> = {
@@ -94,6 +95,12 @@ export default function IncidentsPage() {
                     <StatusBadge variant={statusVariants[inc.status]}>{statusLabels[inc.status]}</StatusBadge>
                     {inc.sla_overdue && <StatusBadge variant="danger" pulse>SLA просрочен</StatusBadge>}
                     {inc.social_object && <StatusBadge variant="warning">Соцобъект</StatusBadge>}
+                    {(inc as any).political_sensitivity === 'high' && (
+                      <StatusBadge variant="danger"><Shield className="w-3 h-3 inline mr-0.5" />Полит. чувств.</StatusBadge>
+                    )}
+                    {(inc as any).political_sensitivity === 'medium' && (
+                      <StatusBadge variant="warning"><Shield className="w-3 h-3 inline mr-0.5" />Внимание</StatusBadge>
+                    )}
                   </div>
                   <h3 className="text-sm font-bold text-foreground leading-snug">{inc.title}</h3>
                   <div className="flex flex-wrap items-center gap-4 mt-2.5">

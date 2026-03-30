@@ -17,7 +17,7 @@ export default function CreateContractDialog({ open, onOpenChange, onCreated }: 
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
-    name: '', contractor: '', department: '', amount: '', deadline: '', risk_level: 'low' as string,
+    name: '', contractor: '', department: '', amount: '', deadline: '', risk_level: 'low' as string, political_sensitivity: 'low' as string,
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -31,13 +31,14 @@ export default function CreateContractDialog({ open, onOpenChange, onCreated }: 
       amount: form.amount ? Number(form.amount) : null,
       deadline: form.deadline || null,
       risk_level: form.risk_level,
+      political_sensitivity: form.political_sensitivity,
     });
     setLoading(false);
     if (error) {
       toast({ title: 'Ошибка', description: error.message, variant: 'destructive' });
     } else {
       toast({ title: 'Контракт создан' });
-      setForm({ name: '', contractor: '', department: '', amount: '', deadline: '', risk_level: 'low' });
+      setForm({ name: '', contractor: '', department: '', amount: '', deadline: '', risk_level: 'low', political_sensitivity: 'low' });
       onOpenChange(false);
       onCreated();
     }
@@ -82,6 +83,17 @@ export default function CreateContractDialog({ open, onOpenChange, onCreated }: 
                 <SelectItem value="low">Низкий</SelectItem>
                 <SelectItem value="medium">Средний</SelectItem>
                 <SelectItem value="high">Высокий</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <Label>Политическая чувствительность</Label>
+            <Select value={form.political_sensitivity} onValueChange={v => setForm(p => ({ ...p, political_sensitivity: v }))}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="low">Низкая</SelectItem>
+                <SelectItem value="medium">Средняя</SelectItem>
+                <SelectItem value="high">Высокая</SelectItem>
               </SelectContent>
             </Select>
           </div>

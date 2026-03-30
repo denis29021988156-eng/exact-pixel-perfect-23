@@ -21,7 +21,7 @@ export default function CreateIncidentDialog({ open, onOpenChange, onCreated }: 
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
     title: '', description: '', type: 'other' as string, severity: 'medium' as string,
-    address: '', department: '', responsible: '',
+    address: '', department: '', responsible: '', political_sensitivity: 'low' as string,
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -37,13 +37,14 @@ export default function CreateIncidentDialog({ open, onOpenChange, onCreated }: 
       department: form.department.trim() || null,
       responsible: form.responsible.trim() || null,
       created_by: user?.id,
+      political_sensitivity: form.political_sensitivity,
     });
     setLoading(false);
     if (error) {
       toast({ title: 'Ошибка', description: error.message, variant: 'destructive' });
     } else {
       toast({ title: 'Инцидент создан' });
-      setForm({ title: '', description: '', type: 'other', severity: 'medium', address: '', department: '', responsible: '' });
+      setForm({ title: '', description: '', type: 'other', severity: 'medium', address: '', department: '', responsible: '', political_sensitivity: 'low' });
       onOpenChange(false);
       onCreated();
     }
@@ -104,6 +105,17 @@ export default function CreateIncidentDialog({ open, onOpenChange, onCreated }: 
           <div>
             <Label>Описание</Label>
             <Textarea value={form.description} onChange={e => setForm(p => ({ ...p, description: e.target.value }))} maxLength={2000} rows={3} />
+          </div>
+          <div>
+            <Label>Политическая чувствительность</Label>
+            <Select value={form.political_sensitivity} onValueChange={v => setForm(p => ({ ...p, political_sensitivity: v }))}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="low">Низкая</SelectItem>
+                <SelectItem value="medium">Средняя</SelectItem>
+                <SelectItem value="high">Высокая</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
           <div className="flex justify-end gap-2 pt-2">
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>Отмена</Button>

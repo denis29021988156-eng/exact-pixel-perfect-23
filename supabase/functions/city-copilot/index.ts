@@ -23,17 +23,19 @@ serve(async (req) => {
     const trimmedMessages = messages?.slice(-6) || [];
 
     // Fetch and aggregate city data
-    const [incidentsRes, tasksRes, projectsRes, contractsRes] = await Promise.all([
+    const [incidentsRes, tasksRes, projectsRes, contractsRes, escalationsRes] = await Promise.all([
       supabase.from("incidents").select("*").in("status", ["new", "in_progress"]).limit(50),
       supabase.from("tasks").select("*").neq("status", "completed").limit(50),
       supabase.from("projects").select("*").limit(30),
       supabase.from("contracts").select("*").limit(30),
+      supabase.from("escalations").select("*").eq("status", "active").limit(20),
     ]);
 
     const incidents = incidentsRes.data || [];
     const tasks = tasksRes.data || [];
     const projects = projectsRes.data || [];
     const contracts = contractsRes.data || [];
+    const escalations = escalationsRes.data || [];
 
     // Deterministic Risk Index
     const criticalIncidents = incidents.filter((i: any) => i.severity === "high").length;
@@ -52,6 +54,10 @@ serve(async (req) => {
     });
 
     // Aggregated context for LLM
+    const highSensitivityIncidents = incidents.filter((i: any) => i.political_sensitivity === "high").length;
+    const highSensitivityProjects = projects.filter((p: any) => p.political_sensitivity === "high").length;
+    const highSensitivityContracts = contracts.filter((c: any) => c.political_sensitivity === "high").length;
+
     const aggregatedData = {
       date: new Date().toLocaleDateString("ru-RU"),
       cityRiskIndex: riskIndex,
@@ -65,6 +71,8 @@ serve(async (req) => {
       activeContracts: contracts.length,
       highRiskContracts: contracts.filter((c: any) => c.risk_level === "high").length,
       departmentsAtRisk: Array.from(deptSet),
+      activeEscalations: escalations.length,
+      highSensitivityItems: highSensitivityIncidents + highSensitivityProjects + highSensitivityContracts,
     };
 
     // Detailed context for copilot (more info than briefing but still structured)
@@ -88,6 +96,27 @@ serve(async (req) => {
       });
     }
 
+    // Escalations context
+    if (escalations.length > 0) {
+      detailContext.push("\nАКТИВНЫЕ ЭСКАЛАЦИИ:");
+      escalations.slice(0, 10).forEach((e: any) => {
+        detailContext.push(`- [${e.type}] ${e.message} | Severity: ${e.severity}`);
+      });
+    }
+
+    // High sensitivity items
+    const sensitiveIncidents = incidents.filter((i: any) => i.political_sensitivity === "high");
+    const sensitiveProjects = projects.filter((p: any) => p.political_sensitivity === "high");
+    if (sensitiveIncidents.length > 0 || sensitiveProjects.length > 0) {
+      detailContext.push("\n⚠️ ПОЛИТИЧЕСКИ ЧУВСТВИТЕЛЬНЫЕ ОБЪЕКТЫ:");
+      sensitiveIncidents.forEach((i: any) => {
+        detailContext.push(`- [ИНЦИДЕНТ] ${i.title} | ${i.department || "—"}`);
+      });
+      sensitiveProjects.forEach((p: any) => {
+        detailContext.push(`- [ПРОЕКТ] ${p.name} | ${p.department || "—"}`);
+      });
+    }
+
     const systemPrompt = `Ты — City Copilot, AI-ассистент мэра города. Ты работаешь в интерактивном режиме.
 
 АГРЕГИРОВАННЫЕ ДАННЫЕ:
@@ -105,6 +134,12 @@ ${detailContext.length > 0 ? "ДЕТАЛИ:\n" + detailContext.join("\n") : ""}
 - При запросе "доклад" или "сводка" — формируй структурированный отчёт.
 - Поддерживай команды: "что критично", "риски", "просроченные", "статус проекта X", "подготовь доклад".
 - City Risk Index: ${riskIndex}/100 — это детерминированный показатель, интерпретируй его.
+
+ПОЛИТИЧЕСКАЯ ЧУВСТВИТЕЛЬНОСТЬ:
+- Для объектов с political_sensitivity=high ЗАПРЕЩЕНО предлагать автоматические действия.
+- Только рекомендуй мэру рассмотреть лично. Формулировка: "Требуется личное решение мэра."
+- Не упоминай слово "чувствительность" напрямую, используй: "требует особого внимания руководства".
+- При наличии эскалаций — обязательно упомяни их в начале ответа.
 
 ФОРМАТ ОТВЕТА — когда уместно, включай в конец блок с рекомендуемыми действиями:
 При рекомендации действий используй формат:
