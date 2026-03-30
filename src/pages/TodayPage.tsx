@@ -28,6 +28,9 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import { useNavigate } from 'react-router-dom';
 import { chartDataDay, chartDataWeek } from '@/data/mock';
 import EscalationPanel from '@/components/EscalationPanel';
+import WhatIfCard from '@/components/WhatIfCard';
+import BudgetRiskCard from '@/components/BudgetRiskCard';
+import CityPulseBlock from '@/components/CityPulseBlock';
 
 function RedZoneCard({ title, total, critical, label, onClick }: { title: string; total: number; critical?: number; label: string; onClick: () => void }) {
   const animTotal = useCountUp(total);
@@ -257,6 +260,15 @@ export default function TodayPage() {
           <p className="text-sm text-muted-foreground/60">Нет срочных задач. Добавьте данные через формы.</p>
         )}
       </div>
+
+      {/* What-If Scenarios */}
+      <WhatIfCard />
+
+      {/* Budget Risk */}
+      <BudgetRiskCard />
+
+      {/* City Pulse */}
+      <CityPulseBlock />
 
       {/* Chart */}
       <div className="glass-card p-6">

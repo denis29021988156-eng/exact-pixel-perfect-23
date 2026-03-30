@@ -23,13 +23,23 @@ export interface CityAIContext {
     incidentsDelta: number;
     overdueDelta: number;
   };
+  // Phase 1
+  activeEscalations: number;
+  // Phase 2
+  complaintsCount: number;
+  topComplaintTopics: string[];
+  complaintDivergence: number;
+  budgetRiskContracts: number;
 }
 
 export async function aggregateCityData(): Promise<CityAIContext> {
-  const [incRes, taskRes, projRes] = await Promise.all([
+  const [incRes, taskRes, projRes, escRes, compRes, budgetRes] = await Promise.all([
     supabase.from('incidents').select('*').neq('status', 'closed'),
     supabase.from('tasks').select('*').neq('status', 'completed'),
     supabase.from('projects').select('*'),
+    supabase.from('escalations').select('id').eq('status', 'active' as any),
+    supabase.from('public_complaints').select('topic'),
+    supabase.from('contracts').select('id, risk_of_non_execution').gt('risk_of_non_execution', 50),
   ]);
 
   const incidents = incRes.data || [];
@@ -60,6 +70,21 @@ export async function aggregateCityData(): Promise<CityAIContext> {
     }
   });
 
+  // Complaint topics
+  const topicCounts: Record<string, number> = {};
+  (compRes.data || []).forEach((c: any) => {
+    topicCounts[c.topic] = (topicCounts[c.topic] || 0) + 1;
+  });
+  const topTopics = Object.entries(topicCounts)
+    .sort(([, a], [, b]) => b - a)
+    .slice(0, 5)
+    .map(([t]) => t);
+
+  const complaintsCount = compRes.data?.length || 0;
+  const complaintDivergence = complaintsCount > 0 && incidents.length > 0
+    ? Math.round(Math.abs(complaintsCount - incidents.length) / Math.max(complaintsCount, incidents.length) * 100)
+    : 0;
+
   return {
     timestamp: new Date().toISOString(),
     cityRiskIndex: risk.index,
@@ -77,5 +102,10 @@ export async function aggregateCityData(): Promise<CityAIContext> {
       incidentsDelta: trendFactor > 0.5 ? 1 : 0,
       overdueDelta: overdueTasks > 5 ? 1 : 0,
     },
+    activeEscalations: escRes.data?.length || 0,
+    complaintsCount,
+    topComplaintTopics: topTopics,
+    complaintDivergence,
+    budgetRiskContracts: budgetRes.data?.length || 0,
   };
 }
