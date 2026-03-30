@@ -19,7 +19,7 @@ const severityLabels: Record<string, string> = { low: 'Низкая', medium: '�
 const severityVariants: Record<string, 'danger' | 'warning' | 'muted'> = { low: 'muted', medium: 'warning', high: 'danger' };
 
 export default function IncidentsPage() {
-  const { user } = useAuth();
+  
   const [search, setSearch] = useState('');
   const [typeFilter, setTypeFilter] = useState<string>('all');
   const [statusFilter, setStatusFilter] = useState<string>('all');
