@@ -4,7 +4,7 @@ import type { Tables } from '@/integrations/supabase/types';
 import StatusBadge from '@/components/StatusBadge';
 import CreateIncidentDialog from '@/components/forms/CreateIncidentDialog';
 import { Search, Filter, MapPin, User, Clock, Plus } from 'lucide-react';
-import { useAuth } from '@/contexts/AuthContext';
+
 
 const incidentTypeLabels: Record<string, string> = {
   housing: 'ЖКХ', road: 'Дороги', social: 'Соцсфера', ecology: 'Экология', transport: 'Транспорт', other: 'Другое',
