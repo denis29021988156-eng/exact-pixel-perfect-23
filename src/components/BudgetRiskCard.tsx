@@ -59,7 +59,7 @@ export default function BudgetRiskCard() {
 
       <div className="space-y-3">
         {contracts.map(c => (
-          <div key={c.contract_id} className="flex items-center gap-4 p-3 rounded-xl bg-surface-muted/50">
+          <div key={c.id} className="flex items-center gap-4 p-3 rounded-xl bg-surface-muted/50">
             <div className={`w-2 h-2 rounded-full flex-shrink-0 ${c.risk_of_non_execution > 70 ? 'bg-danger animate-pulse' : 'bg-warning'}`} />
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium text-foreground truncate">{c.name}</p>
