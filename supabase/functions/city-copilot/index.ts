@@ -35,6 +35,7 @@ serve(async (req) => {
     const tasks = tasksRes.data || [];
     const projects = projectsRes.data || [];
     const contracts = contractsRes.data || [];
+    const escalations = escalationsRes.data || [];
 
     // Deterministic Risk Index
     const criticalIncidents = incidents.filter((i: any) => i.severity === "high").length;
