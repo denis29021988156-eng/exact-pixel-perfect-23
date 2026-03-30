@@ -111,9 +111,9 @@ export default function MapPage() {
         </div>
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2 text-xs">
-            <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full" style={{ background: '#ef4444' }} /> {stats.high}</span>
-            <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full" style={{ background: '#f59e0b' }} /> {stats.medium}</span>
-            <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full" style={{ background: '#22c55e' }} /> {stats.low}</span>
+            <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full" style={{ background: '#E74C3C' }} /> {stats.high}</span>
+            <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full" style={{ background: '#F39C12' }} /> {stats.medium}</span>
+            <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full" style={{ background: '#2ECC71' }} /> {stats.low}</span>
           </div>
         </div>
       </div>
