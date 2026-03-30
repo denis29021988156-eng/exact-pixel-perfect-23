@@ -13,7 +13,8 @@ import {
   Shield,
   BrainCircuit,
   LogOut,
-  User
+  User,
+  Newspaper
 } from 'lucide-react';
 
 const navItems = [
