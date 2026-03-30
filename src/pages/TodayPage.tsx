@@ -261,6 +261,15 @@ export default function TodayPage() {
         )}
       </div>
 
+      {/* What-If Scenarios */}
+      <WhatIfCard />
+
+      {/* Budget Risk */}
+      <BudgetRiskCard />
+
+      {/* City Pulse */}
+      <CityPulseBlock />
+
       {/* Chart */}
       <div className="glass-card p-6">
         <div className="flex items-center justify-between mb-5">
