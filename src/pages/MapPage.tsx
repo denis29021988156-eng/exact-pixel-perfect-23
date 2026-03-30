@@ -157,7 +157,7 @@ export default function MapPage() {
         ) : (
           <MapContainer center={CITY_CENTER} zoom={13} style={{ height: '100%', width: '100%' }} zoomControl={true} attributionControl={false}>
             <TileLayer
-              url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
+              url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
               subdomains="abcd"
             />
             {showHeatmap && <HeatmapLayer incidents={filtered} />}
