@@ -289,6 +289,9 @@ export default function TodayPage() {
       {/* City Pulse */}
       <CityPulseBlock />
 
+      {/* Benchmarks */}
+      <BenchmarkBlock />
+
       {/* Chart */}
       <div className="glass-card p-6">
         <div className="flex items-center justify-between mb-5">
