@@ -3,13 +3,39 @@ import { supabase } from '@/integrations/supabase/client';
 import type { Tables } from '@/integrations/supabase/types';
 import StatusBadge from '@/components/StatusBadge';
 import CreateTaskDialog from '@/components/forms/CreateTaskDialog';
-import { ClipboardCheck, Search, Filter, User, Calendar, Plus } from 'lucide-react';
+import { ClipboardCheck, Search, Filter, User, Calendar, Plus, Clock, AlertTriangle, CheckCircle2, ListChecks } from 'lucide-react';
 import { useCanManage } from '@/hooks/useCanManage';
 
 const statusLabels: Record<string, string> = { new: 'Новое', in_progress: 'В работе', completed: 'Выполнено', cancelled: 'Отменено' };
 const statusVariants: Record<string, 'danger' | 'warning' | 'success' | 'info' | 'muted'> = {
   new: 'info', in_progress: 'warning', completed: 'success', cancelled: 'muted',
 };
+
+function StatPill({ icon: Icon, label, value, variant = 'default' }: { icon: any; label: string; value: number; variant?: 'default' | 'danger' | 'warning' | 'success' }) {
+  const colorMap = {
+    default: 'bg-card text-foreground border-border',
+    danger: 'bg-danger-soft/50 text-danger border-danger/10',
+    warning: 'bg-warning-muted/50 text-warning border-warning/10',
+    success: 'bg-success-muted/50 text-success border-success/10',
+  };
+  const iconColorMap = {
+    default: 'bg-primary/10 text-primary',
+    danger: 'bg-danger/10 text-danger',
+    warning: 'bg-warning/10 text-warning',
+    success: 'bg-success/10 text-success',
+  };
+  return (
+    <div className={`flex items-center gap-3 px-4 py-3.5 rounded-xl border ${colorMap[variant]}`}>
+      <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${iconColorMap[variant]}`}>
+        <Icon className="w-4 h-4" />
+      </div>
+      <div>
+        <span className="text-2xl font-bold">{value}</span>
+        <p className="text-[10px] font-medium text-muted-foreground leading-tight mt-0.5">{label}</p>
+      </div>
+    </div>
+  );
+}
 
 export default function TasksPage() {
   const canManage = useCanManage();
@@ -34,12 +60,18 @@ export default function TasksPage() {
     return true;
   });
 
+  const activeTasks = tasks.filter(t => t.status !== 'completed' && t.status !== 'cancelled');
+  const overdueCount = activeTasks.filter(t => t.overdue).length;
+  const completedCount = tasks.filter(t => t.status === 'completed').length;
+  const inProgressCount = tasks.filter(t => t.status === 'in_progress').length;
+
   return (
-    <div className="space-y-8 animate-fade-in-up">
+    <div className="space-y-6 animate-fade-in-up">
+      {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="section-heading text-2xl">Личные поручения</h1>
-          <p className="meta-text mt-1">Поручения мэра и эскалации</p>
+          <h1 className="text-[28px] font-bold text-foreground tracking-tight">Личные поручения</h1>
+          <p className="meta-text mt-1">Поручения мэра и контроль исполнения</p>
         </div>
         {canManage && (
           <button onClick={() => setCreateOpen(true)} className="flex items-center gap-2 px-5 py-2.5 bg-primary text-primary-foreground text-sm font-semibold rounded-xl hover:bg-primary/90 transition-all shadow-sm">
@@ -48,50 +80,87 @@ export default function TasksPage() {
         )}
       </div>
 
-      <div className="glass-card p-5 flex flex-wrap gap-3 items-center">
+      {/* Stats Row */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        <StatPill icon={ListChecks} label="Всего активных" value={activeTasks.length} />
+        <StatPill icon={Clock} label="В работе" value={inProgressCount} variant="warning" />
+        <StatPill icon={AlertTriangle} label="Просрочено" value={overdueCount} variant={overdueCount > 0 ? 'danger' : 'default'} />
+        <StatPill icon={CheckCircle2} label="Выполнено" value={completedCount} variant="success" />
+      </div>
+
+      {/* Filters */}
+      <div className="glass-card p-4 flex flex-wrap gap-3 items-center">
         <div className="relative flex-1 min-w-[200px]">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Поиск поручений..." className="w-full pl-10 pr-4 py-2.5 bg-surface border border-border rounded-xl text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 transition-shadow" />
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+          <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Поиск поручений..."
+            className="w-full pl-10 pr-4 py-2.5 bg-surface border border-border rounded-xl text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 transition-shadow" />
         </div>
-        <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className="bg-surface border border-border rounded-xl px-3 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30">
+        <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)}
+          className="bg-surface border border-border rounded-xl px-3.5 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20">
           <option value="all">Все статусы</option>
           {Object.entries(statusLabels).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
         </select>
-        <div className="meta-text flex items-center gap-1">
+        <div className="meta-text flex items-center gap-1.5 px-3 py-2 rounded-lg bg-surface-muted text-xs font-medium">
           <Filter className="w-3.5 h-3.5" />
           {filtered.length} из {tasks.length}
         </div>
       </div>
 
+      {/* List */}
       {loading ? (
-        <div className="glass-card p-16 text-center"><p className="text-muted-foreground">Загрузка...</p></div>
+        <div className="glass-card p-16 text-center">
+          <div className="inline-flex items-center gap-2 text-muted-foreground">
+            <Clock className="w-4 h-4 animate-spin" />
+            <p className="text-sm">Загрузка поручений...</p>
+          </div>
+        </div>
       ) : (
         <div className="space-y-3">
           {filtered.map(t => (
-            <div key={t.id} className={`glass-card glass-card-hover p-6 ${t.overdue ? 'border-l-[3px] border-l-danger' : ''}`}>
+            <div key={t.id} className={`glass-card glass-card-hover p-5 transition-all ${t.overdue ? 'border-l-[3px] border-l-danger bg-danger-soft/20' : ''}`}>
               <div className="flex items-start justify-between gap-4">
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-2">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-2.5 flex-wrap">
                     <StatusBadge variant={statusVariants[t.status]}>{statusLabels[t.status]}</StatusBadge>
                     {t.overdue && <StatusBadge variant="danger" pulse>Просрочено</StatusBadge>}
                   </div>
                   <h3 className="text-sm font-bold text-foreground leading-snug">{t.title}</h3>
-                  <div className="flex flex-wrap items-center gap-4 mt-2.5">
-                    {t.responsible && <span className="meta-text flex items-center gap-1"><User className="w-3.5 h-3.5" />{t.responsible}</span>}
-                    {t.department && <span className="meta-text flex items-center gap-1"><ClipboardCheck className="w-3.5 h-3.5" />{t.department}</span>}
-                    {t.deadline && <span className="meta-text flex items-center gap-1"><Calendar className="w-3.5 h-3.5" />Срок: {t.deadline}</span>}
+                  {t.description && (
+                    <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{t.description}</p>
+                  )}
+                  <div className="flex flex-wrap items-center gap-x-5 gap-y-1 mt-3">
+                    {t.responsible && (
+                      <span className="meta-text flex items-center gap-1.5 text-xs">
+                        <User className="w-3.5 h-3.5 text-primary/60" />{t.responsible}
+                      </span>
+                    )}
+                    {t.department && (
+                      <span className="meta-text flex items-center gap-1.5 text-xs">
+                        <ClipboardCheck className="w-3.5 h-3.5 text-primary/60" />{t.department}
+                      </span>
+                    )}
+                    {t.deadline && (
+                      <span className={`flex items-center gap-1.5 text-xs ${t.overdue ? 'text-danger font-semibold' : 'meta-text'}`}>
+                        <Calendar className={`w-3.5 h-3.5 ${t.overdue ? 'text-danger' : 'text-primary/60'}`} />
+                        Срок: {t.deadline}
+                      </span>
+                    )}
                   </div>
                 </div>
-                <div className="text-right flex-shrink-0">
-                  {t.created_by_name && <p className="meta-text">Автор: {t.created_by_name}</p>}
-                  <p className="meta-text">{new Date(t.created_at).toLocaleDateString('ru-RU')}</p>
+                <div className="text-right flex-shrink-0 flex flex-col items-end gap-1.5">
+                  {t.created_by_name && (
+                    <span className="text-[11px] px-3 py-1.5 rounded-lg bg-surface-muted text-muted-foreground font-semibold">{t.created_by_name}</span>
+                  )}
+                  <span className="text-[10px] text-muted-foreground/60">{new Date(t.created_at).toLocaleDateString('ru-RU')}</span>
                 </div>
               </div>
             </div>
           ))}
           {filtered.length === 0 && (
             <div className="glass-card p-16 text-center">
-              <p className="text-muted-foreground">Поручений не найдено</p>
+              <ClipboardCheck className="w-8 h-8 text-muted-foreground/30 mx-auto mb-3" />
+              <p className="text-muted-foreground text-sm">Поручений не найдено</p>
+              <p className="text-xs text-muted-foreground/60 mt-1">Попробуйте изменить фильтры</p>
             </div>
           )}
         </div>
