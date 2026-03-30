@@ -44,7 +44,7 @@ export default function CreateIncidentDialog({ open, onOpenChange, onCreated }: 
       toast({ title: 'Ошибка', description: error.message, variant: 'destructive' });
     } else {
       toast({ title: 'Инцидент создан' });
-      setForm({ title: '', description: '', type: 'other', severity: 'medium', address: '', department: '', responsible: '' });
+      setForm({ title: '', description: '', type: 'other', severity: 'medium', address: '', department: '', responsible: '', political_sensitivity: 'low' });
       onOpenChange(false);
       onCreated();
     }
