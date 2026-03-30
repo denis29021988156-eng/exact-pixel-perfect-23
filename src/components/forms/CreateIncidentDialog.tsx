@@ -21,7 +21,7 @@ export default function CreateIncidentDialog({ open, onOpenChange, onCreated }: 
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
     title: '', description: '', type: 'other' as string, severity: 'medium' as string,
-    address: '', department: '', responsible: '',
+    address: '', department: '', responsible: '', political_sensitivity: 'low' as string,
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
