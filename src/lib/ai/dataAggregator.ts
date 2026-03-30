@@ -33,10 +33,13 @@ export interface CityAIContext {
 }
 
 export async function aggregateCityData(): Promise<CityAIContext> {
-  const [incRes, taskRes, projRes] = await Promise.all([
+  const [incRes, taskRes, projRes, escRes, compRes, budgetRes] = await Promise.all([
     supabase.from('incidents').select('*').neq('status', 'closed'),
     supabase.from('tasks').select('*').neq('status', 'completed'),
     supabase.from('projects').select('*'),
+    supabase.from('escalations').select('id').eq('status', 'active' as any),
+    supabase.from('public_complaints').select('topic'),
+    supabase.from('contracts').select('id, risk_of_non_execution').gt('risk_of_non_execution', 50),
   ]);
 
   const incidents = incRes.data || [];
