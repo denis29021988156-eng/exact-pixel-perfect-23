@@ -54,6 +54,10 @@ serve(async (req) => {
     });
 
     // Aggregated context for LLM
+    const highSensitivityIncidents = incidents.filter((i: any) => i.political_sensitivity === "high").length;
+    const highSensitivityProjects = projects.filter((p: any) => p.political_sensitivity === "high").length;
+    const highSensitivityContracts = contracts.filter((c: any) => c.political_sensitivity === "high").length;
+
     const aggregatedData = {
       date: new Date().toLocaleDateString("ru-RU"),
       cityRiskIndex: riskIndex,
@@ -67,6 +71,8 @@ serve(async (req) => {
       activeContracts: contracts.length,
       highRiskContracts: contracts.filter((c: any) => c.risk_level === "high").length,
       departmentsAtRisk: Array.from(deptSet),
+      activeEscalations: escalations.length,
+      highSensitivityItems: highSensitivityIncidents + highSensitivityProjects + highSensitivityContracts,
     };
 
     // Detailed context for copilot (more info than briefing but still structured)
