@@ -6,72 +6,85 @@
 
 @layer base {
   :root {
-    --background: 220 25% 98%;
-    --foreground: 222 47% 11%;
+    /* ─── Core palette from ТЗ ─── */
+    --background: 210 20% 97%;          /* #F5F5F5-ish light grey */
+    --foreground: 213 33% 17%;          /* #1E2A38 dark navy */
 
-    --card: 220 20% 100%;
-    --card-foreground: 222 47% 11%;
+    --card: 0 0% 100%;                  /* #FFFFFF */
+    --card-foreground: 213 33% 17%;
 
-    --popover: 220 20% 100%;
-    --popover-foreground: 222 47% 11%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 213 33% 17%;
 
-    --primary: 232 60% 52%;
+    /* Primary — info blue #3498DB */
+    --primary: 204 70% 53%;
     --primary-foreground: 0 0% 100%;
-    --primary-soft: 232 60% 95%;
-    --primary-glow: 232 70% 55%;
+    --primary-soft: 204 70% 94%;
+    --primary-glow: 204 75% 58%;
 
-    --secondary: 220 18% 96%;
-    --secondary-foreground: 222 47% 11%;
+    --secondary: 210 20% 96%;
+    --secondary-foreground: 213 33% 17%;
 
-    --muted: 220 18% 96%;
-    --muted-foreground: 220 15% 50%;
+    --muted: 210 14% 96%;
+    --muted-foreground: 212 16% 55%;    /* #7D8B99 */
 
-    --accent: 220 18% 96%;
-    --accent-foreground: 222 47% 11%;
+    --accent: 210 14% 96%;
+    --accent-foreground: 213 33% 17%;
 
-    --destructive: 2 72% 52%;
+    /* Destructive / Danger — #E74C3C */
+    --destructive: 6 74% 57%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 220 15% 90%;
-    --input: 220 15% 90%;
-    --ring: 232 60% 52%;
+    --border: 210 14% 91%;
+    --input: 210 14% 91%;
+    --ring: 204 70% 53%;
 
-    --radius: 1rem;
+    --radius: 0.75rem;                  /* 12px as per spec */
 
-    --danger: 2 72% 52%;
+    /* ─── Signal colours ─── */
+    --danger: 6 74% 57%;                /* #E74C3C */
     --danger-foreground: 0 0% 100%;
-    --danger-muted: 2 72% 52%;
-    --danger-soft: 2 80% 96%;
+    --danger-muted: 6 74% 57%;
+    --danger-soft: 6 80% 96%;
 
-    --warning: 38 85% 52%;
+    --warning: 36 90% 51%;              /* #F39C12 */
     --warning-foreground: 0 0% 10%;
-    --warning-muted: 38 60% 90%;
+    --warning-muted: 36 60% 92%;
 
-    --success: 145 55% 45%;
+    --success: 145 63% 49%;             /* #2ECC71 */
     --success-foreground: 0 0% 100%;
-    --success-muted: 145 40% 90%;
+    --success-muted: 145 40% 92%;
 
-    --info: 232 60% 52%;
+    --caution: 48 89% 60%;              /* #F1C40F yellow */
+    --caution-foreground: 0 0% 10%;
+
+    --info: 204 70% 53%;                /* #3498DB */
     --info-foreground: 0 0% 100%;
 
-    --surface: 220 20% 100%;
+    /* Surfaces */
+    --surface: 0 0% 100%;
     --surface-elevated: 0 0% 100%;
-    --surface-muted: 220 18% 96%;
+    --surface-muted: 210 14% 96%;       /* #F5F5F5 */
 
-    --sidebar-background: 220 25% 99%;
-    --sidebar-foreground: 220 15% 50%;
-    --sidebar-primary: 232 60% 52%;
+    /* ─── Dark Navy Sidebar — #1E2A38 ─── */
+    --sidebar-background: 213 33% 17%;
+    --sidebar-foreground: 210 20% 72%;
+    --sidebar-primary: 204 70% 60%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 232 60% 95%;
-    --sidebar-accent-foreground: 222 47% 11%;
-    --sidebar-border: 220 15% 92%;
-    --sidebar-ring: 232 60% 52%;
+    --sidebar-accent: 213 33% 22%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 213 25% 24%;
+    --sidebar-ring: 204 70% 53%;
 
-    --chart-1: 232 60% 52%;
-    --chart-2: 145 55% 45%;
-    --chart-3: 2 72% 52%;
-    --chart-4: 38 85% 52%;
-    --chart-5: 262 83% 58%;
+    /* Charts */
+    --chart-1: 204 70% 53%;             /* blue  */
+    --chart-2: 145 63% 49%;             /* green */
+    --chart-3: 6 74% 57%;               /* red   */
+    --chart-4: 36 90% 51%;              /* orange */
+    --chart-5: 48 89% 60%;              /* yellow */
+
+    /* Hover highlight */
+    --hover-highlight: 210 60% 95%;     /* #E8F0FE */
   }
 }
 
@@ -83,7 +96,13 @@
   body {
     @apply bg-background text-foreground font-sans antialiased;
     font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
   }
+
+  h1 { font-size: 28px; font-weight: 700; line-height: 1.3; letter-spacing: -0.01em; }
+  h2 { font-size: 22px; font-weight: 600; line-height: 1.3; }
+  h3 { font-size: 18px; font-weight: 500; line-height: 1.3; }
 
   ::-webkit-scrollbar {
     width: 5px;
@@ -102,13 +121,16 @@
 }
 
 @layer utilities {
-  /* Card system */
+  /* ─── Card system (12px radius, 0 2px 8px shadow per spec) ─── */
   .glass-card {
-    @apply bg-card border border-border rounded-2xl shadow-[0_1px_3px_0_rgba(0,0,0,0.04)] transition-all duration-200;
+    @apply bg-card border border-border transition-all duration-200;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   }
   .glass-card-hover:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 24px -8px hsl(var(--foreground) / 0.06);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    border-color: hsl(var(--primary));
   }
 
   /* AI Card */
@@ -116,18 +138,19 @@
     background: linear-gradient(135deg, hsl(var(--card)), hsl(var(--primary-soft)));
     border: 1px solid hsl(var(--primary-glow) / 0.25);
     box-shadow: 0 0 24px -8px hsl(var(--primary-glow) / 0.15);
-    @apply rounded-2xl transition-all duration-200;
+    border-radius: 12px;
+    @apply transition-all duration-200;
   }
 
   /* Glow effects */
   .glow-danger {
-    box-shadow: 0 0 20px -5px hsl(var(--danger) / 0.1);
+    box-shadow: 0 0 20px -5px hsl(var(--danger) / 0.15);
   }
   .glow-warning {
-    box-shadow: 0 0 20px -5px hsl(var(--warning) / 0.1);
+    box-shadow: 0 0 20px -5px hsl(var(--warning) / 0.15);
   }
   .glow-success {
-    box-shadow: 0 0 20px -5px hsl(var(--success) / 0.1);
+    box-shadow: 0 0 20px -5px hsl(var(--success) / 0.15);
   }
   .glow-primary {
     box-shadow: 0 0 24px -6px hsl(var(--primary-glow) / 0.2);
@@ -138,16 +161,18 @@
     @apply border-t border-foreground/[0.04];
   }
 
-  /* KPI */
+  /* KPI — 28px bold per spec */
   .kpi-value {
-    @apply text-4xl font-extrabold tracking-tight text-foreground;
-    letter-spacing: -0.03em;
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    @apply text-foreground;
   }
 
-  /* Meta text */
+  /* Meta text — 14px per spec */
   .meta-text {
-    @apply text-[11px] text-muted-foreground/75;
-    letter-spacing: 0.01em;
+    font-size: 14px;
+    @apply text-muted-foreground;
   }
 
   /* Red zone panel */
@@ -162,7 +187,11 @@
 
   /* Section heading */
   .section-heading {
-    @apply text-[10px] font-bold uppercase tracking-[0.08em] text-muted-foreground;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    @apply text-muted-foreground;
   }
 
   /* AI pulse indicator */
@@ -178,5 +207,13 @@
     0% { box-shadow: 0 0 0 0 hsl(var(--primary) / 0.3); }
     70% { box-shadow: 0 0 0 6px hsl(var(--primary) / 0); }
     100% { box-shadow: 0 0 0 0 hsl(var(--primary) / 0); }
+  }
+
+  /* ─── Table row striping ─── */
+  .table-row-even {
+    background-color: hsl(var(--surface-muted));
+  }
+  .table-row-hover:hover {
+    background-color: hsl(var(--hover-highlight));
   }
 }
