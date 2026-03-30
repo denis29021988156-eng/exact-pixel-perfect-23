@@ -47,6 +47,44 @@ export type Database = {
         }
         Relationships: []
       }
+      budget_forecast: {
+        Row: {
+          actual_amount: number | null
+          actual_payment_date: string | null
+          contract_id: string
+          created_at: string
+          id: string
+          planned_amount: number | null
+          planned_payment_date: string | null
+        }
+        Insert: {
+          actual_amount?: number | null
+          actual_payment_date?: string | null
+          contract_id: string
+          created_at?: string
+          id?: string
+          planned_amount?: number | null
+          planned_payment_date?: string | null
+        }
+        Update: {
+          actual_amount?: number | null
+          actual_payment_date?: string | null
+          contract_id?: string
+          created_at?: string
+          id?: string
+          planned_amount?: number | null
+          planned_payment_date?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "budget_forecast_contract_id_fkey"
+            columns: ["contract_id"]
+            isOneToOne: false
+            referencedRelation: "contracts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       contracts: {
         Row: {
           amount: number | null
@@ -54,9 +92,11 @@ export type Database = {
           created_at: string
           deadline: string | null
           department: string | null
+          execution_rate: number | null
           id: string
           name: string
           risk_level: string | null
+          risk_of_non_execution: number | null
           status: string | null
           updated_at: string
         }
@@ -66,9 +106,11 @@ export type Database = {
           created_at?: string
           deadline?: string | null
           department?: string | null
+          execution_rate?: number | null
           id?: string
           name: string
           risk_level?: string | null
+          risk_of_non_execution?: number | null
           status?: string | null
           updated_at?: string
         }
@@ -78,9 +120,11 @@ export type Database = {
           created_at?: string
           deadline?: string | null
           department?: string | null
+          execution_rate?: number | null
           id?: string
           name?: string
           risk_level?: string | null
+          risk_of_non_execution?: number | null
           status?: string | null
           updated_at?: string
         }
@@ -275,6 +319,63 @@ export type Database = {
           responsible?: string | null
           status?: Database["public"]["Enums"]["project_status"]
           updated_at?: string
+        }
+        Relationships: []
+      }
+      public_complaints: {
+        Row: {
+          complaint_text: string | null
+          created_at: string
+          district: string | null
+          id: string
+          sentiment: string | null
+          source: string
+          topic: string
+        }
+        Insert: {
+          complaint_text?: string | null
+          created_at?: string
+          district?: string | null
+          id?: string
+          sentiment?: string | null
+          source?: string
+          topic: string
+        }
+        Update: {
+          complaint_text?: string | null
+          created_at?: string
+          district?: string | null
+          id?: string
+          sentiment?: string | null
+          source?: string
+          topic?: string
+        }
+        Relationships: []
+      }
+      scenario_history: {
+        Row: {
+          approved: boolean
+          created_at: string
+          id: string
+          input_params: Json
+          predicted_output: Json
+          user_id: string
+        }
+        Insert: {
+          approved?: boolean
+          created_at?: string
+          id?: string
+          input_params?: Json
+          predicted_output?: Json
+          user_id: string
+        }
+        Update: {
+          approved?: boolean
+          created_at?: string
+          id?: string
+          input_params?: Json
+          predicted_output?: Json
+          user_id?: string
         }
         Relationships: []
       }
