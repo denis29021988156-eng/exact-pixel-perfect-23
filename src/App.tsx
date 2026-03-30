@@ -13,6 +13,8 @@ import ProgramPage from "./pages/ProgramPage";
 import TasksPage from "./pages/TasksPage";
 import CheatsheetPage from "./pages/CheatsheetPage";
 import MapPage from "./pages/MapPage";
+import ReputationPage from "./pages/ReputationPage";
+import PublicDashboard from "./pages/PublicDashboard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
