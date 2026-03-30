@@ -86,6 +86,17 @@ export default function CreateContractDialog({ open, onOpenChange, onCreated }: 
               </SelectContent>
             </Select>
           </div>
+          <div>
+            <Label>Политическая чувствительность</Label>
+            <Select value={form.political_sensitivity} onValueChange={v => setForm(p => ({ ...p, political_sensitivity: v }))}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="low">Низкая</SelectItem>
+                <SelectItem value="medium">Средняя</SelectItem>
+                <SelectItem value="high">Высокая</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
           <div className="flex justify-end gap-2 pt-2">
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>Отмена</Button>
             <Button type="submit" disabled={loading || !form.name.trim()}>{loading ? 'Создание...' : 'Создать'}</Button>

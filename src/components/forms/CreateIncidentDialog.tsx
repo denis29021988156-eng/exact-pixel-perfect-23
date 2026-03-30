@@ -106,6 +106,17 @@ export default function CreateIncidentDialog({ open, onOpenChange, onCreated }: 
             <Label>Описание</Label>
             <Textarea value={form.description} onChange={e => setForm(p => ({ ...p, description: e.target.value }))} maxLength={2000} rows={3} />
           </div>
+          <div>
+            <Label>Политическая чувствительность</Label>
+            <Select value={form.political_sensitivity} onValueChange={v => setForm(p => ({ ...p, political_sensitivity: v }))}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="low">Низкая</SelectItem>
+                <SelectItem value="medium">Средняя</SelectItem>
+                <SelectItem value="high">Высокая</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
           <div className="flex justify-end gap-2 pt-2">
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>Отмена</Button>
             <Button type="submit" disabled={loading || !form.title.trim()}>{loading ? 'Создание...' : 'Создать'}</Button>

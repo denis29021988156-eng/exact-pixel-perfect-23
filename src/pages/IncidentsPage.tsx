@@ -95,6 +95,12 @@ export default function IncidentsPage() {
                     <StatusBadge variant={statusVariants[inc.status]}>{statusLabels[inc.status]}</StatusBadge>
                     {inc.sla_overdue && <StatusBadge variant="danger" pulse>SLA просрочен</StatusBadge>}
                     {inc.social_object && <StatusBadge variant="warning">Соцобъект</StatusBadge>}
+                    {(inc as any).political_sensitivity === 'high' && (
+                      <StatusBadge variant="danger"><Shield className="w-3 h-3 inline mr-0.5" />Полит. чувств.</StatusBadge>
+                    )}
+                    {(inc as any).political_sensitivity === 'medium' && (
+                      <StatusBadge variant="warning"><Shield className="w-3 h-3 inline mr-0.5" />Внимание</StatusBadge>
+                    )}
                   </div>
                   <h3 className="text-sm font-bold text-foreground leading-snug">{inc.title}</h3>
                   <div className="flex flex-wrap items-center gap-4 mt-2.5">
