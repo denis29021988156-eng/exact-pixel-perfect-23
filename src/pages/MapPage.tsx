@@ -15,7 +15,7 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
 });
 
-const severityColors: Record<string, string> = { low: '#22c55e', medium: '#f59e0b', high: '#ef4444' };
+const severityColors: Record<string, string> = { low: '#2ECC71', medium: '#F39C12', high: '#E74C3C' };
 const severityLabels: Record<string, string> = { low: 'Низкая', medium: 'Средняя', high: 'Высокая' };
 const statusLabels: Record<string, string> = { new: 'Новый', in_progress: 'В работе', resolved: 'Решён', closed: 'Закрыт' };
 const typeLabels: Record<string, string> = { housing: 'ЖКХ', road: 'Дороги', social: 'Соцсфера', ecology: 'Экология', transport: 'Транспорт', other: 'Другое' };
