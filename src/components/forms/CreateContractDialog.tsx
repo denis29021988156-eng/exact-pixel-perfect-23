@@ -17,7 +17,7 @@ export default function CreateContractDialog({ open, onOpenChange, onCreated }: 
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
-    name: '', contractor: '', department: '', amount: '', deadline: '', risk_level: 'low' as string,
+    name: '', contractor: '', department: '', amount: '', deadline: '', risk_level: 'low' as string, political_sensitivity: 'low' as string,
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
