@@ -31,6 +31,7 @@ export default function CreateContractDialog({ open, onOpenChange, onCreated }: 
       amount: form.amount ? Number(form.amount) : null,
       deadline: form.deadline || null,
       risk_level: form.risk_level,
+      political_sensitivity: form.political_sensitivity,
     });
     setLoading(false);
     if (error) {
