@@ -35,6 +35,7 @@ export default function CreateProjectDialog({ open, onOpenChange, onCreated }: P
       planned_start: form.planned_start || null,
       planned_end: form.planned_end || null,
       budget_total: form.budget_total ? Number(form.budget_total) : null,
+      political_sensitivity: form.political_sensitivity,
     });
     setLoading(false);
     if (error) {
