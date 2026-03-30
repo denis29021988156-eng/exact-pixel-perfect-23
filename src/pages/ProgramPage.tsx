@@ -83,6 +83,12 @@ export default function ProgramPage() {
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-2">
                     <StatusBadge variant={projStatusVariants[p.status]}>{projStatusLabels[p.status]}</StatusBadge>
+                    {(p as any).political_sensitivity === 'high' && (
+                      <StatusBadge variant="danger"><Shield className="w-3 h-3 inline mr-0.5" />Полит. чувств.</StatusBadge>
+                    )}
+                    {(p as any).political_sensitivity === 'medium' && (
+                      <StatusBadge variant="warning"><Shield className="w-3 h-3 inline mr-0.5" />Внимание</StatusBadge>
+                    )}
                   </div>
                   <h3 className="text-sm font-bold text-foreground leading-snug">{p.name}</h3>
                   <p className="meta-text mt-1.5">{p.department} · {p.responsible}</p>
