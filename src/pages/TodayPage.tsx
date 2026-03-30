@@ -27,6 +27,7 @@ import StatusBadge from '@/components/StatusBadge';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { useNavigate } from 'react-router-dom';
 import { chartDataDay, chartDataWeek } from '@/data/mock';
+import EscalationPanel from '@/components/EscalationPanel';
 
 function RedZoneCard({ title, total, critical, label, onClick }: { title: string; total: number; critical?: number; label: string; onClick: () => void }) {
   const animTotal = useCountUp(total);
@@ -154,6 +155,9 @@ export default function TodayPage() {
           )}
         </div>
       </div>
+
+      {/* Escalation Panel */}
+      <EscalationPanel />
 
       {/* AI Briefing Panel */}
       <div className="ai-card p-6">
