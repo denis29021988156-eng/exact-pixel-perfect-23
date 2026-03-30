@@ -19,7 +19,7 @@ export default function CreateProjectDialog({ open, onOpenChange, onCreated }: P
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
     name: '', description: '', department: '', responsible: '', status: 'on_track' as string,
-    planned_start: '', planned_end: '', budget_total: '',
+    planned_start: '', planned_end: '', budget_total: '', political_sensitivity: 'low' as string,
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
