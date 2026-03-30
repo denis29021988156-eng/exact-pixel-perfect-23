@@ -42,7 +42,7 @@ export default function CreateProjectDialog({ open, onOpenChange, onCreated }: P
       toast({ title: 'Ошибка', description: error.message, variant: 'destructive' });
     } else {
       toast({ title: 'Проект создан' });
-      setForm({ name: '', description: '', department: '', responsible: '', status: 'on_track', planned_start: '', planned_end: '', budget_total: '' });
+      setForm({ name: '', description: '', department: '', responsible: '', status: 'on_track', planned_start: '', planned_end: '', budget_total: '', political_sensitivity: 'low' });
       onOpenChange(false);
       onCreated();
     }
