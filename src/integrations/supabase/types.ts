@@ -47,6 +47,42 @@ export type Database = {
         }
         Relationships: []
       }
+      benchmarks: {
+        Row: {
+          category: string | null
+          city_name: string | null
+          created_at: string
+          id: string
+          metric_name: string
+          metric_value: number
+          norm_value: number
+          period: string | null
+          updated_at: string
+        }
+        Insert: {
+          category?: string | null
+          city_name?: string | null
+          created_at?: string
+          id?: string
+          metric_name: string
+          metric_value?: number
+          norm_value?: number
+          period?: string | null
+          updated_at?: string
+        }
+        Update: {
+          category?: string | null
+          city_name?: string | null
+          created_at?: string
+          id?: string
+          metric_name?: string
+          metric_value?: number
+          norm_value?: number
+          period?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       budget_forecast: {
         Row: {
           actual_amount: number | null
@@ -241,6 +277,39 @@ export type Database = {
           title?: string
           type?: Database["public"]["Enums"]["incident_type"]
           updated_at?: string
+        }
+        Relationships: []
+      }
+      media_mentions: {
+        Row: {
+          created_at: string
+          id: string
+          published_at: string
+          sentiment: string
+          source: string
+          title: string
+          topic: string | null
+          url: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          published_at?: string
+          sentiment?: string
+          source: string
+          title: string
+          topic?: string | null
+          url?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          published_at?: string
+          sentiment?: string
+          source?: string
+          title?: string
+          topic?: string | null
+          url?: string | null
         }
         Relationships: []
       }
@@ -453,7 +522,18 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      public_metrics: {
+        Row: {
+          active_incidents: number | null
+          active_projects: number | null
+          active_tasks: number | null
+          critical_incidents: number | null
+          risk_projects: number | null
+          spent_budget: number | null
+          total_budget: number | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       has_role: {

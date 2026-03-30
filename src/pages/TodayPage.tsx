@@ -1,6 +1,7 @@
 import { AlertTriangle, Clock, Eye, ArrowRight, TrendingUp, BrainCircuit, RefreshCw } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { useState, useEffect, useRef } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
 
 function useCountUp(end: number, duration = 800) {
   const [value, setValue] = useState(0);
@@ -31,6 +32,7 @@ import EscalationPanel from '@/components/EscalationPanel';
 import WhatIfCard from '@/components/WhatIfCard';
 import BudgetRiskCard from '@/components/BudgetRiskCard';
 import CityPulseBlock from '@/components/CityPulseBlock';
+import BenchmarkBlock from '@/components/BenchmarkBlock';
 
 function RedZoneCard({ title, total, critical, label, onClick }: { title: string; total: number; critical?: number; label: string; onClick: () => void }) {
   const animTotal = useCountUp(total);
@@ -72,6 +74,8 @@ export default function TodayPage() {
   const [chartPeriod, setChartPeriod] = useState<'day' | 'week'>('day');
   const navigate = useNavigate();
   const { data: briefing, loading: briefingLoading, generate: generateBriefing } = useBriefing();
+  const { user, userRole } = useAuth();
+  const [deputyDept, setDeputyDept] = useState<string | null>(null);
 
   const [stats, setStats] = useState({
     activeIncidents: 0,
@@ -85,9 +89,18 @@ export default function TodayPage() {
   const [riskProjects, setRiskProjects] = useState<any[]>([]);
   const [dataLoading, setDataLoading] = useState(true);
 
+  // E008: Load deputy's department for zone filtering
+  useEffect(() => {
+    if (userRole === 'deputy' && user?.id) {
+      supabase.from('profiles').select('department').eq('user_id', user.id).maybeSingle().then(({ data }) => {
+        setDeputyDept(data?.department || null);
+      });
+    }
+  }, [userRole, user?.id]);
+
   useEffect(() => {
     loadData();
-  }, []);
+  }, [deputyDept]);
 
   async function loadData() {
     setDataLoading(true);
@@ -99,9 +112,14 @@ export default function TodayPage() {
       supabase.from('projects').select('*'),
     ]);
 
-    const incidents = incRes.data || [];
-    const tasks = taskRes.data || [];
-    const projects = projRes.data || [];
+    // E008: Filter by deputy's department if applicable
+    const allIncidents = incRes.data || [];
+    const allTasks = taskRes.data || [];
+    const allProjects = projRes.data || [];
+
+    const incidents = deputyDept ? allIncidents.filter(i => i.department === deputyDept) : allIncidents;
+    const tasks = deputyDept ? allTasks.filter(t => t.department === deputyDept) : allTasks;
+    const projects = deputyDept ? allProjects.filter(p => p.department === deputyDept) : allProjects;
 
     setStats({
       activeIncidents: incidents.length,
@@ -148,6 +166,7 @@ export default function TodayPage() {
           <h1 className="text-2xl font-bold text-foreground tracking-tight">Сегодня</h1>
           <p className="meta-text mt-1">
             {new Date().toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric', weekday: 'long' })}
+            {deputyDept && <span className="ml-2 px-2 py-0.5 rounded-lg bg-primary/10 text-primary text-[10px] font-semibold">Зона: {deputyDept}</span>}
           </p>
         </div>
         <div className="flex items-center gap-2 text-[11px] text-muted-foreground/60">
@@ -269,6 +288,9 @@ export default function TodayPage() {
 
       {/* City Pulse */}
       <CityPulseBlock />
+
+      {/* Benchmarks */}
+      <BenchmarkBlock />
 
       {/* Chart */}
       <div className="glass-card p-6">

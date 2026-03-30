@@ -13,7 +13,8 @@ import {
   Shield,
   BrainCircuit,
   LogOut,
-  User
+  User,
+  Newspaper
 } from 'lucide-react';
 
 const navItems = [
@@ -22,6 +23,7 @@ const navItems = [
   { path: '/app/map', label: 'Карта', icon: Map },
   { path: '/app/program', label: 'Программа', icon: FolderKanban },
   { path: '/app/tasks', label: 'Поручения', icon: ClipboardCheck },
+  { path: '/app/reputation', label: 'Репутация', icon: Newspaper },
   { path: '/app/cheatsheet', label: 'Шпаргалка', icon: BookOpen },
 ];
 

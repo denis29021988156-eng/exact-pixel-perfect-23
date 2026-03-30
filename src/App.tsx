@@ -13,6 +13,8 @@ import ProgramPage from "./pages/ProgramPage";
 import TasksPage from "./pages/TasksPage";
 import CheatsheetPage from "./pages/CheatsheetPage";
 import MapPage from "./pages/MapPage";
+import ReputationPage from "./pages/ReputationPage";
+import PublicDashboard from "./pages/PublicDashboard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -45,6 +47,7 @@ function AppRoutes() {
           <Route path="/program" element={<ProgramPage />} />
           <Route path="/tasks" element={<TasksPage />} />
           <Route path="/map" element={<MapPage />} />
+          <Route path="/reputation" element={<ReputationPage />} />
           <Route path="/cheatsheet" element={<CheatsheetPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
@@ -63,6 +66,7 @@ const App = () => (
           <Routes>
             <Route path="/" element={<LandingPage />} />
             <Route path="/auth" element={<AuthPage />} />
+            <Route path="/public" element={<PublicDashboard />} />
             <Route path="/app/*" element={<AppRoutes />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
