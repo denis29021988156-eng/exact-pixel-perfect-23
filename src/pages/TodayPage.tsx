@@ -319,12 +319,13 @@ export default function TodayPage() {
         <div className="h-64">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={chartData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="hsl(220 15% 92%)" />
-              <XAxis dataKey="time" tick={{ fill: 'hsl(220 15% 50%)', fontSize: 11 }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fill: 'hsl(220 15% 50%)', fontSize: 11 }} axisLine={false} tickLine={false} />
+              <CartesianGrid strokeDasharray="3 3" stroke="#EDEDED" />
+              <XAxis dataKey="time" tick={{ fill: '#7D8B99', fontSize: 14 }} axisLine={false} tickLine={false} />
+              <YAxis tick={{ fill: '#7D8B99', fontSize: 14 }} axisLine={false} tickLine={false} />
               <Tooltip
-                contentStyle={{ backgroundColor: 'hsl(220 20% 100%)', border: '1px solid hsl(220 15% 90%)', borderRadius: '12px', color: 'hsl(222 47% 11%)', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}
-                labelStyle={{ color: 'hsl(222 47% 11%)' }}
+                contentStyle={{ backgroundColor: '#1E2A38', border: 'none', borderRadius: '8px', color: '#FFFFFF', boxShadow: '0 4px 12px rgba(0,0,0,0.2)' }}
+                labelStyle={{ color: '#FFFFFF' }}
+                itemStyle={{ color: '#FFFFFF' }}
               />
               <Legend wrapperStyle={{ fontSize: 11 }} />
               <Bar dataKey="new" name="Новые" fill="hsl(2 72% 52%)" radius={[6, 6, 0, 0]} />

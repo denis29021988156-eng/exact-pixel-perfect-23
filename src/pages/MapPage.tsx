@@ -15,7 +15,7 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
 });
 
-const severityColors: Record<string, string> = { low: '#22c55e', medium: '#f59e0b', high: '#ef4444' };
+const severityColors: Record<string, string> = { low: '#2ECC71', medium: '#F39C12', high: '#E74C3C' };
 const severityLabels: Record<string, string> = { low: 'Низкая', medium: 'Средняя', high: 'Высокая' };
 const statusLabels: Record<string, string> = { new: 'Новый', in_progress: 'В работе', resolved: 'Решён', closed: 'Закрыт' };
 const typeLabels: Record<string, string> = { housing: 'ЖКХ', road: 'Дороги', social: 'Соцсфера', ecology: 'Экология', transport: 'Транспорт', other: 'Другое' };
@@ -111,9 +111,9 @@ export default function MapPage() {
         </div>
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2 text-xs">
-            <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full" style={{ background: '#ef4444' }} /> {stats.high}</span>
-            <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full" style={{ background: '#f59e0b' }} /> {stats.medium}</span>
-            <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full" style={{ background: '#22c55e' }} /> {stats.low}</span>
+            <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full" style={{ background: '#E74C3C' }} /> {stats.high}</span>
+            <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full" style={{ background: '#F39C12' }} /> {stats.medium}</span>
+            <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full" style={{ background: '#2ECC71' }} /> {stats.low}</span>
           </div>
         </div>
       </div>
@@ -157,7 +157,7 @@ export default function MapPage() {
         ) : (
           <MapContainer center={CITY_CENTER} zoom={13} style={{ height: '100%', width: '100%' }} zoomControl={true} attributionControl={false}>
             <TileLayer
-              url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
+              url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
               subdomains="abcd"
             />
             {showHeatmap && <HeatmapLayer incidents={filtered} />}

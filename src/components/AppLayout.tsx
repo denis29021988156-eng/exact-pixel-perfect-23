@@ -66,15 +66,15 @@ function AIStatusIndicator() {
   return (
     <div className="flex items-center gap-3">
       {minutesAgo > 0 && (
-        <span className="text-[10px] text-muted-foreground/50">
+        <span className="text-xs text-muted-foreground/50">
           Updated {minutesAgo}m ago
         </span>
       )}
-      <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-surface-muted">
+      <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-surface-muted border border-border">
         <div className="relative">
           <div className={`w-2 h-2 rounded-full ${cfg.color} ai-pulse`} />
         </div>
-        <span className={`text-[10px] font-semibold tracking-wide ${cfg.textColor}`}>
+        <span className={`text-xs font-semibold tracking-wide ${cfg.textColor}`}>
           {cfg.label}
         </span>
       </div>
@@ -97,16 +97,16 @@ export default function AppLayout({ children }: { children: ReactNode }) {
 
   return (
     <div className="flex h-screen overflow-hidden bg-background">
-      {/* Sidebar */}
-      <aside className="w-20 lg:w-64 flex-shrink-0 bg-sidebar flex flex-col">
+      {/* Dark Navy Sidebar */}
+      <aside className="w-20 lg:w-64 flex-shrink-0 bg-sidebar flex flex-col border-r border-sidebar-border">
         {/* Logo */}
         <div className="h-16 flex items-center gap-3 px-4">
-          <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center flex-shrink-0">
-            <Shield className="w-5 h-5 text-primary-foreground" />
+          <div className="w-10 h-10 rounded-lg bg-sidebar-primary flex items-center justify-center flex-shrink-0">
+            <Shield className="w-5 h-5 text-white" />
           </div>
           <div className="hidden lg:block">
-            <h1 className="text-sm font-bold text-foreground leading-tight tracking-tight">City Intelligence</h1>
-            <p className="text-[10px] text-muted-foreground/60 tracking-wide">Операционная система</p>
+            <h1 className="text-sm font-bold text-white leading-tight tracking-tight">City Intelligence</h1>
+            <p className="text-xs text-sidebar-foreground/60 tracking-wide">Операционная система</p>
           </div>
         </div>
 
@@ -120,13 +120,13 @@ export default function AppLayout({ children }: { children: ReactNode }) {
               <NavLink
                 key={item.path}
                 to={item.path}
-                className={`flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-150 text-sm font-medium
+                className={`flex items-center gap-3 px-3 py-3 rounded-lg transition-all duration-150 text-sm font-medium
                   ${isActive 
-                    ? 'bg-primary-soft text-primary' 
-                    : 'text-sidebar-foreground hover:bg-surface-muted hover:text-foreground'
+                    ? 'bg-sidebar-accent text-white' 
+                    : 'text-sidebar-foreground hover:bg-sidebar-accent/50 hover:text-white'
                   }`}
               >
-                <item.icon className={`w-[22px] h-[22px] flex-shrink-0 ${isActive ? 'text-primary' : ''}`} />
+                <item.icon className={`w-[22px] h-[22px] flex-shrink-0 ${isActive ? 'text-sidebar-primary' : ''}`} />
                 <span className="hidden lg:block">{item.label}</span>
               </NavLink>
             );
@@ -135,18 +135,18 @@ export default function AppLayout({ children }: { children: ReactNode }) {
 
         {/* User info */}
         <div className="p-3 space-y-2">
-          <div className="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-surface-muted/50">
-            <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-              <User className="w-4 h-4 text-primary" />
+          <div className="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-sidebar-accent/40">
+            <div className="w-8 h-8 rounded-lg bg-sidebar-primary/20 flex items-center justify-center flex-shrink-0">
+              <User className="w-4 h-4 text-sidebar-primary" />
             </div>
             <div className="hidden lg:block flex-1 min-w-0">
-              <p className="text-xs font-medium text-foreground truncate">{displayName}</p>
-              <p className="text-[10px] text-muted-foreground/60">{roleName}</p>
+              <p className="text-xs font-medium text-white truncate">{displayName}</p>
+              <p className="text-xs text-sidebar-foreground/60">{roleName}</p>
             </div>
           </div>
           <button
             onClick={handleSignOut}
-            className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-muted-foreground hover:bg-surface-muted hover:text-foreground transition-colors"
+            className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sidebar-foreground hover:bg-sidebar-accent/50 hover:text-white transition-colors"
           >
             <LogOut className="w-4 h-4 flex-shrink-0" />
             <span className="hidden lg:block text-xs font-medium">Выйти</span>

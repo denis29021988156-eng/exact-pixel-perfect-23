@@ -68,6 +68,10 @@ export default {
           foreground: "hsl(var(--success-foreground))",
           muted: "hsl(var(--success-muted))",
         },
+        caution: {
+          DEFAULT: "hsl(var(--caution))",
+          foreground: "hsl(var(--caution-foreground))",
+        },
         info: {
           DEFAULT: "hsl(var(--info))",
           foreground: "hsl(var(--info-foreground))",
@@ -87,11 +91,19 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        hover: {
+          highlight: "hsl(var(--hover-highlight))",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+      },
+      boxShadow: {
+        card: "0 2px 8px rgba(0,0,0,0.05)",
+        "card-hover": "0 4px 16px rgba(0,0,0,0.08)",
+        btn: "0 1px 4px rgba(0,0,0,0.1)",
       },
       keyframes: {
         "accordion-down": {
