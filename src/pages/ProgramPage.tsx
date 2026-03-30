@@ -18,6 +18,7 @@ const riskVariants: Record<string, 'danger' | 'warning' | 'success'> = { low: 's
 const riskLabels: Record<string, string> = { low: 'Норма', medium: 'Риск', high: 'Красный' };
 
 export default function ProgramPage() {
+  const canManage = useCanManage();
   const [tab, setTab] = useState<'projects' | 'contracts'>('projects');
   const [projects, setProjects] = useState<Tables<'projects'>[]>([]);
   const [contracts, setContracts] = useState<Tables<'contracts'>[]>([]);
