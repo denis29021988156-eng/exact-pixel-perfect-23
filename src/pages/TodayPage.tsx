@@ -1,6 +1,7 @@
 import { AlertTriangle, Clock, Eye, ArrowRight, TrendingUp, BrainCircuit, RefreshCw } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { useState, useEffect, useRef } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
 
 function useCountUp(end: number, duration = 800) {
   const [value, setValue] = useState(0);
