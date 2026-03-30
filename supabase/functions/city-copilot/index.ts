@@ -23,11 +23,12 @@ serve(async (req) => {
     const trimmedMessages = messages?.slice(-6) || [];
 
     // Fetch and aggregate city data
-    const [incidentsRes, tasksRes, projectsRes, contractsRes] = await Promise.all([
+    const [incidentsRes, tasksRes, projectsRes, contractsRes, escalationsRes] = await Promise.all([
       supabase.from("incidents").select("*").in("status", ["new", "in_progress"]).limit(50),
       supabase.from("tasks").select("*").neq("status", "completed").limit(50),
       supabase.from("projects").select("*").limit(30),
       supabase.from("contracts").select("*").limit(30),
+      supabase.from("escalations").select("*").eq("status", "active").limit(20),
     ]);
 
     const incidents = incidentsRes.data || [];
