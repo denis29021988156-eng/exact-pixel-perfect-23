@@ -117,14 +117,14 @@ export default function EscalationPanel() {
               <div className="flex gap-2 flex-shrink-0">
                 <button
                   onClick={() => handleAcknowledge(esc.id)}
-                  className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+                  className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-lg bg-primary text-primary-foreground shadow-btn hover:bg-primary/90 transition-colors"
                 >
                   <CheckCircle className="w-3 h-3" />
                   Принять
                 </button>
                 <button
                   onClick={() => handleResolve(esc.id)}
-                  className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-lg bg-muted text-muted-foreground hover:bg-muted/80 transition-colors"
+                  className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-lg bg-muted text-muted-foreground shadow-btn hover:bg-muted-foreground hover:text-white transition-colors"
                 >
                   <Clock className="w-3 h-3" />
                   Закрыть
