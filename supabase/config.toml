@@ -8,3 +8,12 @@ verify_jwt = false
 
 [functions.send-notification]
 verify_jwt = false
+
+[functions.what-if-analyzer]
+verify_jwt = false
+
+[functions.budget-forecast]
+verify_jwt = false
+
+[functions.fetch-complaints]
+verify_jwt = false
