@@ -166,6 +166,7 @@ export default function TodayPage() {
           <h1 className="text-2xl font-bold text-foreground tracking-tight">Сегодня</h1>
           <p className="meta-text mt-1">
             {new Date().toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric', weekday: 'long' })}
+            {deputyDept && <span className="ml-2 px-2 py-0.5 rounded-lg bg-primary/10 text-primary text-[10px] font-semibold">Зона: {deputyDept}</span>}
           </p>
         </div>
         <div className="flex items-center gap-2 text-[11px] text-muted-foreground/60">
