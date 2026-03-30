@@ -23,6 +23,13 @@ export interface CityAIContext {
     incidentsDelta: number;
     overdueDelta: number;
   };
+  // Phase 1
+  activeEscalations: number;
+  // Phase 2
+  complaintsCount: number;
+  topComplaintTopics: string[];
+  complaintDivergence: number;
+  budgetRiskContracts: number;
 }
 
 export async function aggregateCityData(): Promise<CityAIContext> {
