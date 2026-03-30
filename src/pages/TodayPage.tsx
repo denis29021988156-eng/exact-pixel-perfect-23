@@ -74,6 +74,8 @@ export default function TodayPage() {
   const [chartPeriod, setChartPeriod] = useState<'day' | 'week'>('day');
   const navigate = useNavigate();
   const { data: briefing, loading: briefingLoading, generate: generateBriefing } = useBriefing();
+  const { user, userRole } = useAuth();
+  const [deputyDept, setDeputyDept] = useState<string | null>(null);
 
   const [stats, setStats] = useState({
     activeIncidents: 0,
@@ -87,9 +89,18 @@ export default function TodayPage() {
   const [riskProjects, setRiskProjects] = useState<any[]>([]);
   const [dataLoading, setDataLoading] = useState(true);
 
+  // E008: Load deputy's department for zone filtering
+  useEffect(() => {
+    if (userRole === 'deputy' && user?.id) {
+      supabase.from('profiles').select('department').eq('user_id', user.id).maybeSingle().then(({ data }) => {
+        setDeputyDept(data?.department || null);
+      });
+    }
+  }, [userRole, user?.id]);
+
   useEffect(() => {
     loadData();
-  }, []);
+  }, [deputyDept]);
 
   async function loadData() {
     setDataLoading(true);
