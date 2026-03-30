@@ -32,6 +32,7 @@ import EscalationPanel from '@/components/EscalationPanel';
 import WhatIfCard from '@/components/WhatIfCard';
 import BudgetRiskCard from '@/components/BudgetRiskCard';
 import CityPulseBlock from '@/components/CityPulseBlock';
+import BenchmarkBlock from '@/components/BenchmarkBlock';
 
 function RedZoneCard({ title, total, critical, label, onClick }: { title: string; total: number; critical?: number; label: string; onClick: () => void }) {
   const animTotal = useCountUp(total);
