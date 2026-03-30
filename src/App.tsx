@@ -47,6 +47,7 @@ function AppRoutes() {
           <Route path="/program" element={<ProgramPage />} />
           <Route path="/tasks" element={<TasksPage />} />
           <Route path="/map" element={<MapPage />} />
+          <Route path="/reputation" element={<ReputationPage />} />
           <Route path="/cheatsheet" element={<CheatsheetPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
