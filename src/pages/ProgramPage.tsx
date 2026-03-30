@@ -5,6 +5,7 @@ import StatusBadge from '@/components/StatusBadge';
 import CreateProjectDialog from '@/components/forms/CreateProjectDialog';
 import CreateContractDialog from '@/components/forms/CreateContractDialog';
 import { FolderKanban, FileText, AlertCircle, Plus } from 'lucide-react';
+import { useCanManage } from '@/hooks/useCanManage';
 
 const projStatusLabels: Record<string, string> = {
   on_track: 'В срок', risk: 'Риск', overdue: 'Просрочено', completed: 'Завершено',
@@ -17,6 +18,7 @@ const riskVariants: Record<string, 'danger' | 'warning' | 'success'> = { low: 's
 const riskLabels: Record<string, string> = { low: 'Норма', medium: 'Риск', high: 'Красный' };
 
 export default function ProgramPage() {
+  const canManage = useCanManage();
   const [tab, setTab] = useState<'projects' | 'contracts'>('projects');
   const [projects, setProjects] = useState<Tables<'projects'>[]>([]);
   const [contracts, setContracts] = useState<Tables<'contracts'>[]>([]);
@@ -51,12 +53,14 @@ export default function ProgramPage() {
           <h1 className="section-heading text-2xl">Программа</h1>
           <p className="meta-text mt-1">Нацпроекты, стройки и контракты</p>
         </div>
-        <button
-          onClick={() => tab === 'projects' ? setProjectDialogOpen(true) : setContractDialogOpen(true)}
-          className="flex items-center gap-2 px-5 py-2.5 bg-primary text-primary-foreground text-sm font-semibold rounded-xl hover:bg-primary/90 transition-all shadow-sm"
-        >
-          <Plus className="w-4 h-4" /> {tab === 'projects' ? 'Новый проект' : 'Новый контракт'}
-        </button>
+        {canManage && (
+          <button
+            onClick={() => tab === 'projects' ? setProjectDialogOpen(true) : setContractDialogOpen(true)}
+            className="flex items-center gap-2 px-5 py-2.5 bg-primary text-primary-foreground text-sm font-semibold rounded-xl hover:bg-primary/90 transition-all shadow-sm"
+          >
+            <Plus className="w-4 h-4" /> {tab === 'projects' ? 'Новый проект' : 'Новый контракт'}
+          </button>
+        )}
       </div>
 
       <div className="flex bg-surface border border-border rounded-xl p-1 w-fit">

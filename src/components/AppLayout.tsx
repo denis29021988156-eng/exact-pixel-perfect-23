@@ -1,6 +1,7 @@
 import { ReactNode, useState, useEffect } from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import CityCopilot from '@/components/CityCopilot';
+import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { 
   LayoutDashboard, 
@@ -10,7 +11,9 @@ import {
   BookOpen,
   Map,
   Shield,
-  BrainCircuit
+  BrainCircuit,
+  LogOut,
+  User
 } from 'lucide-react';
 
 const navItems = [
@@ -21,6 +24,12 @@ const navItems = [
   { path: '/app/tasks', label: 'Поручения', icon: ClipboardCheck },
   { path: '/app/cheatsheet', label: 'Шпаргалка', icon: BookOpen },
 ];
+
+const roleLabels: Record<string, string> = {
+  mayor: 'Мэр',
+  deputy: 'Заместитель',
+  employee: 'Сотрудник',
+};
 
 function AIStatusIndicator() {
   const [status, setStatus] = useState<'active' | 'elevated' | 'unavailable'>('active');
@@ -40,7 +49,7 @@ function AIStatusIndicator() {
         });
     };
     check();
-    const interval = setInterval(check, 60000); // refresh every minute
+    const interval = setInterval(check, 60000);
     return () => clearInterval(interval);
   }, []);
 
@@ -73,6 +82,16 @@ function AIStatusIndicator() {
 
 export default function AppLayout({ children }: { children: ReactNode }) {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, userRole, signOut } = useAuth();
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate('/auth');
+  };
+
+  const displayName = user?.user_metadata?.full_name || user?.email || '';
+  const roleName = roleLabels[userRole || ''] || 'Сотрудник';
 
   return (
     <div className="flex h-screen overflow-hidden bg-background">
@@ -112,17 +131,24 @@ export default function AppLayout({ children }: { children: ReactNode }) {
           })}
         </nav>
 
-        {/* Demo badge */}
-        <div className="p-3">
+        {/* User info */}
+        <div className="p-3 space-y-2">
           <div className="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-surface-muted/50">
             <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-              <BrainCircuit className="w-4 h-4 text-primary" />
+              <User className="w-4 h-4 text-primary" />
             </div>
             <div className="hidden lg:block flex-1 min-w-0">
-              <p className="text-xs font-medium text-foreground">Демо-режим</p>
-              <p className="text-[10px] text-muted-foreground/60">Публичный доступ</p>
+              <p className="text-xs font-medium text-foreground truncate">{displayName}</p>
+              <p className="text-[10px] text-muted-foreground/60">{roleName}</p>
             </div>
           </div>
+          <button
+            onClick={handleSignOut}
+            className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-muted-foreground hover:bg-surface-muted hover:text-foreground transition-colors"
+          >
+            <LogOut className="w-4 h-4 flex-shrink-0" />
+            <span className="hidden lg:block text-xs font-medium">Выйти</span>
+          </button>
         </div>
       </aside>
 

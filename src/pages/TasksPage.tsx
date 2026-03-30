@@ -4,6 +4,7 @@ import type { Tables } from '@/integrations/supabase/types';
 import StatusBadge from '@/components/StatusBadge';
 import CreateTaskDialog from '@/components/forms/CreateTaskDialog';
 import { ClipboardCheck, Search, Filter, User, Calendar, Plus } from 'lucide-react';
+import { useCanManage } from '@/hooks/useCanManage';
 
 const statusLabels: Record<string, string> = { new: 'Новое', in_progress: 'В работе', completed: 'Выполнено', cancelled: 'Отменено' };
 const statusVariants: Record<string, 'danger' | 'warning' | 'success' | 'info' | 'muted'> = {
@@ -11,6 +12,7 @@ const statusVariants: Record<string, 'danger' | 'warning' | 'success' | 'info' |
 };
 
 export default function TasksPage() {
+  const canManage = useCanManage();
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [search, setSearch] = useState('');
   const [tasks, setTasks] = useState<Tables<'tasks'>[]>([]);
@@ -39,9 +41,11 @@ export default function TasksPage() {
           <h1 className="section-heading text-2xl">Личные поручения</h1>
           <p className="meta-text mt-1">Поручения мэра и эскалации</p>
         </div>
-        <button onClick={() => setCreateOpen(true)} className="flex items-center gap-2 px-5 py-2.5 bg-primary text-primary-foreground text-sm font-semibold rounded-xl hover:bg-primary/90 transition-all shadow-sm">
-          <Plus className="w-4 h-4" /> Новое поручение
-        </button>
+        {canManage && (
+          <button onClick={() => setCreateOpen(true)} className="flex items-center gap-2 px-5 py-2.5 bg-primary text-primary-foreground text-sm font-semibold rounded-xl hover:bg-primary/90 transition-all shadow-sm">
+            <Plus className="w-4 h-4" /> Новое поручение
+          </button>
+        )}
       </div>
 
       <div className="glass-card p-5 flex flex-wrap gap-3 items-center">

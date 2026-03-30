@@ -5,6 +5,7 @@ import StatusBadge from '@/components/StatusBadge';
 import CreateIncidentDialog from '@/components/forms/CreateIncidentDialog';
 import { Search, Filter, MapPin, User, Clock, Plus } from 'lucide-react';
 
+
 const incidentTypeLabels: Record<string, string> = {
   housing: 'ЖКХ', road: 'Дороги', social: 'Соцсфера', ecology: 'Экология', transport: 'Транспорт', other: 'Другое',
 };
@@ -18,6 +19,7 @@ const severityLabels: Record<string, string> = { low: 'Низкая', medium: '�
 const severityVariants: Record<string, 'danger' | 'warning' | 'muted'> = { low: 'muted', medium: 'warning', high: 'danger' };
 
 export default function IncidentsPage() {
+  
   const [search, setSearch] = useState('');
   const [typeFilter, setTypeFilter] = useState<string>('all');
   const [statusFilter, setStatusFilter] = useState<string>('all');
