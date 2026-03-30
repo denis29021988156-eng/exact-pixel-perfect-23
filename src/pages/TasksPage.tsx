@@ -11,6 +11,7 @@ const statusVariants: Record<string, 'danger' | 'warning' | 'success' | 'info' |
 };
 
 export default function TasksPage() {
+  const canManage = useCanManage();
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [search, setSearch] = useState('');
   const [tasks, setTasks] = useState<Tables<'tasks'>[]>([]);
