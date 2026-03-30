@@ -86,6 +86,54 @@ export type Database = {
         }
         Relationships: []
       }
+      escalations: {
+        Row: {
+          acknowledged_at: string | null
+          acknowledged_by: string | null
+          channels: Json | null
+          created_at: string
+          id: string
+          message: string
+          severity: number
+          source_id: string | null
+          source_type: string
+          status: Database["public"]["Enums"]["escalation_status"]
+          suggested_action: string | null
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          acknowledged_at?: string | null
+          acknowledged_by?: string | null
+          channels?: Json | null
+          created_at?: string
+          id?: string
+          message: string
+          severity?: number
+          source_id?: string | null
+          source_type?: string
+          status?: Database["public"]["Enums"]["escalation_status"]
+          suggested_action?: string | null
+          type?: string
+          updated_at?: string
+        }
+        Update: {
+          acknowledged_at?: string | null
+          acknowledged_by?: string | null
+          channels?: Json | null
+          created_at?: string
+          id?: string
+          message?: string
+          severity?: number
+          source_id?: string | null
+          source_type?: string
+          status?: Database["public"]["Enums"]["escalation_status"]
+          suggested_action?: string | null
+          type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       incidents: {
         Row: {
           address: string | null
@@ -308,6 +356,7 @@ export type Database = {
     }
     Enums: {
       app_role: "mayor" | "deputy" | "employee"
+      escalation_status: "active" | "acknowledged" | "resolved"
       incident_severity: "low" | "medium" | "high"
       incident_status: "new" | "in_progress" | "resolved" | "closed"
       incident_type:
@@ -447,6 +496,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["mayor", "deputy", "employee"],
+      escalation_status: ["active", "acknowledged", "resolved"],
       incident_severity: ["low", "medium", "high"],
       incident_status: ["new", "in_progress", "resolved", "closed"],
       incident_type: [
