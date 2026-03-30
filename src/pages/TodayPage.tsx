@@ -156,6 +156,9 @@ export default function TodayPage() {
         </div>
       </div>
 
+      {/* Escalation Panel */}
+      <EscalationPanel />
+
       {/* AI Briefing Panel */}
       <div className="ai-card p-6">
         <div className="flex items-center justify-between mb-5">
