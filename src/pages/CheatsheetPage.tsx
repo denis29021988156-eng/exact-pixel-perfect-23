@@ -39,7 +39,7 @@ const staticBlocks: SectorBlock[] = [
   },
   {
     name: 'Дорожное хозяйство',
-    icon: <Road className="w-5 h-5" />,
+    icon: <Route className="w-5 h-5" />,
     color: 'bg-warning/10 text-warning',
     metrics: [
       { label: 'Отремонтировано дорог (2026)', value: '12.4', unit: 'км' },
