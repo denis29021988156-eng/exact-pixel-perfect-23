@@ -112,9 +112,14 @@ export default function TodayPage() {
       supabase.from('projects').select('*'),
     ]);
 
-    const incidents = incRes.data || [];
-    const tasks = taskRes.data || [];
-    const projects = projRes.data || [];
+    // E008: Filter by deputy's department if applicable
+    const allIncidents = incRes.data || [];
+    const allTasks = taskRes.data || [];
+    const allProjects = projRes.data || [];
+
+    const incidents = deputyDept ? allIncidents.filter(i => i.department === deputyDept) : allIncidents;
+    const tasks = deputyDept ? allTasks.filter(t => t.department === deputyDept) : allTasks;
+    const projects = deputyDept ? allProjects.filter(p => p.department === deputyDept) : allProjects;
 
     setStats({
       activeIncidents: incidents.length,
