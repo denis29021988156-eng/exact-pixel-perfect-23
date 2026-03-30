@@ -4,6 +4,7 @@ import type { Tables } from '@/integrations/supabase/types';
 import StatusBadge from '@/components/StatusBadge';
 import CreateTaskDialog from '@/components/forms/CreateTaskDialog';
 import { ClipboardCheck, Search, Filter, User, Calendar, Plus } from 'lucide-react';
+import { useCanManage } from '@/hooks/useCanManage';
 
 const statusLabels: Record<string, string> = { new: 'Новое', in_progress: 'В работе', completed: 'Выполнено', cancelled: 'Отменено' };
 const statusVariants: Record<string, 'danger' | 'warning' | 'success' | 'info' | 'muted'> = {

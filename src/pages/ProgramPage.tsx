@@ -5,6 +5,7 @@ import StatusBadge from '@/components/StatusBadge';
 import CreateProjectDialog from '@/components/forms/CreateProjectDialog';
 import CreateContractDialog from '@/components/forms/CreateContractDialog';
 import { FolderKanban, FileText, AlertCircle, Plus } from 'lucide-react';
+import { useCanManage } from '@/hooks/useCanManage';
 
 const projStatusLabels: Record<string, string> = {
   on_track: 'В срок', risk: 'Риск', overdue: 'Просрочено', completed: 'Завершено',
