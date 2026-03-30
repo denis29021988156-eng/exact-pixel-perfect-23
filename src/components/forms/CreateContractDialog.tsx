@@ -38,7 +38,7 @@ export default function CreateContractDialog({ open, onOpenChange, onCreated }: 
       toast({ title: 'Ошибка', description: error.message, variant: 'destructive' });
     } else {
       toast({ title: 'Контракт создан' });
-      setForm({ name: '', contractor: '', department: '', amount: '', deadline: '', risk_level: 'low' });
+      setForm({ name: '', contractor: '', department: '', amount: '', deadline: '', risk_level: 'low', political_sensitivity: 'low' });
       onOpenChange(false);
       onCreated();
     }
