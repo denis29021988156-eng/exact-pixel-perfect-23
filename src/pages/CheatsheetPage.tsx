@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import {
   Copy, Check, AlertTriangle, FolderKanban, ClipboardCheck, TrendingUp,
-  ChevronDown, ChevronRight, Building2, Road, School, TreePine, Home,
+  ChevronDown, ChevronRight, Building2, Route, School, TreePine, Home,
   Droplets, Users, Landmark
 } from 'lucide-react';
 import { toast } from 'sonner';
