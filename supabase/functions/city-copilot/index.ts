@@ -96,6 +96,26 @@ serve(async (req) => {
       });
     }
 
+    // Escalations context
+    if (escalations.length > 0) {
+      detailContext.push("\nАКТИВНЫЕ ЭСКАЛАЦИИ:");
+      escalations.slice(0, 10).forEach((e: any) => {
+        detailContext.push(`- [${e.type}] ${e.message} | Severity: ${e.severity}`);
+      });
+    }
+
+    // High sensitivity items
+    const sensitiveIncidents = incidents.filter((i: any) => i.political_sensitivity === "high");
+    const sensitiveProjects = projects.filter((p: any) => p.political_sensitivity === "high");
+    if (sensitiveIncidents.length > 0 || sensitiveProjects.length > 0) {
+      detailContext.push("\n⚠️ ПОЛИТИЧЕСКИ ЧУВСТВИТЕЛЬНЫЕ ОБЪЕКТЫ:");
+      sensitiveIncidents.forEach((i: any) => {
+        detailContext.push(`- [ИНЦИДЕНТ] ${i.title} | ${i.department || "—"}`);
+      });
+      sensitiveProjects.forEach((p: any) => {
+        detailContext.push(`- [ПРОЕКТ] ${p.name} | ${p.department || "—"}`);
+      });
+
     const systemPrompt = `Ты — City Copilot, AI-ассистент мэра города. Ты работаешь в интерактивном режиме.
 
 АГРЕГИРОВАННЫЕ ДАННЫЕ:
