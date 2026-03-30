@@ -3,7 +3,8 @@ import { supabase } from '@/integrations/supabase/client';
 import type { Tables } from '@/integrations/supabase/types';
 import StatusBadge from '@/components/StatusBadge';
 import CreateIncidentDialog from '@/components/forms/CreateIncidentDialog';
-import { Search, Filter, MapPin, User, Clock, Plus } from 'lucide-react';
+import PermissionGate from '@/components/PermissionGate';
+import { Search, Filter, MapPin, User, Clock, Plus, Shield } from 'lucide-react';
 
 
 const incidentTypeLabels: Record<string, string> = {
