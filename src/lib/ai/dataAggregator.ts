@@ -70,6 +70,21 @@ export async function aggregateCityData(): Promise<CityAIContext> {
     }
   });
 
+  // Complaint topics
+  const topicCounts: Record<string, number> = {};
+  (compRes.data || []).forEach((c: any) => {
+    topicCounts[c.topic] = (topicCounts[c.topic] || 0) + 1;
+  });
+  const topTopics = Object.entries(topicCounts)
+    .sort(([, a], [, b]) => b - a)
+    .slice(0, 5)
+    .map(([t]) => t);
+
+  const complaintsCount = compRes.data?.length || 0;
+  const complaintDivergence = complaintsCount > 0 && incidents.length > 0
+    ? Math.round(Math.abs(complaintsCount - incidents.length) / Math.max(complaintsCount, incidents.length) * 100)
+    : 0;
+
   return {
     timestamp: new Date().toISOString(),
     cityRiskIndex: risk.index,
@@ -87,5 +102,10 @@ export async function aggregateCityData(): Promise<CityAIContext> {
       incidentsDelta: trendFactor > 0.5 ? 1 : 0,
       overdueDelta: overdueTasks > 5 ? 1 : 0,
     },
+    activeEscalations: escRes.data?.length || 0,
+    complaintsCount,
+    topComplaintTopics: topTopics,
+    complaintDivergence,
+    budgetRiskContracts: budgetRes.data?.length || 0,
   };
 }
