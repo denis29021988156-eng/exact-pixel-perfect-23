@@ -14,6 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
+      ai_logs: {
+        Row: {
+          duration_ms: number | null
+          error_flag: boolean
+          id: string
+          input_summary: string | null
+          module: string
+          output_summary: string | null
+          risk_index: number | null
+          timestamp: string
+        }
+        Insert: {
+          duration_ms?: number | null
+          error_flag?: boolean
+          id?: string
+          input_summary?: string | null
+          module: string
+          output_summary?: string | null
+          risk_index?: number | null
+          timestamp?: string
+        }
+        Update: {
+          duration_ms?: number | null
+          error_flag?: boolean
+          id?: string
+          input_summary?: string | null
+          module?: string
+          output_summary?: string | null
+          risk_index?: number | null
+          timestamp?: string
+        }
+        Relationships: []
+      }
       contracts: {
         Row: {
           amount: number | null
