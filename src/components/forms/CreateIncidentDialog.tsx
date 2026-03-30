@@ -37,6 +37,7 @@ export default function CreateIncidentDialog({ open, onOpenChange, onCreated }: 
       department: form.department.trim() || null,
       responsible: form.responsible.trim() || null,
       created_by: user?.id,
+      political_sensitivity: form.political_sensitivity,
     });
     setLoading(false);
     if (error) {
