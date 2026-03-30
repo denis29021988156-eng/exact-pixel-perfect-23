@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, Polygon, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet.heat';
@@ -20,6 +20,47 @@ const severityLabels: Record<string, string> = { low: 'Низкая', medium: '�
 const statusLabels: Record<string, string> = { new: 'Новый', in_progress: 'В работе', resolved: 'Решён', closed: 'Закрыт' };
 const typeLabels: Record<string, string> = { housing: 'ЖКХ', road: 'Дороги', social: 'Соцсфера', ecology: 'Экология', transport: 'Транспорт', other: 'Другое' };
 const severityWeight: Record<string, number> = { low: 0.3, medium: 0.6, high: 1.0 };
+
+// Simplified Balashikha city boundary (approximate polygon)
+const BALASHIKHA_BOUNDARY: [number, number][] = [
+  [55.8580, 37.8400],
+  [55.8620, 37.8600],
+  [55.8600, 37.8900],
+  [55.8550, 37.9100],
+  [55.8480, 37.9300],
+  [55.8400, 37.9500],
+  [55.8350, 37.9700],
+  [55.8300, 37.9900],
+  [55.8250, 38.0100],
+  [55.8180, 38.0300],
+  [55.8100, 38.0500],
+  [55.8000, 38.0650],
+  [55.7900, 38.0750],
+  [55.7800, 38.0800],
+  [55.7700, 38.0780],
+  [55.7600, 38.0700],
+  [55.7500, 38.0550],
+  [55.7400, 38.0400],
+  [55.7350, 38.0200],
+  [55.7320, 38.0000],
+  [55.7300, 37.9800],
+  [55.7280, 37.9600],
+  [55.7300, 37.9400],
+  [55.7350, 37.9200],
+  [55.7400, 37.9050],
+  [55.7500, 37.8900],
+  [55.7600, 37.8800],
+  [55.7700, 37.8700],
+  [55.7800, 37.8600],
+  [55.7900, 37.8500],
+  [55.8000, 37.8420],
+  [55.8100, 37.8380],
+  [55.8200, 37.8350],
+  [55.8300, 37.8340],
+  [55.8400, 37.8350],
+  [55.8500, 37.8380],
+  [55.8580, 37.8400],
+];
 
 function createIcon(severity: string) {
   const color = severityColors[severity] || '#6b7280';
@@ -58,7 +99,7 @@ function HeatmapLayer({ incidents }: { incidents: Incident[] }) {
         blur: 25,
         maxZoom: 17,
         max: 1.0,
-        gradient: { 0.2: '#22c55e', 0.5: '#f59e0b', 0.8: '#ef4444', 1.0: '#991b1b' },
+        gradient: { 0.2: '#2ECC71', 0.5: '#F1C40F', 0.8: '#E74C3C', 1.0: '#991b1b' },
       }).addTo(map);
     }
 
@@ -155,10 +196,22 @@ export default function MapPage() {
             <p className="text-muted-foreground">Загрузка карты...</p>
           </div>
         ) : (
-          <MapContainer center={CITY_CENTER} zoom={13} style={{ height: '100%', width: '100%' }} zoomControl={true} attributionControl={false}>
+          <MapContainer center={CITY_CENTER} zoom={12} style={{ height: '100%', width: '100%' }} zoomControl={true} attributionControl={false}>
             <TileLayer
-              url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+              url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
               subdomains="abcd"
+            />
+            {/* City boundary */}
+            <Polygon
+              positions={BALASHIKHA_BOUNDARY}
+              pathOptions={{
+                color: '#3498DB',
+                weight: 2.5,
+                opacity: 0.8,
+                fillColor: '#3498DB',
+                fillOpacity: 0.04,
+                dashArray: '8, 4',
+              }}
             />
             {showHeatmap && <HeatmapLayer incidents={filtered} />}
             {showMarkers && filtered.map(inc => (
@@ -173,7 +226,7 @@ export default function MapPage() {
                     </div>
                     {inc.address && <div className="text-xs" style={{ color: '#6b7280' }}>📍 {inc.address}</div>}
                     {inc.responsible && <div className="text-xs" style={{ color: '#6b7280' }}>Отв: {inc.responsible}</div>}
-                    {inc.sla_overdue && <div className="text-xs font-medium" style={{ color: '#ef4444' }}>⚠ SLA просрочен</div>}
+                    {inc.sla_overdue && <div className="text-xs font-medium" style={{ color: '#E74C3C' }}>⚠ SLA просрочен</div>}
                   </div>
                 </Popup>
               </Marker>
