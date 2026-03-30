@@ -95,6 +95,7 @@ export type Database = {
           execution_rate: number | null
           id: string
           name: string
+          political_sensitivity: string
           risk_level: string | null
           risk_of_non_execution: number | null
           status: string | null
@@ -109,6 +110,7 @@ export type Database = {
           execution_rate?: number | null
           id?: string
           name: string
+          political_sensitivity?: string
           risk_level?: string | null
           risk_of_non_execution?: number | null
           status?: string | null
@@ -123,6 +125,7 @@ export type Database = {
           execution_rate?: number | null
           id?: string
           name?: string
+          political_sensitivity?: string
           risk_level?: string | null
           risk_of_non_execution?: number | null
           status?: string | null
@@ -188,6 +191,7 @@ export type Database = {
           id: string
           lat: number | null
           lng: number | null
+          political_sensitivity: string
           responsible: string | null
           severity: Database["public"]["Enums"]["incident_severity"]
           sla_deadline: string | null
@@ -207,6 +211,7 @@ export type Database = {
           id?: string
           lat?: number | null
           lng?: number | null
+          political_sensitivity?: string
           responsible?: string | null
           severity?: Database["public"]["Enums"]["incident_severity"]
           sla_deadline?: string | null
@@ -226,6 +231,7 @@ export type Database = {
           id?: string
           lat?: number | null
           lng?: number | null
+          political_sensitivity?: string
           responsible?: string | null
           severity?: Database["public"]["Enums"]["incident_severity"]
           sla_deadline?: string | null
@@ -283,6 +289,7 @@ export type Database = {
           name: string
           planned_end: string | null
           planned_start: string | null
+          political_sensitivity: string
           progress: number | null
           responsible: string | null
           status: Database["public"]["Enums"]["project_status"]
@@ -299,6 +306,7 @@ export type Database = {
           name: string
           planned_end?: string | null
           planned_start?: string | null
+          political_sensitivity?: string
           progress?: number | null
           responsible?: string | null
           status?: Database["public"]["Enums"]["project_status"]
@@ -315,6 +323,7 @@ export type Database = {
           name?: string
           planned_end?: string | null
           planned_start?: string | null
+          political_sensitivity?: string
           progress?: number | null
           responsible?: string | null
           status?: Database["public"]["Enums"]["project_status"]
