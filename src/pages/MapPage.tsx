@@ -201,18 +201,7 @@ export default function MapPage() {
               url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
               subdomains="abcd"
             />
-            {/* City boundary */}
-            <Polygon
-              positions={BALASHIKHA_BOUNDARY}
-              pathOptions={{
-                color: '#3498DB',
-                weight: 2.5,
-                opacity: 0.8,
-                fillColor: '#3498DB',
-                fillOpacity: 0.04,
-                dashArray: '8, 4',
-              }}
-            />
+            {/* City boundary removed per request */}
             {showHeatmap && <HeatmapLayer incidents={filtered} />}
             {showMarkers && filtered.map(inc => (
               <Marker key={inc.id} position={[inc.lat!, inc.lng!]} icon={createIcon(inc.severity)}>
