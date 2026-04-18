@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      address_normalization: {
+        Row: {
+          created_at: string
+          district: string | null
+          id: string
+          lat: number | null
+          lng: number | null
+          normalized_address: string
+          raw_text: string
+        }
+        Insert: {
+          created_at?: string
+          district?: string | null
+          id?: string
+          lat?: number | null
+          lng?: number | null
+          normalized_address: string
+          raw_text: string
+        }
+        Update: {
+          created_at?: string
+          district?: string | null
+          id?: string
+          lat?: number | null
+          lng?: number | null
+          normalized_address?: string
+          raw_text?: string
+        }
+        Relationships: []
+      }
       ai_logs: {
         Row: {
           duration_ms: number | null
@@ -169,6 +199,48 @@ export type Database = {
         }
         Relationships: []
       }
+      data_sources: {
+        Row: {
+          config: Json
+          created_at: string
+          id: string
+          last_sync_at: string | null
+          latency_minutes: number
+          name: string
+          reliability: number
+          status: Database["public"]["Enums"]["data_source_status"]
+          success_rate: number
+          type: Database["public"]["Enums"]["data_source_type"]
+          updated_at: string
+        }
+        Insert: {
+          config?: Json
+          created_at?: string
+          id?: string
+          last_sync_at?: string | null
+          latency_minutes?: number
+          name: string
+          reliability?: number
+          status?: Database["public"]["Enums"]["data_source_status"]
+          success_rate?: number
+          type: Database["public"]["Enums"]["data_source_type"]
+          updated_at?: string
+        }
+        Update: {
+          config?: Json
+          created_at?: string
+          id?: string
+          last_sync_at?: string | null
+          latency_minutes?: number
+          name?: string
+          reliability?: number
+          status?: Database["public"]["Enums"]["data_source_status"]
+          success_rate?: number
+          type?: Database["public"]["Enums"]["data_source_type"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
       escalations: {
         Row: {
           acknowledged_at: string | null
@@ -220,6 +292,7 @@ export type Database = {
       incidents: {
         Row: {
           address: string | null
+          confidence_score: number
           created_at: string
           created_by: string | null
           department: string | null
@@ -228,11 +301,13 @@ export type Database = {
           lat: number | null
           lng: number | null
           political_sensitivity: string
+          raw_source_id: string | null
           responsible: string | null
           severity: Database["public"]["Enums"]["incident_severity"]
           sla_deadline: string | null
           sla_overdue: boolean | null
           social_object: boolean | null
+          source_id: string | null
           status: Database["public"]["Enums"]["incident_status"]
           title: string
           type: Database["public"]["Enums"]["incident_type"]
@@ -240,6 +315,7 @@ export type Database = {
         }
         Insert: {
           address?: string | null
+          confidence_score?: number
           created_at?: string
           created_by?: string | null
           department?: string | null
@@ -248,11 +324,13 @@ export type Database = {
           lat?: number | null
           lng?: number | null
           political_sensitivity?: string
+          raw_source_id?: string | null
           responsible?: string | null
           severity?: Database["public"]["Enums"]["incident_severity"]
           sla_deadline?: string | null
           sla_overdue?: boolean | null
           social_object?: boolean | null
+          source_id?: string | null
           status?: Database["public"]["Enums"]["incident_status"]
           title: string
           type?: Database["public"]["Enums"]["incident_type"]
@@ -260,6 +338,7 @@ export type Database = {
         }
         Update: {
           address?: string | null
+          confidence_score?: number
           created_at?: string
           created_by?: string | null
           department?: string | null
@@ -268,17 +347,78 @@ export type Database = {
           lat?: number | null
           lng?: number | null
           political_sensitivity?: string
+          raw_source_id?: string | null
           responsible?: string | null
           severity?: Database["public"]["Enums"]["incident_severity"]
           sla_deadline?: string | null
           sla_overdue?: boolean | null
           social_object?: boolean | null
+          source_id?: string | null
           status?: Database["public"]["Enums"]["incident_status"]
           title?: string
           type?: Database["public"]["Enums"]["incident_type"]
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "incidents_raw_source_id_fkey"
+            columns: ["raw_source_id"]
+            isOneToOne: false
+            referencedRelation: "staging_raw"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "incidents_source_id_fkey"
+            columns: ["source_id"]
+            isOneToOne: false
+            referencedRelation: "data_sources"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ingestion_log: {
+        Row: {
+          created_at: string
+          duration_ms: number | null
+          error_message: string | null
+          id: string
+          records_failed: number
+          records_in: number
+          records_normalized: number
+          source_id: string | null
+          status: Database["public"]["Enums"]["ingestion_status"]
+        }
+        Insert: {
+          created_at?: string
+          duration_ms?: number | null
+          error_message?: string | null
+          id?: string
+          records_failed?: number
+          records_in?: number
+          records_normalized?: number
+          source_id?: string | null
+          status: Database["public"]["Enums"]["ingestion_status"]
+        }
+        Update: {
+          created_at?: string
+          duration_ms?: number | null
+          error_message?: string | null
+          id?: string
+          records_failed?: number
+          records_in?: number
+          records_normalized?: number
+          source_id?: string | null
+          status?: Database["public"]["Enums"]["ingestion_status"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ingestion_log_source_id_fkey"
+            columns: ["source_id"]
+            isOneToOne: false
+            referencedRelation: "data_sources"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       media_mentions: {
         Row: {
@@ -403,32 +543,56 @@ export type Database = {
       public_complaints: {
         Row: {
           complaint_text: string | null
+          confidence_score: number
           created_at: string
           district: string | null
           id: string
+          raw_source_id: string | null
           sentiment: string | null
           source: string
+          source_id: string | null
           topic: string
         }
         Insert: {
           complaint_text?: string | null
+          confidence_score?: number
           created_at?: string
           district?: string | null
           id?: string
+          raw_source_id?: string | null
           sentiment?: string | null
           source?: string
+          source_id?: string | null
           topic: string
         }
         Update: {
           complaint_text?: string | null
+          confidence_score?: number
           created_at?: string
           district?: string | null
           id?: string
+          raw_source_id?: string | null
           sentiment?: string | null
           source?: string
+          source_id?: string | null
           topic?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "public_complaints_raw_source_id_fkey"
+            columns: ["raw_source_id"]
+            isOneToOne: false
+            referencedRelation: "staging_raw"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_complaints_source_id_fkey"
+            columns: ["source_id"]
+            isOneToOne: false
+            referencedRelation: "data_sources"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       scenario_history: {
         Row: {
@@ -457,9 +621,60 @@ export type Database = {
         }
         Relationships: []
       }
+      staging_raw: {
+        Row: {
+          confidence: number
+          created_at: string
+          error_message: string | null
+          id: string
+          parsed_payload: Json | null
+          raw_payload: Json
+          source_id: string | null
+          status: Database["public"]["Enums"]["staging_status"]
+          target_id: string | null
+          target_table: string | null
+          updated_at: string
+        }
+        Insert: {
+          confidence?: number
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          parsed_payload?: Json | null
+          raw_payload?: Json
+          source_id?: string | null
+          status?: Database["public"]["Enums"]["staging_status"]
+          target_id?: string | null
+          target_table?: string | null
+          updated_at?: string
+        }
+        Update: {
+          confidence?: number
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          parsed_payload?: Json | null
+          raw_payload?: Json
+          source_id?: string | null
+          status?: Database["public"]["Enums"]["staging_status"]
+          target_id?: string | null
+          target_table?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "staging_raw_source_id_fkey"
+            columns: ["source_id"]
+            isOneToOne: false
+            referencedRelation: "data_sources"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       tasks: {
         Row: {
           assigned_to: string | null
+          confidence_score: number
           created_at: string
           created_by_name: string | null
           deadline: string | null
@@ -467,13 +682,16 @@ export type Database = {
           description: string | null
           id: string
           overdue: boolean | null
+          raw_source_id: string | null
           responsible: string | null
+          source_id: string | null
           status: Database["public"]["Enums"]["task_status"]
           title: string
           updated_at: string
         }
         Insert: {
           assigned_to?: string | null
+          confidence_score?: number
           created_at?: string
           created_by_name?: string | null
           deadline?: string | null
@@ -481,13 +699,16 @@ export type Database = {
           description?: string | null
           id?: string
           overdue?: boolean | null
+          raw_source_id?: string | null
           responsible?: string | null
+          source_id?: string | null
           status?: Database["public"]["Enums"]["task_status"]
           title: string
           updated_at?: string
         }
         Update: {
           assigned_to?: string | null
+          confidence_score?: number
           created_at?: string
           created_by_name?: string | null
           deadline?: string | null
@@ -495,12 +716,29 @@ export type Database = {
           description?: string | null
           id?: string
           overdue?: boolean | null
+          raw_source_id?: string | null
           responsible?: string | null
+          source_id?: string | null
           status?: Database["public"]["Enums"]["task_status"]
           title?: string
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "tasks_raw_source_id_fkey"
+            columns: ["raw_source_id"]
+            isOneToOne: false
+            referencedRelation: "staging_raw"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tasks_source_id_fkey"
+            columns: ["source_id"]
+            isOneToOne: false
+            referencedRelation: "data_sources"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_roles: {
         Row: {
@@ -546,6 +784,8 @@ export type Database = {
     }
     Enums: {
       app_role: "mayor" | "deputy" | "employee"
+      data_source_status: "active" | "warning" | "error" | "disabled"
+      data_source_type: "email" | "excel" | "telegram" | "manual" | "db" | "api"
       escalation_status: "active" | "acknowledged" | "resolved"
       incident_severity: "low" | "medium" | "high"
       incident_status: "new" | "in_progress" | "resolved" | "closed"
@@ -556,7 +796,14 @@ export type Database = {
         | "ecology"
         | "transport"
         | "other"
+      ingestion_status: "success" | "error" | "partial"
       project_status: "on_track" | "risk" | "overdue" | "completed"
+      staging_status:
+        | "pending"
+        | "parsed"
+        | "normalized"
+        | "rejected"
+        | "promoted"
       task_status: "new" | "in_progress" | "completed" | "cancelled"
     }
     CompositeTypes: {
@@ -686,6 +933,8 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["mayor", "deputy", "employee"],
+      data_source_status: ["active", "warning", "error", "disabled"],
+      data_source_type: ["email", "excel", "telegram", "manual", "db", "api"],
       escalation_status: ["active", "acknowledged", "resolved"],
       incident_severity: ["low", "medium", "high"],
       incident_status: ["new", "in_progress", "resolved", "closed"],
@@ -697,7 +946,15 @@ export const Constants = {
         "transport",
         "other",
       ],
+      ingestion_status: ["success", "error", "partial"],
       project_status: ["on_track", "risk", "overdue", "completed"],
+      staging_status: [
+        "pending",
+        "parsed",
+        "normalized",
+        "rejected",
+        "promoted",
+      ],
       task_status: ["new", "in_progress", "completed", "cancelled"],
     },
   },
