@@ -185,7 +185,7 @@ export default function MapPage() {
             <p className="text-muted-foreground">Загрузка карты...</p>
           </div>
         ) : (
-          <MapContainer center={CITY_CENTER} zoom={14} style={{ height: '100%', width: '100%', background: 'hsl(220, 20%, 97%)' }} zoomControl={true} attributionControl={false}>
+          <MapContainer center={CITY_CENTER} zoom={13} style={{ height: '100%', width: '100%', background: 'hsl(220, 20%, 97%)' }} zoomControl={true} attributionControl={false}>
             <TileLayer
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
               maxZoom={19}
