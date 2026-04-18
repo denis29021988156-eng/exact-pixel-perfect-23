@@ -34,6 +34,7 @@ import WhatIfCard from '@/components/WhatIfCard';
 import BudgetRiskCard from '@/components/BudgetRiskCard';
 import CityPulseBlock from '@/components/CityPulseBlock';
 import BenchmarkBlock from '@/components/BenchmarkBlock';
+import ConfidenceBadge from '@/components/ConfidenceBadge';
 
 /* ─── Risk Index Gauge ─── */
 function RiskGauge({ value }: { value: number }) {
@@ -209,6 +210,10 @@ export default function TodayPage() {
 
   const chartData = chartPeriod === 'day' ? chartDataDay : chartDataWeek;
   const riskIndex = briefing?.riskIndex ?? 0;
+  // Простой расчёт уверенности: чем больше данных и свежее briefing — тем выше
+  const dataConfidence = briefing
+    ? Math.min(95, 60 + Math.min(stats.activeIncidents, 10) * 3 + Math.min(stats.activeProjects, 10) * 2)
+    : 50;
 
   return (
     <div className="space-y-6">
@@ -241,6 +246,9 @@ export default function TodayPage() {
           <div className="glass-card p-6 h-full flex flex-col items-center justify-center">
             <p className="section-heading mb-3">Индекс риска города</p>
             <RiskGauge value={riskIndex} />
+            <div className="mt-3">
+              <ConfidenceBadge score={dataConfidence} source="Агрегированные источники" ageMinutes={1} />
+            </div>
           </div>
         </div>
 

@@ -14,6 +14,7 @@ import TasksPage from "./pages/TasksPage";
 import CheatsheetPage from "./pages/CheatsheetPage";
 import MapPage from "./pages/MapPage";
 import ReputationPage from "./pages/ReputationPage";
+import DataQualityPage from "./pages/DataQualityPage";
 import PublicDashboard from "./pages/PublicDashboard";
 import NotFound from "./pages/NotFound";
 
@@ -48,6 +49,7 @@ function AppRoutes() {
           <Route path="/tasks" element={<TasksPage />} />
           <Route path="/map" element={<MapPage />} />
           <Route path="/reputation" element={<ReputationPage />} />
+          <Route path="/data-quality" element={<DataQualityPage />} />
           <Route path="/cheatsheet" element={<CheatsheetPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
