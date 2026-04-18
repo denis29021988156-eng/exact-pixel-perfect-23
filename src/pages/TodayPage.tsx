@@ -34,6 +34,7 @@ import WhatIfCard from '@/components/WhatIfCard';
 import BudgetRiskCard from '@/components/BudgetRiskCard';
 import CityPulseBlock from '@/components/CityPulseBlock';
 import BenchmarkBlock from '@/components/BenchmarkBlock';
+import ConfidenceBadge from '@/components/ConfidenceBadge';
 
 /* ─── Risk Index Gauge ─── */
 function RiskGauge({ value }: { value: number }) {
@@ -241,6 +242,9 @@ export default function TodayPage() {
           <div className="glass-card p-6 h-full flex flex-col items-center justify-center">
             <p className="section-heading mb-3">Индекс риска города</p>
             <RiskGauge value={riskIndex} />
+            <div className="mt-3">
+              <ConfidenceBadge score={dataConfidence} source="Агрегированные источники" ageMinutes={1} />
+            </div>
           </div>
         </div>
 
