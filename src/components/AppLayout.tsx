@@ -14,7 +14,8 @@ import {
   BrainCircuit,
   LogOut,
   User,
-  Newspaper
+  Newspaper,
+  Database
 } from 'lucide-react';
 
 const navItems = [
@@ -24,6 +25,7 @@ const navItems = [
   { path: '/app/program', label: 'Программа', icon: FolderKanban },
   { path: '/app/tasks', label: 'Поручения', icon: ClipboardCheck },
   { path: '/app/reputation', label: 'Репутация', icon: Newspaper },
+  { path: '/app/data-quality', label: 'Качество данных', icon: Database },
   { path: '/app/cheatsheet', label: 'Шпаргалка', icon: BookOpen },
 ];
 
