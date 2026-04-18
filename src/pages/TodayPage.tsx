@@ -210,6 +210,10 @@ export default function TodayPage() {
 
   const chartData = chartPeriod === 'day' ? chartDataDay : chartDataWeek;
   const riskIndex = briefing?.riskIndex ?? 0;
+  // Простой расчёт уверенности: чем больше данных и свежее briefing — тем выше
+  const dataConfidence = briefing
+    ? Math.min(95, 60 + Math.min(stats.activeIncidents, 10) * 3 + Math.min(stats.activeProjects, 10) * 2)
+    : 50;
 
   return (
     <div className="space-y-6">
