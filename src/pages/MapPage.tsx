@@ -75,7 +75,7 @@ function createIcon(severity: string) {
   });
 }
 
-const CITY_CENTER: [number, number] = [55.7963, 37.9382];
+const CITY_CENTER: [number, number] = [55.7611, 37.8589];
 
 type Incident = Tables<'incidents'> & { lat?: number | null; lng?: number | null };
 
@@ -148,7 +148,7 @@ export default function MapPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-extrabold text-foreground">Карта города</h1>
-          <p className="text-sm text-muted-foreground mt-0.5">Балашиха · Инциденты на карте</p>
+          <p className="text-sm text-muted-foreground mt-0.5">Реутов · Инциденты на карте</p>
         </div>
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2 text-xs">
