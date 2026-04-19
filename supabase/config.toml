@@ -26,3 +26,6 @@ verify_jwt = false
 
 [functions.ai-extract-incident]
 verify_jwt = false
+
+[functions.telegram-poll]
+verify_jwt = false

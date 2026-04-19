@@ -18,7 +18,8 @@ import {
   Database,
   FileSpreadsheet,
   Inbox,
-  Sparkles
+  Sparkles,
+  Send
 } from 'lucide-react';
 
 const navItems = [
@@ -30,6 +31,7 @@ const navItems = [
   { path: '/app/reputation', label: 'Репутация', icon: Newspaper },
   { path: '/app/data-quality', label: 'Качество данных', icon: Database },
   { path: '/app/excel-upload', label: 'Excel загрузка', icon: FileSpreadsheet },
+  { path: '/app/telegram-inbox', label: 'Telegram', icon: Send },
   { path: '/app/ai-extract', label: 'AI-структурирование', icon: Sparkles },
   { path: '/app/moderation', label: 'Модерация', icon: Inbox },
   { path: '/app/cheatsheet', label: 'Шпаргалка', icon: BookOpen },
