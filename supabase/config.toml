@@ -20,3 +20,6 @@ verify_jwt = false
 
 [functions.ingest-manual]
 verify_jwt = false
+
+[functions.ingest-excel]
+verify_jwt = false
