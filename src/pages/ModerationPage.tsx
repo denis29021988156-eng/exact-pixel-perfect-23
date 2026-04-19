@@ -74,35 +74,23 @@ export default function ModerationPage() {
   }, [threshold, filterTarget]);
 
   const approve = async (row: StagingRow) => {
-    // Если target_id ещё нет — нужно создать запись в целевой таблице.
-    // По текущему ingest-flow target_id уже проставлен (мы делаем insert+promote сразу).
-    // Здесь просто помечаем staging как promoted и поднимаем confidence у target.
-    const updates: Promise<unknown>[] = [
-      supabase.from('staging_raw').update({ status: 'promoted' }).eq('id', row.id),
-    ];
+    await supabase.from('staging_raw').update({ status: 'promoted' }).eq('id', row.id);
     if (row.target_id && row.target_table) {
       const tbl = row.target_table as TargetTable;
-      updates.push(
-        // @ts-expect-error dynamic table name
-        supabase.from(tbl).update({ confidence_score: Math.max(row.confidence, 75) }).eq('id', row.target_id),
-      );
+      // @ts-expect-error dynamic table name
+      await supabase.from(tbl).update({ confidence_score: Math.max(row.confidence, 75) }).eq('id', row.target_id);
     }
-    await Promise.all(updates);
     toast({ title: 'Принято', description: 'Запись подтверждена и осталась в системе' });
     setItems((s) => s.filter((x) => x.id !== row.id));
   };
 
   const reject = async (row: StagingRow) => {
-    const ops: Promise<unknown>[] = [
-      supabase.from('staging_raw').update({ status: 'rejected' }).eq('id', row.id),
-    ];
-    // Удалить целевую запись нельзя (RLS), но можно пометить — для incidents/tasks ставим status=closed/cancelled
+    await supabase.from('staging_raw').update({ status: 'rejected' }).eq('id', row.id);
     if (row.target_id && row.target_table === 'incidents') {
-      ops.push(supabase.from('incidents').update({ status: 'closed' }).eq('id', row.target_id));
+      await supabase.from('incidents').update({ status: 'closed' }).eq('id', row.target_id);
     } else if (row.target_id && row.target_table === 'tasks') {
-      ops.push(supabase.from('tasks').update({ status: 'cancelled' }).eq('id', row.target_id));
+      await supabase.from('tasks').update({ status: 'cancelled' }).eq('id', row.target_id);
     }
-    await Promise.all(ops);
     toast({ title: 'Отклонено', description: 'Запись помечена как отклонённая' });
     setItems((s) => s.filter((x) => x.id !== row.id));
   };
