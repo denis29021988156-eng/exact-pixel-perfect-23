@@ -23,3 +23,6 @@ verify_jwt = false
 
 [functions.ingest-excel]
 verify_jwt = false
+
+[functions.ai-extract-incident]
+verify_jwt = false
