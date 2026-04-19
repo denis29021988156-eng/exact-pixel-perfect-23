@@ -15,7 +15,9 @@ import {
   LogOut,
   User,
   Newspaper,
-  Database
+  Database,
+  FileSpreadsheet,
+  Inbox
 } from 'lucide-react';
 
 const navItems = [
@@ -26,6 +28,8 @@ const navItems = [
   { path: '/app/tasks', label: 'Поручения', icon: ClipboardCheck },
   { path: '/app/reputation', label: 'Репутация', icon: Newspaper },
   { path: '/app/data-quality', label: 'Качество данных', icon: Database },
+  { path: '/app/excel-upload', label: 'Excel загрузка', icon: FileSpreadsheet },
+  { path: '/app/moderation', label: 'Модерация', icon: Inbox },
   { path: '/app/cheatsheet', label: 'Шпаргалка', icon: BookOpen },
 ];
 

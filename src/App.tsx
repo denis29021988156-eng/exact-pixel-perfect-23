@@ -15,6 +15,8 @@ import CheatsheetPage from "./pages/CheatsheetPage";
 import MapPage from "./pages/MapPage";
 import ReputationPage from "./pages/ReputationPage";
 import DataQualityPage from "./pages/DataQualityPage";
+import ExcelUploadPage from "./pages/ExcelUploadPage";
+import ModerationPage from "./pages/ModerationPage";
 import PublicDashboard from "./pages/PublicDashboard";
 import NotFound from "./pages/NotFound";
 
@@ -50,6 +52,8 @@ function AppRoutes() {
           <Route path="/map" element={<MapPage />} />
           <Route path="/reputation" element={<ReputationPage />} />
           <Route path="/data-quality" element={<DataQualityPage />} />
+          <Route path="/excel-upload" element={<ExcelUploadPage />} />
+          <Route path="/moderation" element={<ModerationPage />} />
           <Route path="/cheatsheet" element={<CheatsheetPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
