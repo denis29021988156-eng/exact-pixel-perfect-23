@@ -139,7 +139,7 @@ export default function ModerationPage() {
       .update({
         status: 'promoted',
         confidence: 80,
-        parsed_payload: { ...(editing.parsed_payload || {}), ...editForm },
+        parsed_payload: { ...(editing.parsed_payload || {}), ...editForm } as never,
       })
       .eq('id', editing.id);
     toast({ title: 'Сохранено', description: 'Запись обновлена и подтверждена' });
