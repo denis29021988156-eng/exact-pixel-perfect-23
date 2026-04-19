@@ -77,8 +77,8 @@ export default function ModerationPage() {
     await supabase.from('staging_raw').update({ status: 'promoted' }).eq('id', row.id);
     if (row.target_id && row.target_table) {
       const tbl = row.target_table as TargetTable;
-      // @ts-expect-error dynamic table name
-      await supabase.from(tbl).update({ confidence_score: Math.max(row.confidence, 75) }).eq('id', row.target_id);
+      const client = supabase as unknown as { from: (t: string) => { update: (p: Record<string, unknown>) => { eq: (c: string, v: string) => Promise<unknown> } } };
+      await client.from(tbl).update({ confidence_score: Math.max(row.confidence, 75) }).eq('id', row.target_id);
     }
     toast({ title: 'Принято', description: 'Запись подтверждена и осталась в системе' });
     setItems((s) => s.filter((x) => x.id !== row.id));
@@ -128,8 +128,8 @@ export default function ModerationPage() {
       if (editForm.description) patch.complaint_text = editForm.description;
       if (editForm.district) patch.district = editForm.district;
     }
-    // @ts-expect-error dynamic table
-    const { error: e1 } = await supabase.from(tbl).update(patch).eq('id', id);
+    const client = supabase as unknown as { from: (t: string) => { update: (p: Record<string, unknown>) => { eq: (c: string, v: string) => Promise<{ error: { message: string } | null }> } } };
+    const { error: e1 } = await client.from(tbl).update(patch).eq('id', id);
     if (e1) {
       toast({ title: 'Ошибка', description: e1.message, variant: 'destructive' });
       return;
