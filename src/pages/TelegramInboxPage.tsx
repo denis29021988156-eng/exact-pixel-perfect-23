@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ConfidenceBadge } from "@/components/ConfidenceBadge";
+import ConfidenceBadge from "@/components/ConfidenceBadge";
 import { toast } from "sonner";
 import { Send, RefreshCw, MessageSquare, CheckCircle2, AlertCircle, Clock } from "lucide-react";
 
