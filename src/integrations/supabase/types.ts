@@ -740,6 +740,77 @@ export type Database = {
           },
         ]
       }
+      telegram_bot_state: {
+        Row: {
+          id: number
+          update_offset: number
+          updated_at: string
+        }
+        Insert: {
+          id: number
+          update_offset?: number
+          updated_at?: string
+        }
+        Update: {
+          id?: number
+          update_offset?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      telegram_messages: {
+        Row: {
+          chat_id: number
+          chat_title: string | null
+          confidence: number
+          created_at: string
+          error_message: string | null
+          extracted_payload: Json | null
+          from_username: string | null
+          processed: boolean
+          raw_update: Json
+          staging_raw_id: string | null
+          text: string | null
+          update_id: number
+        }
+        Insert: {
+          chat_id: number
+          chat_title?: string | null
+          confidence?: number
+          created_at?: string
+          error_message?: string | null
+          extracted_payload?: Json | null
+          from_username?: string | null
+          processed?: boolean
+          raw_update: Json
+          staging_raw_id?: string | null
+          text?: string | null
+          update_id: number
+        }
+        Update: {
+          chat_id?: number
+          chat_title?: string | null
+          confidence?: number
+          created_at?: string
+          error_message?: string | null
+          extracted_payload?: Json | null
+          from_username?: string | null
+          processed?: boolean
+          raw_update?: Json
+          staging_raw_id?: string | null
+          text?: string | null
+          update_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "telegram_messages_staging_raw_id_fkey"
+            columns: ["staging_raw_id"]
+            isOneToOne: false
+            referencedRelation: "staging_raw"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           id: string
