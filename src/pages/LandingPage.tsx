@@ -2,78 +2,178 @@ import { useNavigate } from 'react-router-dom';
 import {
   Shield, ArrowRight, AlertTriangle, Map, BrainCircuit, MessageSquare,
   BarChart3, Users, Globe, TrendingUp, Clock, DollarSign, Lightbulb,
-  CheckCircle, Zap, Eye, FileText, Newspaper
+  CheckCircle, Zap, FileText, Newspaper, FileSpreadsheet, Send,
+  ShieldCheck, Filter, Crown, UserCog
 } from 'lucide-react';
 
-const painPoints = [
-  { icon: Clock, problem: 'Узнаёте о проблемах из соцсетей', solution: 'Система сама находит и показывает критичное' },
-  { icon: AlertTriangle, problem: 'Просроченные задачи теряются', solution: 'Автоматические эскалации и напоминания' },
-  { icon: Users, problem: 'Замы не видят свою зону', solution: 'Каждый видит только свой участок ответственности' },
-  { icon: DollarSign, problem: 'Бюджет контрактов непрозрачен', solution: 'Прогноз рисков неисполнения по каждому контракту' },
+// Боли мэра — что именно мешает управлять городом
+const mayorPains = [
+  {
+    icon: Clock,
+    pain: 'Я узнаю о ЧП последним — из новостей или соцсетей',
+    fix: 'Критичное всплывает мгновенно в «Красной зоне» дашборда',
+  },
+  {
+    icon: FileSpreadsheet,
+    pain: 'Каждый зам присылает Excel в своём формате — я не вижу общую картину',
+    fix: 'Excel, Telegram-чаты, письма — всё стекается в одну базу автоматически',
+  },
+  {
+    icon: AlertTriangle,
+    pain: 'Поручения теряются между департаментами, SLA срываются молча',
+    fix: 'Авто-эскалации: просрочки и риски подсвечиваются в реальном времени',
+  },
+  {
+    icon: DollarSign,
+    pain: 'О срыве контракта узнаю, когда уже не вернуть деньги',
+    fix: 'AI прогнозирует риск неисполнения по каждому контракту заранее',
+  },
+  {
+    icon: MessageSquare,
+    pain: 'Жалобы граждан копятся в десятке чатов — никто не агрегирует',
+    fix: 'Telegram-бот собирает жалобы, AI извлекает суть, маршрутизирует ответственным',
+  },
+  {
+    icon: BrainCircuit,
+    pain: 'Чтобы получить срез по любому вопросу — нужно собирать совещание',
+    fix: 'AI-копилот отвечает голосом за секунды: «Что критично?», «Покажи риски ЖКХ»',
+  },
 ];
 
+// Команда: МЭР + несколько операторов данных
+const team = [
+  {
+    role: 'МЭР',
+    headline: 'Принимает решения',
+    icon: Crown,
+    color: 'bg-primary/10 text-primary',
+    border: 'border-primary/30',
+    points: [
+      'Видит весь город на одном экране',
+      'Получает AI-сводки и прогнозы рисков',
+      'Утверждает сценарии «что если»',
+      'Контролирует исполнение поручений',
+    ],
+  },
+  {
+    role: 'Замы',
+    headline: 'Управляют своей зоной',
+    icon: UserCog,
+    color: 'bg-warning/10 text-warning',
+    border: 'border-warning/30',
+    points: [
+      'Видят только свой департамент (RBAC)',
+      'Получают эскалации по своему направлению',
+      'Назначают исполнителей и сроки',
+      'Не видят чужие зоны — только свои KPI',
+    ],
+  },
+  {
+    role: '2–5 операторов',
+    headline: 'Вносят данные',
+    icon: FileText,
+    color: 'bg-success/10 text-success',
+    border: 'border-success/30',
+    points: [
+      'Загружают Excel из старых систем (1 клик)',
+      'Подключают Telegram-чаты жалоб',
+      'Модерируют записи с низкой уверенностью',
+      'Не нужны айтишники — интерфейс простой',
+    ],
+  },
+];
+
+// Поток данных: как сырые данные превращаются в управленческие решения
+const dataFlow = [
+  {
+    step: '01',
+    title: 'Сбор',
+    desc: 'Excel-файлы, Telegram-чаты, письма, ручной ввод — 4 способа загрузки',
+    icon: Zap,
+  },
+  {
+    step: '02',
+    title: 'AI-структурирование',
+    desc: 'Gemini извлекает тип, серьёзность, адрес, ответственного из сырого текста',
+    icon: BrainCircuit,
+  },
+  {
+    step: '03',
+    title: 'Оценка уверенности',
+    desc: 'Каждая запись получает confidence-score. <60% — на модерацию оператору',
+    icon: ShieldCheck,
+  },
+  {
+    step: '04',
+    title: 'Решения мэра',
+    desc: 'Чистые данные → дашборд мэра → AI-рекомендации → поручения с SLA',
+    icon: Crown,
+  },
+];
+
+// Ключевые модули платформы
 const features = [
   {
     icon: BrainCircuit,
     title: 'AI-помощник мэра',
-    desc: 'Задайте вопрос голосом или текстом — «Что критично сейчас?», «Подготовь доклад» — и получите ответ за секунды.',
+    desc: 'Голосовые и текстовые запросы. Готовит доклады, объясняет цифры, предлагает решения.',
     color: 'bg-primary/10 text-primary',
   },
   {
     icon: AlertTriangle,
     title: 'Инциденты и эскалации',
-    desc: 'Все аварии, жалобы и ЧП в одном месте. Просроченные SLA автоматически поднимаются наверх.',
+    desc: 'Все ЧП в одном месте. Просроченные SLA автоматически поднимаются в «Красную зону».',
     color: 'bg-danger/10 text-danger',
+  },
+  {
+    icon: FileSpreadsheet,
+    title: 'Excel-импорт',
+    desc: 'Загружайте .xlsx из старых систем. Маппинг колонок — за 30 секунд.',
+    color: 'bg-success/10 text-success',
+  },
+  {
+    icon: Send,
+    title: 'Telegram-коннектор',
+    desc: 'Городские чаты жалоб подключаются за минуту. AI парсит каждое сообщение.',
+    color: 'bg-primary/10 text-primary',
+  },
+  {
+    icon: Filter,
+    title: 'Модерация низкой уверенности',
+    desc: 'Записи с confidence < 60% выводятся в очередь. Принять / Отклонить / Редактировать.',
+    color: 'bg-warning/10 text-warning',
   },
   {
     icon: Map,
     title: 'Карта города',
-    desc: 'Тепловая карта проблем. Сразу видно, где горячие точки и куда направить ресурсы.',
+    desc: 'Тепловая карта проблем. Видно, где горячие точки и куда направлять ресурсы.',
     color: 'bg-success/10 text-success',
   },
   {
     icon: Lightbulb,
     title: '«Что если?» — сценарии',
-    desc: 'Добавить бюджет? Нанять людей? Система покажет прогноз: как изменится ситуация.',
+    desc: 'Добавить бюджет? Нанять людей? Платформа покажет прогноз: как изменится ситуация.',
     color: 'bg-warning/10 text-warning',
-  },
-  {
-    icon: MessageSquare,
-    title: 'Пульс города',
-    desc: 'Жалобы граждан из Telegram, Госуслуг и соцсетей в одном потоке с анализом настроений.',
-    color: 'bg-primary/10 text-primary',
   },
   {
     icon: DollarSign,
     title: 'Бюджет и контракты',
-    desc: 'Прогноз неисполнения контрактов. Видите риски до того, как деньги будут потеряны.',
+    desc: 'Прогноз неисполнения по каждому контракту. Видите риск до того, как потеряли деньги.',
     color: 'bg-warning/10 text-warning',
   },
   {
     icon: BarChart3,
-    title: 'Бенчмарки',
-    desc: 'Сравнение показателей города с нормативами. Где вы лучше среднего, а где — нет.',
-    color: 'bg-success/10 text-success',
-  },
-  {
-    icon: Newspaper,
-    title: 'Репутация в СМИ',
-    desc: 'Мониторинг упоминаний города в медиа. Соотношение позитива и негатива в одном графике.',
+    title: 'Бенчмарки и репутация',
+    desc: 'Сравнение с нормативами, мониторинг СМИ, анализ настроений граждан.',
     color: 'bg-primary/10 text-primary',
-  },
-  {
-    icon: Globe,
-    title: 'Публичный дашборд',
-    desc: 'Открытая страница для граждан: ключевые показатели города без регистрации.',
-    color: 'bg-success/10 text-success',
   },
 ];
 
 const stats = [
-  { value: '10×', label: 'быстрее реакция на инциденты' },
-  { value: '100%', label: 'контроль поручений и SLA' },
-  { value: '0', label: 'потерянных задач и жалоб' },
-  { value: '24/7', label: 'мониторинг без выходных' },
+  { value: '1', label: 'мэр видит всё' },
+  { value: '2–5', label: 'операторов вносят данные' },
+  { value: '4', label: 'канала загрузки данных' },
+  { value: '24/7', label: 'AI-мониторинг города' },
 ];
 
 export default function LandingPage() {
@@ -109,21 +209,22 @@ export default function LandingPage() {
       </header>
 
       {/* ═══════ HERO ═══════ */}
-      <section className="relative z-10 flex flex-col items-center text-center px-6 pt-20 pb-16 lg:pt-32 lg:pb-28 animate-fade-in-up">
+      <section className="relative z-10 flex flex-col items-center text-center px-6 pt-20 pb-16 lg:pt-32 lg:pb-24 animate-fade-in-up">
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary-soft border border-primary/10 mb-8">
           <div className="w-1.5 h-1.5 rounded-full bg-primary ai-pulse" />
-          <span className="text-xs font-semibold text-primary tracking-wide">ПЛАТФОРМА ДЛЯ УПРАВЛЕНИЯ ГОРОДОМ</span>
+          <span className="text-xs font-semibold text-primary tracking-wide">ОПЕРАЦИОННАЯ СИСТЕМА ГОРОДА</span>
         </div>
 
         <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-foreground tracking-tight leading-[1.1] max-w-4xl">
-          Весь город —
-          <span className="text-primary"> на одном экране</span>
+          Город управляется
+          <span className="text-primary"> одним человеком</span>
+          <br />
+          <span className="text-foreground">с командой из 3–5 операторов</span>
         </h1>
 
-        <p className="mt-6 text-lg lg:text-xl text-muted-foreground max-w-2xl leading-relaxed">
-          Инциденты, бюджет, жалобы граждан, контракты, репутация — всё в одном месте.
-          <br className="hidden sm:block" />
-          AI-помощник подскажет, что делать прямо сейчас.
+        <p className="mt-7 text-lg lg:text-xl text-muted-foreground max-w-2xl leading-relaxed">
+          Мэр видит весь город на одном экране. Несколько операторов загружают данные
+          из Excel, Telegram и старых систем — AI превращает их в чистую картину для принятия решений.
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 mt-10">
@@ -131,13 +232,13 @@ export default function LandingPage() {
             onClick={() => navigate('/app')}
             className="flex items-center justify-center gap-2 px-8 py-3.5 bg-primary text-primary-foreground text-sm font-semibold rounded-lg shadow-btn hover:bg-primary/90 transition-all hover:shadow-lg hover:-translate-y-0.5"
           >
-            Попробовать бесплатно <ArrowRight className="w-4 h-4" />
+            Открыть демо мэра <ArrowRight className="w-4 h-4" />
           </button>
           <a
-            href="#problems"
+            href="#pains"
             className="flex items-center justify-center gap-2 px-8 py-3.5 bg-card border border-border text-foreground text-sm font-semibold rounded-lg hover:bg-surface-muted transition-all"
           >
-            Узнать больше
+            Какие боли мы закрываем
           </a>
         </div>
       </section>
@@ -154,27 +255,97 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ═══════ PAIN POINTS ═══════ */}
-      <section id="problems" className="relative z-10 px-6 lg:px-16 py-20 max-w-5xl mx-auto">
-        <div className="text-center mb-12 animate-fade-in-up">
-          <p className="section-heading text-danger mb-3">Знакомо?</p>
-          <h2 className="text-2xl lg:text-3xl font-bold text-foreground">Проблемы, которые мы решаем</h2>
+      {/* ═══════ MAYOR PAINS — главный блок ═══════ */}
+      <section id="pains" className="relative z-10 px-6 lg:px-16 py-20 lg:py-28 max-w-6xl mx-auto">
+        <div className="text-center mb-14 animate-fade-in-up">
+          <p className="section-heading text-danger mb-3">Боли мэра</p>
+          <h2 className="text-2xl lg:text-3xl font-bold text-foreground max-w-2xl mx-auto leading-tight">
+            6 болей, из-за которых мэр теряет контроль над городом
+          </h2>
+          <p className="text-muted-foreground mt-3 max-w-xl mx-auto">
+            И как платформа закрывает каждую из них.
+          </p>
         </div>
         <div className="grid sm:grid-cols-2 gap-5">
-          {painPoints.map((p, i) => (
-            <div key={i} className="glass-card p-6 animate-fade-in-up" style={{ animationDelay: `${100 + i * 60}ms` }}>
-              <div className="flex items-start gap-4">
-                <div className="w-10 h-10 rounded-lg bg-danger/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+          {mayorPains.map((p, i) => (
+            <div key={i} className="glass-card p-7 animate-fade-in-up" style={{ animationDelay: `${100 + i * 60}ms` }}>
+              <div className="flex items-start gap-4 mb-4">
+                <div className="w-10 h-10 rounded-lg bg-danger/10 flex items-center justify-center flex-shrink-0">
                   <p.icon className="w-5 h-5 text-danger" />
                 </div>
-                <div>
-                  <p className="text-sm text-muted-foreground line-through mb-1">{p.problem}</p>
-                  <p className="text-sm font-semibold text-foreground flex items-center gap-2">
-                    <CheckCircle className="w-4 h-4 text-success flex-shrink-0" />
-                    {p.solution}
-                  </p>
+                <div className="flex-1">
+                  <p className="text-xs font-semibold text-danger uppercase tracking-wider mb-1.5">Боль</p>
+                  <p className="text-sm text-foreground leading-relaxed">{p.pain}</p>
                 </div>
               </div>
+              <div className="pl-14">
+                <div className="flex items-start gap-2">
+                  <CheckCircle className="w-4 h-4 text-success flex-shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-xs font-semibold text-success uppercase tracking-wider mb-1">Решение</p>
+                    <p className="text-sm text-foreground font-medium leading-relaxed">{p.fix}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ═══════ TEAM MODEL — 1 мэр + операторы ═══════ */}
+      <section className="relative z-10 px-6 lg:px-16 py-20 lg:py-24 max-w-6xl mx-auto">
+        <div className="text-center mb-14 animate-fade-in-up">
+          <p className="section-heading text-primary mb-3">Модель работы</p>
+          <h2 className="text-2xl lg:text-3xl font-bold text-foreground max-w-2xl mx-auto leading-tight">
+            Не нужен IT-отдел. Достаточно мэра и нескольких операторов
+          </h2>
+          <p className="text-muted-foreground mt-3 max-w-2xl mx-auto">
+            Платформа спроектирована так, чтобы городом мог управлять один человек —
+            с минимальной командой, которая просто загружает данные.
+          </p>
+        </div>
+        <div className="grid md:grid-cols-3 gap-6">
+          {team.map((t, i) => (
+            <div
+              key={t.role}
+              className={`glass-card p-7 border-2 ${t.border} animate-fade-in-up`}
+              style={{ animationDelay: `${100 + i * 80}ms` }}
+            >
+              <div className={`w-12 h-12 rounded-lg ${t.color} flex items-center justify-center mb-5`}>
+                <t.icon className="w-6 h-6" />
+              </div>
+              <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-1">{t.headline}</p>
+              <h3 className="text-2xl font-extrabold text-foreground mb-5">{t.role}</h3>
+              <ul className="space-y-2.5">
+                {t.points.map((point) => (
+                  <li key={point} className="flex items-start gap-2.5 text-sm text-muted-foreground">
+                    <div className="w-1.5 h-1.5 rounded-full bg-primary mt-1.5 flex-shrink-0" />
+                    <span>{point}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ═══════ DATA FLOW — как сырые данные становятся решениями ═══════ */}
+      <section className="relative z-10 px-6 lg:px-16 py-20 lg:py-24 max-w-6xl mx-auto">
+        <div className="text-center mb-14 animate-fade-in-up">
+          <p className="section-heading text-primary mb-3">Поток данных</p>
+          <h2 className="text-2xl lg:text-3xl font-bold text-foreground max-w-2xl mx-auto leading-tight">
+            От Excel-файла оператора до решения мэра — за минуты
+          </h2>
+        </div>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 relative">
+          {dataFlow.map((s, i) => (
+            <div key={s.step} className="glass-card p-6 animate-fade-in-up relative" style={{ animationDelay: `${100 + i * 80}ms` }}>
+              <p className="text-xs font-bold text-primary tracking-widest mb-3">{s.step}</p>
+              <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
+                <s.icon className="w-5 h-5 text-primary" />
+              </div>
+              <h3 className="text-base font-bold text-foreground mb-2">{s.title}</h3>
+              <p className="text-sm text-muted-foreground leading-relaxed">{s.desc}</p>
             </div>
           ))}
         </div>
@@ -184,9 +355,9 @@ export default function LandingPage() {
       <section className="relative z-10 px-6 lg:px-16 py-20 max-w-6xl mx-auto">
         <div className="text-center mb-14 animate-fade-in-up">
           <p className="section-heading text-primary mb-3">Возможности</p>
-          <h2 className="text-2xl lg:text-3xl font-bold text-foreground">Всё, что нужно для управления городом</h2>
+          <h2 className="text-2xl lg:text-3xl font-bold text-foreground">9 модулей в одной платформе</h2>
           <p className="text-muted-foreground mt-3 max-w-xl mx-auto">
-            9 модулей, которые работают вместе. Каждый решает конкретную задачу.
+            Каждый модуль решает конкретную задачу мэра. Все работают вместе.
           </p>
         </div>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -213,14 +384,14 @@ export default function LandingPage() {
             <div className="flex-1">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 mb-5">
                 <BrainCircuit className="w-4 h-4 text-primary" />
-                <span className="text-xs font-semibold text-primary">AI Copilot</span>
+                <span className="text-xs font-semibold text-primary">AI Copilot мэра</span>
               </div>
               <h2 className="text-2xl lg:text-3xl font-bold text-foreground mb-4">
                 Спросите — система ответит
               </h2>
               <p className="text-muted-foreground leading-relaxed mb-6">
-                Задавайте вопросы голосом или текстом. AI-помощник знает всё о текущей ситуации
-                в городе и готовит ответы за секунды.
+                AI знает всё о текущей ситуации в городе. Готовит ответы за секунды —
+                голосом или текстом, на основе чистых данных, которые загрузили операторы.
               </p>
               <div className="space-y-3">
                 {[
@@ -257,83 +428,21 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ═══════ WHO IT'S FOR ═══════ */}
-      <section className="relative z-10 px-6 lg:px-16 py-20 max-w-5xl mx-auto">
-        <div className="text-center mb-12 animate-fade-in-up">
-          <p className="section-heading text-primary mb-3">Для кого</p>
-          <h2 className="text-2xl lg:text-3xl font-bold text-foreground">Три роли — одна система</h2>
-        </div>
-        <div className="grid sm:grid-cols-3 gap-6">
-          {[
-            {
-              role: 'Мэр',
-              desc: 'Видит полную картину города. Получает AI-сводки, утверждает сценарии, контролирует исполнение.',
-              icon: Shield,
-              color: 'bg-primary/10 text-primary',
-            },
-            {
-              role: 'Заместитель',
-              desc: 'Работает в своей зоне ответственности. Видит только свой департамент, но с полной глубиной.',
-              icon: Users,
-              color: 'bg-warning/10 text-warning',
-            },
-            {
-              role: 'Сотрудник',
-              desc: 'Создаёт инциденты, отслеживает задачи, получает уведомления об изменениях.',
-              icon: FileText,
-              color: 'bg-success/10 text-success',
-            },
-          ].map((r) => (
-            <div key={r.role} className="glass-card glass-card-hover p-7 text-center animate-fade-in-up">
-              <div className={`w-12 h-12 rounded-lg ${r.color} flex items-center justify-center mx-auto mb-4`}>
-                <r.icon className="w-6 h-6" />
-              </div>
-              <h3 className="text-lg font-bold text-foreground mb-2">{r.role}</h3>
-              <p className="text-sm text-muted-foreground leading-relaxed">{r.desc}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ═══════ HOW IT WORKS ═══════ */}
-      <section className="relative z-10 px-6 lg:px-16 py-20 max-w-5xl mx-auto">
-        <div className="text-center mb-14 animate-fade-in-up">
-          <p className="section-heading text-primary mb-3">Как это работает</p>
-          <h2 className="text-2xl lg:text-3xl font-bold text-foreground">4 шага от хаоса к контролю</h2>
-        </div>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
-          {[
-            { step: '1', title: 'Подключение', desc: 'Данные из ваших систем автоматически попадают в платформу', icon: Zap },
-            { step: '2', title: 'Анализ', desc: 'AI обрабатывает данные и выявляет риски, тренды и аномалии', icon: BrainCircuit },
-            { step: '3', title: 'Рекомендации', desc: 'Система говорит, что делать, и прогнозирует результат', icon: TrendingUp },
-            { step: '4', title: 'Контроль', desc: 'Поручения, дедлайны и эскалации — ничего не теряется', icon: CheckCircle },
-          ].map((s, i) => (
-            <div key={s.step} className="glass-card p-6 text-center animate-fade-in-up" style={{ animationDelay: `${100 + i * 60}ms` }}>
-              <div className="w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center mx-auto mb-4 text-sm font-bold">
-                {s.step}
-              </div>
-              <h3 className="text-sm font-bold text-foreground mb-2">{s.title}</h3>
-              <p className="text-sm text-muted-foreground leading-relaxed">{s.desc}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
       {/* ═══════ FINAL CTA ═══════ */}
       <section className="relative z-10 px-6 lg:px-16 py-24 max-w-4xl mx-auto text-center">
         <div className="animate-fade-in-up">
           <h2 className="text-2xl lg:text-3xl font-bold text-foreground mb-4">
-            Готовы увидеть свой город на одном экране?
+            Готовы управлять городом одним человеком?
           </h2>
           <p className="text-muted-foreground mb-8 max-w-lg mx-auto">
-            Откройте демо с реальными данными Балашихи. Без регистрации, без обязательств.
+            Откройте демо с реальными данными Реутова. Без регистрации, без обязательств.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button
               onClick={() => navigate('/app')}
               className="inline-flex items-center justify-center gap-2 px-10 py-4 bg-primary text-primary-foreground text-sm font-semibold rounded-lg shadow-btn hover:bg-primary/90 transition-all hover:shadow-lg hover:-translate-y-0.5"
             >
-              Открыть демо <ArrowRight className="w-4 h-4" />
+              Открыть демо мэра <ArrowRight className="w-4 h-4" />
             </button>
             <a
               href="/public"
