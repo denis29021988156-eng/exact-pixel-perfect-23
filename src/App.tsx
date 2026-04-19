@@ -18,6 +18,7 @@ import DataQualityPage from "./pages/DataQualityPage";
 import ExcelUploadPage from "./pages/ExcelUploadPage";
 import ModerationPage from "./pages/ModerationPage";
 import AIExtractPage from "./pages/AIExtractPage";
+import TelegramInboxPage from "./pages/TelegramInboxPage";
 import PublicDashboard from "./pages/PublicDashboard";
 import NotFound from "./pages/NotFound";
 
@@ -56,6 +57,7 @@ function AppRoutes() {
           <Route path="/excel-upload" element={<ExcelUploadPage />} />
           <Route path="/moderation" element={<ModerationPage />} />
           <Route path="/ai-extract" element={<AIExtractPage />} />
+          <Route path="/telegram-inbox" element={<TelegramInboxPage />} />
           <Route path="/cheatsheet" element={<CheatsheetPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
