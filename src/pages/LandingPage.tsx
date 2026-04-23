@@ -3,7 +3,7 @@ import {
   Shield, ArrowRight, AlertTriangle, Map, BrainCircuit, MessageSquare,
   BarChart3, Users, Globe, TrendingUp, Clock, DollarSign, Lightbulb,
   CheckCircle, Zap, FileText, Newspaper, FileSpreadsheet, Send,
-  ShieldCheck, Filter, Crown, UserCog
+  ShieldCheck, Filter, Crown, UserCog, Rocket, GraduationCap, Settings2, Radio
 } from 'lucide-react';
 
 // Боли мэра — что именно мешает управлять городом
@@ -176,6 +176,52 @@ const stats = [
   { value: '24/7', label: 'AI-мониторинг города' },
 ];
 
+// 3 этапа внедрения для Реутова
+const rolloutPhases = [
+  {
+    step: '01',
+    duration: '2 недели',
+    title: 'Запуск и базовая настройка',
+    icon: Rocket,
+    color: 'text-primary',
+    bg: 'bg-primary/10',
+    items: [
+      'Развёртывание платформы под бренд города',
+      'Импорт исторических данных из Excel/1С',
+      'Подключение Telegram-каналов жалоб',
+      'Базовая роль мэра + 1 оператор',
+    ],
+  },
+  {
+    step: '02',
+    duration: '4 недели',
+    title: 'AI-модули и интеграции',
+    icon: BrainCircuit,
+    color: 'text-warning',
+    bg: 'bg-warning/10',
+    items: [
+      'Тонкая настройка AI-копилота под лексику Реутова',
+      'Подключение карты, бенчмарков и медиа-мониторинга',
+      'Сценарии эскалаций и SLA по департаментам',
+      'Бюджетный прогноз и риск-индекс контрактов',
+    ],
+  },
+  {
+    step: '03',
+    duration: '2 недели',
+    title: 'Обучение и приёмка',
+    icon: GraduationCap,
+    color: 'text-success',
+    bg: 'bg-success/10',
+    items: [
+      'Обучение 5–6 сотрудников за 5 рабочих дней',
+      'Регламенты работы для мэра, замов, операторов',
+      'Приёмка по чек-листу и юридическая передача',
+      'Гарантийная поддержка 30 дней',
+    ],
+  },
+];
+
 export default function LandingPage() {
   const navigate = useNavigate();
 
@@ -209,37 +255,54 @@ export default function LandingPage() {
       </header>
 
       {/* ═══════ HERO ═══════ */}
-      <section className="relative z-10 flex flex-col items-center text-center px-6 pt-20 pb-16 lg:pt-32 lg:pb-24 animate-fade-in-up">
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary-soft border border-primary/10 mb-8">
-          <div className="w-1.5 h-1.5 rounded-full bg-primary ai-pulse" />
-          <span className="text-xs font-semibold text-primary tracking-wide">ОПЕРАЦИОННАЯ СИСТЕМА ГОРОДА</span>
-        </div>
+      <section className="relative z-10 px-6 pt-16 pb-20 lg:pt-24 lg:pb-32 animate-fade-in-up overflow-hidden">
+        {/* Glow orbs */}
+        <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] rounded-full bg-primary/10 blur-[120px] pointer-events-none" />
+        <div className="absolute bottom-0 right-1/4 w-[400px] h-[400px] rounded-full bg-warning/5 blur-[100px] pointer-events-none" />
 
-        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-foreground tracking-tight leading-[1.1] max-w-4xl">
-          Город управляется
-          <span className="text-primary"> одним человеком</span>
-          <br />
-          <span className="text-foreground">с командой из 3–5 операторов</span>
-        </h1>
+        <div className="relative max-w-5xl mx-auto flex flex-col items-center text-center">
+          <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-card border border-border shadow-sm mb-10">
+            <Radio className="w-3 h-3 text-success ai-pulse" />
+            <span className="text-[11px] font-bold text-foreground tracking-[0.18em] uppercase">Tech OS · 2030 · Tablet of the Mayor</span>
+          </div>
 
-        <p className="mt-7 text-lg lg:text-xl text-muted-foreground max-w-2xl leading-relaxed">
-          Мэр видит весь город на одном экране. Несколько операторов загружают данные
-          из Excel, Telegram и старых систем — AI превращает их в чистую картину для принятия решений.
-        </p>
+          <h1 className="text-5xl sm:text-6xl lg:text-7xl font-extrabold text-foreground tracking-tighter leading-[1.02] max-w-5xl">
+            Город управляется
+            <br />
+            <span className="relative inline-block">
+              <span className="relative z-10 bg-gradient-to-r from-primary via-primary-glow to-primary bg-clip-text text-transparent">одним человеком</span>
+              <span className="absolute inset-x-0 bottom-1 h-3 bg-primary/10 -z-0 rounded-sm" />
+            </span>
+          </h1>
 
-        <div className="flex flex-col sm:flex-row gap-4 mt-10">
-          <button
-            onClick={() => navigate('/app')}
-            className="flex items-center justify-center gap-2 px-8 py-3.5 bg-primary text-primary-foreground text-sm font-semibold rounded-lg shadow-btn hover:bg-primary/90 transition-all hover:shadow-lg hover:-translate-y-0.5"
-          >
-            Открыть демо мэра <ArrowRight className="w-4 h-4" />
-          </button>
-          <a
-            href="#pains"
-            className="flex items-center justify-center gap-2 px-8 py-3.5 bg-card border border-border text-foreground text-sm font-semibold rounded-lg hover:bg-surface-muted transition-all"
-          >
-            Какие боли мы закрываем
-          </a>
+          <p className="mt-8 text-lg lg:text-xl text-muted-foreground max-w-2xl leading-relaxed">
+            Мэр видит весь город на одном экране. Команда из 3–5 операторов загружает данные —
+            AI превращает их в чистую картину для решений.
+          </p>
+
+          <div className="flex flex-col sm:flex-row gap-3 mt-12">
+            <button
+              onClick={() => navigate('/app')}
+              className="group flex items-center justify-center gap-2 px-8 py-4 bg-primary text-primary-foreground text-sm font-semibold rounded-lg shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all hover:shadow-xl hover:shadow-primary/30 hover:-translate-y-0.5"
+            >
+              Открыть демо мэра
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </button>
+            <a
+              href="#rollout"
+              className="flex items-center justify-center gap-2 px-8 py-4 bg-card border border-border text-foreground text-sm font-semibold rounded-lg hover:border-primary/40 hover:bg-surface-muted transition-all"
+            >
+              План внедрения
+            </a>
+          </div>
+
+          {/* Inline trust strip */}
+          <div className="mt-14 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-[11px] text-muted-foreground tracking-wide">
+            <span className="flex items-center gap-1.5"><CheckCircle className="w-3 h-3 text-success" /> RBAC и аудит-лог</span>
+            <span className="flex items-center gap-1.5"><CheckCircle className="w-3 h-3 text-success" /> Размещение в РФ</span>
+            <span className="flex items-center gap-1.5"><CheckCircle className="w-3 h-3 text-success" /> Без vendor lock-in</span>
+            <span className="flex items-center gap-1.5"><CheckCircle className="w-3 h-3 text-success" /> White-label под город</span>
+          </div>
         </div>
       </section>
 
@@ -423,6 +486,82 @@ export default function LandingPage() {
                   3 критических инцидента, 2 просрочены по SLA. Прорыв теплотрассы требует немедленного внимания.
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════ ROLLOUT — 3 ЭТАПА ВНЕДРЕНИЯ ═══════ */}
+      <section id="rollout" className="relative z-10 px-6 lg:px-16 py-20 lg:py-28 max-w-6xl mx-auto">
+        <div className="text-center mb-14 animate-fade-in-up">
+          <p className="section-heading text-primary mb-3">План внедрения</p>
+          <h2 className="text-3xl lg:text-4xl font-extrabold text-foreground tracking-tight max-w-2xl mx-auto leading-tight">
+            От договора до приёмки — 8 недель
+          </h2>
+          <p className="text-muted-foreground mt-4 max-w-xl mx-auto">
+            Три прозрачных этапа с обучением 5–6 сотрудников и юридической передачей.
+          </p>
+        </div>
+
+        <div className="relative">
+          {/* Timeline line */}
+          <div className="hidden lg:block absolute top-12 left-[10%] right-[10%] h-px bg-gradient-to-r from-primary/0 via-primary/40 to-success/0" />
+
+          <div className="grid lg:grid-cols-3 gap-6">
+            {rolloutPhases.map((phase, i) => (
+              <div
+                key={phase.step}
+                className="relative glass-card p-7 animate-fade-in-up hover:border-primary/40 transition-colors"
+                style={{ animationDelay: `${100 + i * 100}ms` }}
+              >
+                {/* Step marker */}
+                <div className="flex items-center justify-between mb-5">
+                  <div className={`w-12 h-12 rounded-xl ${phase.bg} flex items-center justify-center`}>
+                    <phase.icon className={`w-6 h-6 ${phase.color}`} />
+                  </div>
+                  <div className="text-right">
+                    <p className="text-[10px] tracking-[0.18em] uppercase text-muted-foreground font-bold">Этап {phase.step}</p>
+                    <p className={`text-sm font-bold ${phase.color}`}>{phase.duration}</p>
+                  </div>
+                </div>
+
+                <h3 className="text-lg font-bold text-foreground mb-4 leading-tight">{phase.title}</h3>
+
+                <ul className="space-y-2.5">
+                  {phase.items.map((item) => (
+                    <li key={item} className="flex items-start gap-2.5 text-[13px] text-muted-foreground leading-snug">
+                      <CheckCircle className={`w-3.5 h-3.5 ${phase.color} flex-shrink-0 mt-0.5`} />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+
+                {/* Highlight: training in phase 3 */}
+                {phase.step === '03' && (
+                  <div className="mt-5 pt-5 border-t border-border/60">
+                    <div className="flex items-center gap-2 text-[11px] text-success font-semibold">
+                      <GraduationCap className="w-3.5 h-3.5" />
+                      <span>5 дней очно · 5–6 человек · сертификаты</span>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+
+          {/* Total summary strip */}
+          <div className="mt-8 grid grid-cols-3 gap-3">
+            <div className="rounded-lg border border-border/60 bg-card p-4 text-center">
+              <p className="text-2xl font-extrabold text-foreground tracking-tight">8</p>
+              <p className="text-[10px] tracking-widest uppercase text-muted-foreground mt-1">недель всего</p>
+            </div>
+            <div className="rounded-lg border border-border/60 bg-card p-4 text-center">
+              <p className="text-2xl font-extrabold text-foreground tracking-tight">9</p>
+              <p className="text-[10px] tracking-widest uppercase text-muted-foreground mt-1">модулей платформы</p>
+            </div>
+            <div className="rounded-lg border border-border/60 bg-card p-4 text-center">
+              <p className="text-2xl font-extrabold text-foreground tracking-tight">5–6</p>
+              <p className="text-[10px] tracking-widest uppercase text-muted-foreground mt-1">обученных сотрудников</p>
             </div>
           </div>
         </div>
