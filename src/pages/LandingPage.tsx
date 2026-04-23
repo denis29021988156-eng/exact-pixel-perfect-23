@@ -491,6 +491,82 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* ═══════ ROLLOUT — 3 ЭТАПА ВНЕДРЕНИЯ ═══════ */}
+      <section id="rollout" className="relative z-10 px-6 lg:px-16 py-20 lg:py-28 max-w-6xl mx-auto">
+        <div className="text-center mb-14 animate-fade-in-up">
+          <p className="section-heading text-primary mb-3">План внедрения</p>
+          <h2 className="text-3xl lg:text-4xl font-extrabold text-foreground tracking-tight max-w-2xl mx-auto leading-tight">
+            От договора до приёмки — 8 недель
+          </h2>
+          <p className="text-muted-foreground mt-4 max-w-xl mx-auto">
+            Три прозрачных этапа с обучением 5–6 сотрудников и юридической передачей.
+          </p>
+        </div>
+
+        <div className="relative">
+          {/* Timeline line */}
+          <div className="hidden lg:block absolute top-12 left-[10%] right-[10%] h-px bg-gradient-to-r from-primary/0 via-primary/40 to-success/0" />
+
+          <div className="grid lg:grid-cols-3 gap-6">
+            {rolloutPhases.map((phase, i) => (
+              <div
+                key={phase.step}
+                className="relative glass-card p-7 animate-fade-in-up hover:border-primary/40 transition-colors"
+                style={{ animationDelay: `${100 + i * 100}ms` }}
+              >
+                {/* Step marker */}
+                <div className="flex items-center justify-between mb-5">
+                  <div className={`w-12 h-12 rounded-xl ${phase.bg} flex items-center justify-center`}>
+                    <phase.icon className={`w-6 h-6 ${phase.color}`} />
+                  </div>
+                  <div className="text-right">
+                    <p className="text-[10px] tracking-[0.18em] uppercase text-muted-foreground font-bold">Этап {phase.step}</p>
+                    <p className={`text-sm font-bold ${phase.color}`}>{phase.duration}</p>
+                  </div>
+                </div>
+
+                <h3 className="text-lg font-bold text-foreground mb-4 leading-tight">{phase.title}</h3>
+
+                <ul className="space-y-2.5">
+                  {phase.items.map((item) => (
+                    <li key={item} className="flex items-start gap-2.5 text-[13px] text-muted-foreground leading-snug">
+                      <CheckCircle className={`w-3.5 h-3.5 ${phase.color} flex-shrink-0 mt-0.5`} />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+
+                {/* Highlight: training in phase 3 */}
+                {phase.step === '03' && (
+                  <div className="mt-5 pt-5 border-t border-border/60">
+                    <div className="flex items-center gap-2 text-[11px] text-success font-semibold">
+                      <GraduationCap className="w-3.5 h-3.5" />
+                      <span>5 дней очно · 5–6 человек · сертификаты</span>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+
+          {/* Total summary strip */}
+          <div className="mt-8 grid grid-cols-3 gap-3">
+            <div className="rounded-lg border border-border/60 bg-card p-4 text-center">
+              <p className="text-2xl font-extrabold text-foreground tracking-tight">8</p>
+              <p className="text-[10px] tracking-widest uppercase text-muted-foreground mt-1">недель всего</p>
+            </div>
+            <div className="rounded-lg border border-border/60 bg-card p-4 text-center">
+              <p className="text-2xl font-extrabold text-foreground tracking-tight">9</p>
+              <p className="text-[10px] tracking-widest uppercase text-muted-foreground mt-1">модулей платформы</p>
+            </div>
+            <div className="rounded-lg border border-border/60 bg-card p-4 text-center">
+              <p className="text-2xl font-extrabold text-foreground tracking-tight">5–6</p>
+              <p className="text-[10px] tracking-widest uppercase text-muted-foreground mt-1">обученных сотрудников</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ═══════ FINAL CTA ═══════ */}
       <section className="relative z-10 px-6 lg:px-16 py-24 max-w-4xl mx-auto text-center">
         <div className="animate-fade-in-up">
