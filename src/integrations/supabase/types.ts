@@ -77,6 +77,30 @@ export type Database = {
         }
         Relationships: []
       }
+      app_settings: {
+        Row: {
+          city_lat: number | null
+          city_lng: number | null
+          city_name: string
+          id: number
+          updated_at: string
+        }
+        Insert: {
+          city_lat?: number | null
+          city_lng?: number | null
+          city_name?: string
+          id: number
+          updated_at?: string
+        }
+        Update: {
+          city_lat?: number | null
+          city_lng?: number | null
+          city_name?: string
+          id?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       benchmarks: {
         Row: {
           category: string | null
@@ -829,6 +853,87 @@ export type Database = {
         }
         Relationships: []
       }
+      weather_alerts: {
+        Row: {
+          acknowledged: boolean
+          acknowledged_at: string | null
+          acknowledged_by: string | null
+          alert_type: Database["public"]["Enums"]["weather_alert_type"]
+          city_name: string
+          created_at: string
+          description: string | null
+          ends_at: string
+          id: string
+          peak_unit: string | null
+          peak_value: number | null
+          raw_forecast: Json | null
+          severity: Database["public"]["Enums"]["weather_alert_severity"]
+          starts_at: string
+          title: string
+        }
+        Insert: {
+          acknowledged?: boolean
+          acknowledged_at?: string | null
+          acknowledged_by?: string | null
+          alert_type: Database["public"]["Enums"]["weather_alert_type"]
+          city_name: string
+          created_at?: string
+          description?: string | null
+          ends_at: string
+          id?: string
+          peak_unit?: string | null
+          peak_value?: number | null
+          raw_forecast?: Json | null
+          severity?: Database["public"]["Enums"]["weather_alert_severity"]
+          starts_at: string
+          title: string
+        }
+        Update: {
+          acknowledged?: boolean
+          acknowledged_at?: string | null
+          acknowledged_by?: string | null
+          alert_type?: Database["public"]["Enums"]["weather_alert_type"]
+          city_name?: string
+          created_at?: string
+          description?: string | null
+          ends_at?: string
+          id?: string
+          peak_unit?: string | null
+          peak_value?: number | null
+          raw_forecast?: Json | null
+          severity?: Database["public"]["Enums"]["weather_alert_severity"]
+          starts_at?: string
+          title?: string
+        }
+        Relationships: []
+      }
+      weather_snapshot: {
+        Row: {
+          active_alerts: number
+          city_name: string
+          current: Json
+          fetched_at: string
+          forecast_72h: Json
+          id: number
+        }
+        Insert: {
+          active_alerts?: number
+          city_name: string
+          current?: Json
+          fetched_at?: string
+          forecast_72h?: Json
+          id: number
+        }
+        Update: {
+          active_alerts?: number
+          city_name?: string
+          current?: Json
+          fetched_at?: string
+          forecast_72h?: Json
+          id?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
       public_metrics: {
@@ -876,6 +981,13 @@ export type Database = {
         | "rejected"
         | "promoted"
       task_status: "new" | "in_progress" | "completed" | "cancelled"
+      weather_alert_severity: "info" | "warning" | "danger"
+      weather_alert_type:
+        | "heavy_rain"
+        | "heavy_snow"
+        | "extreme_heat"
+        | "extreme_cold"
+        | "storm"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1027,6 +1139,14 @@ export const Constants = {
         "promoted",
       ],
       task_status: ["new", "in_progress", "completed", "cancelled"],
+      weather_alert_severity: ["info", "warning", "danger"],
+      weather_alert_type: [
+        "heavy_rain",
+        "heavy_snow",
+        "extreme_heat",
+        "extreme_cold",
+        "storm",
+      ],
     },
   },
 } as const

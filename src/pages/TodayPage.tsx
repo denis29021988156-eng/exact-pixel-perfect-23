@@ -35,6 +35,7 @@ import BudgetRiskCard from '@/components/BudgetRiskCard';
 import CityPulseBlock from '@/components/CityPulseBlock';
 import BenchmarkBlock from '@/components/BenchmarkBlock';
 import ConfidenceBadge from '@/components/ConfidenceBadge';
+import WeatherWidget from '@/components/WeatherWidget';
 
 /* ─── Risk Index Gauge ─── */
 function RiskGauge({ value }: { value: number }) {
@@ -293,6 +294,9 @@ export default function TodayPage() {
 
       {/* Escalation Panel */}
       <EscalationPanel />
+
+      {/* Weather 72h */}
+      <WeatherWidget />
 
       {/* AI Briefing Panel */}
       <div className="ai-card p-6">
