@@ -1,120 +1,80 @@
 
-# План: Connectors Layer + Confidence + Data Quality
 
-## Что добавляем (новый уровень архитектуры)
+## Демо-данные Реутова — кризис + управляемость + сквозные связи
 
-```text
-Data Sources → CONNECTORS LAYER → Normalized Data → Risk Engine → AI → Action
-                      ↓
-              Confidence Score
-              Data Quality Dashboard
-```
+Доработка предыдущего плана: добавляем позитивные сигналы и связываем сущности в цепочки, чтобы заказчик видел не таблицы, а живую систему управления.
 
-## Phase A: Фундамент (БД + типы)
+### Что меняется в датасете
 
-**Новые таблицы:**
+**Распределение по «настроению» (вместо чистого красного):**
 
-1. `data_sources` — реестр источников (id, name, type [email/excel/telegram/manual/db], status, last_sync_at, success_rate, latency_minutes, config jsonb)
-2. `ingestion_log` — лог ingestion (id, source_id, status [success/error/partial], records_in, records_normalized, records_failed, error_message, duration_ms, created_at)
-3. `staging_raw` — сырые данные до нормализации (id, source_id, raw_payload jsonb, parsed_payload jsonb, status [pending/parsed/normalized/rejected], confidence numeric, target_table text, target_id uuid, created_at)
-4. `address_normalization` — словарь адресов (raw_text, normalized_address, district, lat, lng)
+| Категория | Кризис | Под контролем | Норма |
+|---|---|---|---|
+| Инциденты (20) | 5 критических активных + 4 SLA-просрочки | **1 локализован** (high → resolved сегодня, с пометкой «Локализовано за 2ч») | 10 в работе/новых |
+| Проекты (8) | 1 overdue (школа №2, блокер), 1 risk | **1 «выведен из риска»** (был risk → стал on_track, прогресс 65%, заметка) | 5 on_track |
+| Контракты (6) | 2 с risk_of_non_execution > 70% | **1 «под контролем»** (risk был 65% → execution_rate 78%, статус active, заметка в name) | 2 нормальных |
+| Задачи (15) | 5 просроченных | 3 завершённых сегодня | 7 активных |
 
-**Новые колонки:**
-- `incidents.confidence_score numeric default 100`
-- `incidents.source_id uuid` (nullable, ref data_sources)
-- `incidents.raw_source_id uuid` (nullable, ref staging_raw)
-- то же для `tasks`, `public_complaints`
+**Risk Index прогноз:** 60–70 («Повышенный»), не 75+. Это лучше продаёт идею «система держит ситуацию», а не «всё горит».
 
-## Phase B: Connectors Layer (5 коннекторов)
+### Сквозные связи между сущностями
 
-Все коннекторы — Edge Functions с одинаковым контрактом: `ingest → normalize → score confidence → write to staging → promote to target table`.
+Сейчас в БД нет жёстких FK между incidents/tasks/projects/contracts, но есть **семантические поля** (`department`, `responsible`, текстовые ссылки в title/description). Сделаем 4 явных цепочки, которые заказчик увидит при клике:
 
-1. **Manual Input Connector** (`POST /connectors/manual`) — форма быстрого ввода. Делается первым, т.к. не зависит ни от чего.
-2. **Email Connector** (`POST /connectors/email-webhook`) — принимает forwarded email через webhook (SendGrid Inbound Parse / Resend / IMAP poller). Парсит subject + body + attachments.
-3. **Excel/CSV Connector** (`POST /connectors/excel-upload`) — UI для загрузки .xlsx, парсинг через `xlsx` lib, маппинг колонок.
-4. **Telegram Connector** — реюз связки `telegram-poll` (polling каждую минуту через pg_cron), парсит сообщения из заданных чатов как жалобы.
-5. **DB Connector** (опционально, заглушка) — конфиг подключения к внешней Postgres/MSSQL через edge function.
+**Цепочка 1 — Инцидент → Поручение → Департамент**
+- Incident: «[DEMO] Прорыв магистрали ХВС, Юбилейный пр. 14», dept=ЖКХ, severity=high
+- Task: «Устранить прорыв на Юбилейном пр. 14 (инцидент #...)», dept=ЖКХ, responsible=Иванов А.П., deadline=сегодня+1д. В description ссылка на title инцидента.
+- Связь по тексту title + одинаковому department.
 
-## Phase C: AI Data Structuring
+**Цепочка 2 — Проект → Контракт**
+- Project: «[DEMO] Капремонт школы №2 (мкрн Центральный)», status=overdue, blocker=«Подрядчик сорвал график монтажа кровли»
+- Contract: «[DEMO] СМР по школе №2 — кровля и фасад», contractor=ООО «СтройГарант», risk_of_non_execution=82, deadline=просрочен на 14 дней
+- Связь по упоминанию «школы №2» в обоих + одинаковый department=Образование.
 
-Edge function `ai-extract-incident` (Lovable AI Gateway, gemini-3-flash-preview):
-- Вход: сырой текст (email/telegram message)
-- Выход: структурированный JSON `{ type, severity, address, district, department, suggested_title, confidence }`
-- Используется в Email/Telegram коннекторах автоматически
-- Результат идёт в `staging_raw.parsed_payload` + confidence
+**Цепочка 3 — Жалобы → Heatmap → Эскалация**
+- 6 public_complaints с topic=«ЖКХ», district=«Юбилейный», sentiment=negative → концентрация в `CityPulseBlock` (negativePct ≈ 75%).
+- Те же координаты (lat 55.760–55.762, lng 37.853–37.857) у 3 incidents → кластер на MapPage.
+- Escalation type=«public_pressure», severity=4, message=«75% жалоб по ЖКХ за неделю — мкрн Юбилейный. Совпадение с инцидентами на ХВС».
 
-## Phase D: Normalization Engine
+**Цепочка 4 — Позитив (для контраста)**
+- Incident «локализован»: «[DEMO] Авария на ТП-7 — РЕШЕНО», status=resolved, в description: «Локализовано бригадой за 2ч 15мин. SLA соблюден.»
+- Связанная completed task: «Восстановить электроснабжение ТП-7» с пометкой о времени выполнения.
 
-`src/lib/ingestion/normalizer.ts` — чистые функции:
-- `normalizeAddress(raw) → { normalized, lat, lng, confidence }` (словарь + Nominatim fallback)
-- `normalizeIncidentType(raw) → enum incident_type`
-- `normalizeSeverity(raw) → enum incident_severity`
-- `calculateRecordConfidence({ completeness, freshness, sourceCount, parseConfidence }) → 0-100`
+### Технические детали
 
-## Phase E: Confidence Layer в UI
+- **Запись:** прямой `INSERT` через DB-инструмент (не миграция).
+- **Идемпотентность:** перед каждым блоком — `DELETE WHERE title LIKE '[DEMO]%'` (или name/topic в зависимости от таблицы). Префикс `[DEMO]` обязателен везде, чтобы продакшен-данные не пересеклись.
+- **Связи через текст:** в `task.description` и `contract.name` явно упоминаем title связанной сущности — заказчик при клике увидит связь визуально, без необходимости JOIN.
+- **Координаты:** 3 кластера для heatmap — Юбилейный (ЖКХ), Носовихинское ш. (дороги/ДТП), мкрн Фабричный (благоустройство).
+- **Таймстемпы:** `created_at` разбросан по последним 7 дням → график на TodayPage оживёт.
+- **Эскалации:** триггер `check_and_create_escalation()` сработает автоматически на 3 incidents (high + sla_overdue). Ещё 1 эскалацию (public_pressure) и 1 (budget_risk) вставим вручную.
+- **AI-брифинг:** после засева станет осмысленным — будет о чём говорить (конкретные адреса, цепочки причин).
 
-- Risk Index на TodayPage показывает `67 (доверие: 72%)`
-- Каждая карточка инцидента — маленький бейдж confidence
-- Tooltip объясняет: «3 из 5 полей заполнены, источник: email, возраст: 12 мин»
+### Что увидит заказчик после засева
 
-## Phase F: Data Quality Dashboard
+1. **TodayPage:** Risk Index 65 (оранжевый), Красная зона с 3 эскалациями (включая public_pressure), но в KPI видны 1 локализованный + 3 завершённые задачи → «система работает».
+2. **MapPage:** 20 маркеров, 3 явных кластера, heatmap концентрируется на Юбилейном.
+3. **IncidentsPage:** при клике на инцидент «Прорыв ХВС» в описании упоминается task — можно показать переход.
+4. **TasksPage:** видны и просроченные, и завершённые сегодня.
+5. **ProgramPage:** проект «Школа №2» в красном с блокером + контракт-двойник в риске. Рядом — проект «выведен из риска» (зелёный).
+6. **CityPulseBlock:** топик «ЖКХ» 75% negative, divergence высокий → кнопка «Создать поручение».
+7. **BudgetRiskCard:** 2 контракта в риске + 1 «под контролем» (для контраста).
+8. **PublicDashboard:** реалистичные публичные KPI.
 
-Новая страница `/app/data-quality` (только для мэра/зама/IT):
-- KPI: % автоматических источников, % ручного ввода, средняя задержка, ошибки парсинга за 24ч
-- Таблица `data_sources` с live-статусом (✅/⚠️/❌)
-- График `ingestion_log` за 7 дней (Recharts)
-- Кнопка «Test source» на каждом коннекторе
+### Сценарий показа на демо (15 мин, как побочный артефакт)
 
-Ссылка в сайдбаре `AppLayout.tsx` (рядом с существующими).
+После засева я могу подготовить файл `DEMO_SCRIPT.md` с пошаговым сценарием, который проводит заказчика по этим 4 цепочкам:
+1. Мэр открывает Today → видит Risk Index 65 + Красную зону.
+2. Кликает на эскалацию public_pressure → переходит к жалобам → видит heatmap на Юбилейном.
+3. Открывает связанный инцидент → создаёт поручение через AI Copilot.
+4. Переходит в Program → видит школу №2 (overdue) + контракт-двойник в риске → нажимает «Пересчитать бюджет».
+5. Завершение: показывает 1 локализованный инцидент + проект «выведен из риска» → «вот как платформа возвращает контроль».
 
-## Phase G: Презентация продукта
+### Если результат разойдётся с целью
 
-Обновить `LandingPage.tsx`:
-- Новый hero-блок: *«Подключаемся к хаотичным данным города за 2 недели — без доработки ваших систем»*
-- Секция «Как мы работаем с вашими данными» — диаграмма Connectors Layer
-- Замена позиционирования: «AI для управления городом» → «Система, которая превращает хаос городских данных в управляемые решения»
+Risk Index целимся в 60–70. Если выйдет за рамки — точечно подкручу:
+- Вышло >75: уберу 1 критический или верну 1 SLA в норму.
+- Вышло <55: добавлю 1 high-severity инцидент.
 
----
+После засева отчитаюсь с фактическими числами и попрошу подтвердить, делать ли `DEMO_SCRIPT.md`.
 
-## Технические детали
-
-**Edge Functions (новые):** `ingest-email`, `ingest-excel`, `ingest-telegram`, `ingest-manual`, `ai-extract-incident`, `connector-test`
-
-**Cron jobs:** Telegram polling (1 мин), Email IMAP poll (опц., 5 мин), staging→target promotion (1 мин)
-
-**RLS:** `data_sources`, `ingestion_log`, `staging_raw` — read для authenticated, write только для service_role + mayor
-
-**Confidence формула (детерминированная, не AI):**
-```
-confidence = (completeness × 0.4) + (freshness × 0.3) + 
-             (sourceReliability × 0.2) + (parseConfidence × 0.1)
-```
-где `sourceReliability` — статичная константа на коннектор (manual=100, db=95, excel=85, email=70, telegram=50).
-
-**Промоут staging → target:** триггер на `staging_raw` после `status='normalized'` + `confidence > 60` автоматически вставляет в `incidents`/`tasks`/`public_complaints`. Иначе — попадает в очередь модерации.
-
-**Очередь модерации:** новая страница `/app/moderation` — список записей с confidence < 60, мэр/зам жмёт «Принять» / «Отклонить» / «Редактировать».
-
----
-
-## Порядок внедрения (рекомендуемый)
-
-1. **Phase A** (БД) → **Phase D** (нормализация) → **Phase E** (confidence в UI) — фундамент, даёт сразу видимый эффект
-2. **Phase B.1** (Manual) + **Phase F** (Data Quality Dashboard) — работающий MVP коннекторного слоя
-3. **Phase B.2** (Excel upload) — самая частая «реальность» в администрациях
-4. **Phase C** (AI extraction) + **Phase B.3** (Email) — автоматизация
-5. **Phase B.4** (Telegram) — слой реальности от граждан
-6. **Phase G** (лендинг + презентация) — финальная упаковка
-
----
-
-## Что НЕ меняем (защищаем существующее)
-
-- Risk Engine (`cityRiskEngine.ts`) — формула остаётся
-- AI как интерпретатор (никакого CRUD от AI)
-- Существующие RLS, роли, маршруты, edge functions (city-briefing, city-copilot)
-- White-label «Балашиха», карта Реутова, дизайн-токены
-
----
-
-**Рекомендую стартовать с Phase A + D + E + B.1 + F** — это ~1 итерация, даёт работающий Connectors Layer с ручным вводом, confidence-метрикой и Data Quality Dashboard. Это то, что нужно показать заказчику.
