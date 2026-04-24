@@ -184,9 +184,9 @@ export default function LandingPage() {
       <main className="relative z-10">
         <section className="mx-auto grid max-w-7xl items-center gap-12 px-5 pb-16 pt-12 lg:grid-cols-[1.02fr_0.98fr] lg:px-8 lg:pb-24 lg:pt-20">
           <div className="animate-fade-in-up">
-            <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 shadow-sm">
+            <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-border bg-card/90 px-4 py-2 shadow-sm backdrop-blur-xl">
               <Radio className="h-3.5 w-3.5 text-success ai-pulse" />
-              <span className="text-[11px] font-extrabold uppercase tracking-[0.18em] text-muted-foreground">Управляемый город · AI · SLA</span>
+              <span className="text-[11px] font-extrabold uppercase tracking-[0.18em] text-muted-foreground">MVP · City AI · внедрение 8 недель</span>
             </div>
 
             <h1 className="max-w-4xl text-[44px] font-extrabold leading-[0.98] tracking-normal text-foreground sm:text-[56px] lg:text-[68px]">
@@ -194,8 +194,9 @@ export default function LandingPage() {
             </h1>
 
             <p className="mt-7 max-w-2xl text-[18px] font-medium leading-[30px] text-foreground/75">
-              Демонстрационный контур показывает, как мэр видит город на одном экране: инциденты,
-              поручения, проекты, контракты, обращения граждан и AI-сводки для решений.
+              MVP уже показывает управленческий контур: инциденты, поручения, проекты, контракты,
+              обращения граждан и AI-сводки. После заказа платформа подключается к данным города,
+              регламентам и рабочим каналам администрации.
             </p>
 
             <div className="mt-10 flex flex-col gap-3 sm:flex-row">
@@ -225,13 +226,26 @@ export default function LandingPage() {
             </div>
           </div>
 
-          <div className="animate-fade-in-up lg:pl-6" style={{ animationDelay: '120ms' }}>
-            <div className="rounded-[2rem] border border-border bg-card p-4 shadow-xl shadow-primary/10">
-              <div className="rounded-[1.5rem] border border-border bg-background p-4">
+          <div className="relative min-h-[560px] animate-fade-in-up lg:pl-6" style={{ animationDelay: '120ms' }}>
+            <div className="absolute inset-0 overflow-hidden rounded-[3rem]">
+              {particlePositions.map((particle) => (
+                <span
+                  key={particle.className}
+                  className={`absolute rounded-full shadow-[0_0_28px_hsl(var(--primary)/0.28)] animate-fade-in-up ${particle.className}`}
+                  style={{ animationDelay: particle.delay }}
+                />
+              ))}
+              <span className="absolute left-[14%] top-[24%] h-px w-32 rotate-12 bg-gradient-to-r from-transparent via-primary/35 to-transparent" />
+              <span className="absolute right-[10%] top-[52%] h-px w-40 -rotate-12 bg-gradient-to-r from-transparent via-success/30 to-transparent" />
+              <span className="absolute bottom-[18%] left-[26%] h-px w-28 rotate-[28deg] bg-gradient-to-r from-transparent via-info/30 to-transparent" />
+            </div>
+
+            <div className="relative mx-auto w-full max-w-[560px] rotate-[-5deg] rounded-[2.4rem] border border-border bg-card/95 p-4 shadow-[0_34px_90px_hsl(var(--primary)/0.18)] backdrop-blur-xl transition-transform duration-500 hover:rotate-[-3deg] lg:translate-y-8">
+              <div className="rounded-[1.7rem] border border-border bg-background p-4 shadow-inner">
                 <div className="mb-4 flex items-center justify-between">
                   <div>
-                    <p className="text-[11px] font-extrabold uppercase tracking-[0.18em] text-muted-foreground">Live command center</p>
-                    <h2 className="mt-1 text-[22px] font-extrabold leading-[28px] tracking-normal">Демо мэра</h2>
+                    <p className="text-[11px] font-extrabold uppercase tracking-[0.18em] text-muted-foreground">Mayor tablet · MVP</p>
+                    <h2 className="mt-1 text-[22px] font-extrabold leading-[28px] tracking-normal">Пульт управления городом</h2>
                   </div>
                   <span className="rounded-full bg-success/10 px-3 py-1 text-xs font-bold text-success">online</span>
                 </div>
