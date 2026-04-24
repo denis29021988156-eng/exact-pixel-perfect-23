@@ -251,6 +251,10 @@
     animation: live-progress 3.6s ease-in-out infinite;
   }
 
+  .live-badge {
+    animation: live-badge-pulse 2.8s ease-in-out infinite;
+  }
+
   .live-bar {
     transform-origin: bottom;
     animation: live-bar-scale 2.4s ease-in-out infinite;
@@ -263,8 +267,8 @@
   }
 
   @keyframes tablet-float {
-    0%, 100% { transform: perspective(1100px) rotateX(8deg) rotateY(-15deg) rotateZ(-6deg) translateY(0); }
-    50% { transform: perspective(1100px) rotateX(6deg) rotateY(-12deg) rotateZ(-8deg) translateY(-14px); }
+    0%, 100% { transform: perspective(1100px) rotateX(8deg) rotateY(15deg) rotateZ(6deg) translateY(0); }
+    50% { transform: perspective(1100px) rotateX(6deg) rotateY(12deg) rotateZ(8deg) translateY(-14px); }
   }
 
   @keyframes screen-sheen {
@@ -279,12 +283,17 @@
   }
 
   @keyframes live-progress {
-    0%, 100% { width: 58%; }
-    50% { width: 84%; }
+    0%, 100% { width: var(--progress-base, 58%); }
+    50% { width: var(--progress-peak, 84%); }
+  }
+
+  @keyframes live-badge-pulse {
+    0%, 100% { transform: translateY(0) scale(1); opacity: 0.78; }
+    50% { transform: translateY(-1px) scale(1.04); opacity: 1; }
   }
 
   @keyframes live-bar-scale {
-    0%, 100% { transform: scaleY(0.58); opacity: 0.55; }
-    50% { transform: scaleY(1); opacity: 1; }
+    0%, 100% { transform: scaleY(var(--bar-low, 0.58)); opacity: 0.55; }
+    50% { transform: scaleY(var(--bar-high, 1)); opacity: 1; }
   }
 }

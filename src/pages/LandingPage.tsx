@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { type CSSProperties, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   ArrowRight,
@@ -189,6 +189,21 @@ export default function LandingPage() {
     ? Math.round((publicMetrics.spentBudget / publicMetrics.totalBudget) * 100)
     : 0;
   const healthScore = Math.max(42, Math.min(98, 92 - publicMetrics.criticalIncidents * 9 - publicMetrics.riskProjects * 4));
+  const progressPeak = Math.min(100, healthScore + Math.max(5, publicMetrics.criticalIncidents * 2 + publicMetrics.riskProjects * 3));
+  const progressStyle = {
+    '--progress-base': `${healthScore}%`,
+    '--progress-peak': `${progressPeak}%`,
+  } as CSSProperties;
+  const barMetrics = [
+    publicMetrics.activeIncidents * 3,
+    publicMetrics.activeTasks * 1.6,
+    publicMetrics.activeProjects * 6,
+    (publicMetrics.riskProjects + publicMetrics.criticalIncidents) * 12,
+    budgetPct,
+    healthScore,
+    Math.max(18, 100 - publicMetrics.criticalIncidents * 14),
+    Math.max(24, 100 - publicMetrics.riskProjects * 11),
+  ].map((value) => Math.max(20, Math.min(96, Math.round(value))));
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-background text-foreground">
@@ -293,7 +308,7 @@ export default function LandingPage() {
                     <p className="text-[11px] font-extrabold uppercase tracking-[0.18em] text-muted-foreground">Public dashboard · live metrics</p>
                     <h2 className="mt-1 text-[22px] font-extrabold leading-[28px] tracking-normal">City Health Index</h2>
                   </div>
-                  <span className="rounded-full bg-success/10 px-3 py-1 text-xs font-bold text-success">online</span>
+                  <span className="live-badge rounded-full bg-success/10 px-3 py-1 text-xs font-bold text-success">online</span>
                 </div>
 
                 <div className="grid gap-3">
@@ -307,7 +322,7 @@ export default function LandingPage() {
                       <BarChart3 className="h-6 w-6 text-primary" />
                     </div>
                     <div className="mt-5 h-2.5 overflow-hidden rounded-full bg-secondary">
-                      <div className="h-full rounded-full bg-primary transition-all duration-700" style={{ width: `${healthScore}%` }} />
+                      <div className="live-progress-fill h-full rounded-full bg-primary transition-all duration-700" style={progressStyle} />
                     </div>
                   </div>
 
@@ -325,11 +340,16 @@ export default function LandingPage() {
                   </div>
 
                   <div className="grid h-28 grid-cols-8 items-end gap-2 rounded-2xl border border-border bg-card p-4">
-                    {[publicMetrics.activeIncidents, publicMetrics.activeTasks, publicMetrics.activeProjects, publicMetrics.riskProjects + 8, budgetPct, healthScore, publicMetrics.criticalIncidents + 18, publicMetrics.activeProjects + 24].map((height, index) => (
+                    {barMetrics.map((height, index) => (
                       <span
                         key={height + index}
                         className="live-bar rounded-t-lg bg-primary/70"
-                        style={{ height: `${Math.max(22, Math.min(96, Number(height)))}%`, animationDelay: `${index * 120}ms` }}
+                        style={{
+                          height: `${height}%`,
+                          animationDelay: `${index * 120}ms`,
+                          '--bar-low': Math.max(0.38, (height - 18) / height),
+                          '--bar-high': Math.min(1.16, (height + 10) / height),
+                        } as CSSProperties}
                       />
                     ))}
                   </div>
@@ -338,17 +358,17 @@ export default function LandingPage() {
                     <div className="rounded-2xl border border-border bg-surface-muted p-4">
                       <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground">Проекты</p>
                       <p className="mt-2 text-2xl font-extrabold text-foreground">{publicMetrics.activeProjects}</p>
-                      <p className="text-xs font-bold text-warning">{publicMetrics.riskProjects} в риске</p>
+                      <p className="live-badge text-xs font-bold text-warning">{publicMetrics.riskProjects} в риске</p>
                     </div>
                     <div className="rounded-2xl border border-border bg-surface-muted p-4">
                       <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground">Бюджет</p>
                       <p className="mt-2 text-2xl font-extrabold text-foreground">{budgetPct}%</p>
-                      <p className="text-xs font-bold text-success">освоение</p>
+                      <p className="live-badge text-xs font-bold text-success">освоение</p>
                     </div>
                     <div className="rounded-2xl border border-border bg-surface-muted p-4">
                       <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground">Витрина</p>
                       <p className="mt-2 text-2xl font-extrabold text-foreground">live</p>
-                      <p className="text-xs font-bold text-primary">/public</p>
+                      <p className="live-badge text-xs font-bold text-primary">/public</p>
                     </div>
                   </div>
                 </div>
