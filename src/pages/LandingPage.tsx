@@ -231,8 +231,8 @@ export default function LandingPage() {
           <span className="flex h-10 w-10 items-center justify-center rounded-xl border border-border bg-card shadow-sm">
             <Shield className="h-5 w-5 text-primary" />
           </span>
-          <span>
-            <span className="block text-sm font-extrabold leading-none tracking-tight">City Intelligence OS</span>
+            <span>
+              <span className="block text-sm font-extrabold leading-none tracking-tight">Планшет Мэра</span>
             <span className="mt-1 block text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">Reutov demo</span>
           </span>
         </button>
@@ -298,13 +298,13 @@ export default function LandingPage() {
           </div>
 
           <div className="relative min-h-[640px] animate-fade-in-up lg:pl-2" style={{ animationDelay: '120ms' }}>
-            <div className="tablet-shell relative mx-auto w-full max-w-[760px] rounded-[3rem] border border-foreground/10 bg-foreground p-3 shadow-[0_42px_110px_hsl(var(--foreground)/0.22)] lg:-mr-6 lg:translate-y-8">
+              <div className="tablet-shell relative mx-auto w-full max-w-[760px] rounded-[3rem] border border-foreground/10 bg-foreground p-3 shadow-[0_42px_110px_hsl(var(--foreground)/0.22)] lg:-mr-6 lg:translate-y-8">
               <div className="rounded-[2.4rem] border border-card/20 bg-card p-2">
               <div className="tablet-screen rounded-[2rem] border border-border bg-background p-5 shadow-inner">
                 <div className="mb-4 flex items-center justify-between">
                   <div>
-                    <p className="text-[11px] font-extrabold uppercase tracking-[0.18em] text-muted-foreground">Public dashboard · live metrics</p>
-                    <h2 className="mt-1 text-[22px] font-extrabold leading-[28px] tracking-normal">City Health Index</h2>
+                    <p className="text-[11px] font-extrabold uppercase tracking-[0.18em] text-muted-foreground">Публичный дашборд · живые метрики</p>
+                    <h2 className="mt-1 text-[22px] font-extrabold leading-[28px] tracking-normal">Индекс здоровья города</h2>
                   </div>
                   <span className="live-badge rounded-full bg-success/10 px-3 py-1 text-xs font-bold text-success">online</span>
                 </div>
@@ -390,7 +390,7 @@ export default function LandingPage() {
         <section className="mx-auto max-w-7xl px-5 py-20 lg:px-8 lg:py-28">
           <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:items-end">
             <div>
-              <p className="section-heading text-primary">Боли мэра</p>
+              <p className="section-heading text-primary">Вызовы мэра</p>
               <h2 className="mt-4 text-[32px] font-extrabold leading-[38px] tracking-normal lg:text-[48px] lg:leading-[54px]">Что заказчик видит уже в MVP</h2>
             </div>
             <p className="max-w-2xl text-[17px] font-medium leading-[29px] text-foreground/70 lg:justify-self-end">
@@ -403,7 +403,7 @@ export default function LandingPage() {
             {pains.map(([pain, solution]) => (
               <div key={pain} className="grid gap-4 rounded-3xl border border-border bg-card p-6 shadow-sm md:grid-cols-2">
                 <div>
-                  <p className="text-[11px] font-extrabold uppercase tracking-[0.14em] text-danger">Боль</p>
+                  <p className="text-[11px] font-extrabold uppercase tracking-[0.14em] text-danger">Вызов</p>
                   <p className="mt-3 text-[15px] font-extrabold leading-[23px] text-foreground">{pain}</p>
                 </div>
                 <div>
@@ -419,7 +419,7 @@ export default function LandingPage() {
           <div className="mx-auto max-w-7xl px-5 lg:px-8">
             <div className="max-w-3xl">
               <p className="section-heading text-primary">Модель работы</p>
-              <h2 className="mt-4 text-[32px] font-extrabold leading-[38px] tracking-normal lg:text-[48px] lg:leading-[54px]">Достаточно мэра и небольшой команды операторов</h2>
+              <h2 className="mt-4 text-[32px] font-extrabold leading-[38px] tracking-normal lg:text-[48px] lg:leading-[54px]">Достаточно небольшой команды сотрудников и операторов</h2>
             </div>
 
             <div className="mt-12 grid gap-5 lg:grid-cols-3">
