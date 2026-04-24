@@ -317,13 +317,13 @@ export default function LandingPage() {
                 <div className="mb-6 flex items-start justify-between gap-4">
                   <div>
                     <p className="text-[11px] font-extrabold uppercase tracking-[0.16em] text-muted-foreground">{phase.phase}</p>
-                    <h3 className="mt-2 text-2xl font-extrabold tracking-tight">{phase.title}</h3>
+                    <h3 className="mt-2 text-[24px] font-extrabold leading-[30px] tracking-normal">{phase.title}</h3>
                   </div>
                   <span className="rounded-full bg-primary/10 px-3 py-1 text-sm font-extrabold text-primary">{phase.duration}</span>
                 </div>
                 <ul className="space-y-3">
                   {phase.items.map((item) => (
-                    <li key={item} className="flex items-start gap-3 text-sm font-semibold text-muted-foreground">
+                    <li key={item} className="flex items-start gap-3 text-[14px] font-semibold leading-[21px] text-foreground/65">
                       <CheckCircle className="mt-0.5 h-4 w-4 flex-shrink-0 text-success" />
                       <span>{item}</span>
                     </li>
@@ -342,8 +342,8 @@ export default function LandingPage() {
                   <Sparkles className="h-4 w-4" />
                   Демо для заказчика
                 </div>
-                <h2 className="text-3xl font-extrabold tracking-tight lg:text-4xl">Покажите не кризис, а управляемость</h2>
-                <p className="mt-4 max-w-2xl text-primary-foreground/80">
+                <h2 className="text-[32px] font-extrabold leading-[38px] tracking-normal lg:text-[40px] lg:leading-[46px]">Покажите не кризис, а управляемость</h2>
+                <p className="mt-4 max-w-2xl text-[16px] font-medium leading-[26px] text-primary-foreground/85">
                   Откройте приложение, публичный дашборд и презентацию как одну связанную историю внедрения.
                 </p>
               </div>
