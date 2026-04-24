@@ -137,11 +137,11 @@ export default function LandingPage() {
               <span className="text-[11px] font-extrabold uppercase tracking-[0.18em] text-muted-foreground">Управляемый город · AI · SLA</span>
             </div>
 
-            <h1 className="max-w-4xl text-5xl font-extrabold leading-[1.02] tracking-tight text-foreground sm:text-6xl lg:text-7xl">
+            <h1 className="max-w-4xl text-[44px] font-extrabold leading-[0.98] tracking-normal text-foreground sm:text-[56px] lg:text-[68px]">
               Автоматизируйте управление городом и покажите контроль за 8 недель
             </h1>
 
-            <p className="mt-7 max-w-2xl text-lg leading-8 text-muted-foreground">
+            <p className="mt-7 max-w-2xl text-[18px] font-medium leading-[30px] text-foreground/75">
               Светлая управленческая платформа для мэра: инциденты, поручения, департаменты,
               проекты, контракты и жалобы связаны в единую картину принятия решений.
             </p>
@@ -179,7 +179,7 @@ export default function LandingPage() {
                 <div className="mb-4 flex items-center justify-between">
                   <div>
                     <p className="text-[11px] font-extrabold uppercase tracking-[0.18em] text-muted-foreground">Live command center</p>
-                    <h2 className="mt-1 text-xl font-extrabold tracking-tight">Проверка управляемости</h2>
+                    <h2 className="mt-1 text-[22px] font-extrabold leading-[28px] tracking-normal">Проверка управляемости</h2>
                   </div>
                   <span className="rounded-full bg-success/10 px-3 py-1 text-xs font-bold text-success">online</span>
                 </div>
@@ -189,7 +189,7 @@ export default function LandingPage() {
                     <div className="flex items-start justify-between gap-4">
                       <div>
                         <p className="text-xs font-bold uppercase tracking-[0.14em] text-danger">Инцидент → задача → департамент</p>
-                        <p className="mt-2 text-sm font-semibold text-foreground">Прорыв теплотрассы связан с поручением ЖКХ</p>
+                        <p className="mt-2 text-[15px] font-bold leading-[22px] text-foreground">Прорыв теплотрассы связан с поручением ЖКХ</p>
                       </div>
                       <Target className="h-5 w-5 text-danger" />
                     </div>
@@ -206,7 +206,7 @@ export default function LandingPage() {
                     <div className="flex items-start justify-between gap-4">
                       <div>
                         <p className="text-xs font-bold uppercase tracking-[0.14em] text-primary">Проект → контракт</p>
-                        <p className="mt-2 text-sm font-semibold text-foreground">Ремонт школы выведен из риска, контракт под контролем</p>
+                        <p className="mt-2 text-[15px] font-bold leading-[22px] text-foreground">Ремонт школы выведен из риска, контракт под контролем</p>
                       </div>
                       <Layers3 className="h-5 w-5 text-primary" />
                     </div>
@@ -235,7 +235,7 @@ export default function LandingPage() {
             {metrics.map((metric) => (
               <div key={metric.label}>
                 <p className="text-3xl font-extrabold tracking-tight text-foreground">{metric.value}</p>
-                <p className="mt-1 text-sm font-semibold text-muted-foreground">{metric.label}</p>
+                <p className="mt-1 text-[13px] font-bold leading-[18px] text-foreground/65">{metric.label}</p>
               </div>
             ))}
           </div>
@@ -245,9 +245,9 @@ export default function LandingPage() {
           <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:items-end">
             <div>
               <p className="section-heading text-primary">Платформа</p>
-              <h2 className="mt-4 text-3xl font-extrabold tracking-tight lg:text-5xl">Часть функций уже работает, часть подключается на внедрении</h2>
+              <h2 className="mt-4 text-[32px] font-extrabold leading-[38px] tracking-normal lg:text-[48px] lg:leading-[54px]">Часть функций уже работает, часть подключается на внедрении</h2>
             </div>
-            <p className="max-w-2xl text-lg leading-8 text-muted-foreground lg:justify-self-end">
+            <p className="max-w-2xl text-[17px] font-medium leading-[29px] text-foreground/70 lg:justify-self-end">
               Лендинг честно показывает заказчику текущее демо и будущую настройку: не набор обещаний,
               а понятную систему, которую можно поэтапно довести до промышленного контура.
             </p>
@@ -260,8 +260,8 @@ export default function LandingPage() {
                   <card.icon className="h-6 w-6" />
                 </div>
                 <p className="mb-3 inline-flex rounded-full bg-secondary px-3 py-1 text-[11px] font-extrabold uppercase tracking-[0.12em] text-muted-foreground">{card.status}</p>
-                <h3 className="text-lg font-extrabold tracking-tight text-foreground">{card.title}</h3>
-                <p className="mt-3 text-sm leading-6 text-muted-foreground">{card.desc}</p>
+                <h3 className="text-[18px] font-extrabold leading-[24px] tracking-normal text-foreground">{card.title}</h3>
+                <p className="mt-3 text-[14px] font-medium leading-[22px] text-foreground/65">{card.desc}</p>
               </div>
             ))}
           </div>
@@ -271,15 +271,15 @@ export default function LandingPage() {
           <div className="mx-auto max-w-7xl px-5 lg:px-8">
             <div className="max-w-3xl">
               <p className="section-heading text-primary">Связность данных</p>
-              <h2 className="mt-4 text-3xl font-extrabold tracking-tight lg:text-5xl">Демо выглядит живым, потому что сущности связаны между собой</h2>
+              <h2 className="mt-4 text-[32px] font-extrabold leading-[38px] tracking-normal lg:text-[48px] lg:leading-[54px]">Демо выглядит живым, потому что сущности связаны между собой</h2>
             </div>
 
             <div className="mt-12 grid gap-5 lg:grid-cols-3">
               {workflow.map((item) => (
                 <div key={item.step} className="rounded-3xl border border-border bg-background p-7 shadow-sm">
                   <p className="text-sm font-extrabold text-primary">{item.step}</p>
-                  <h3 className="mt-5 text-2xl font-extrabold tracking-tight">{item.title}</h3>
-                  <p className="mt-3 text-sm leading-6 text-muted-foreground">{item.desc}</p>
+                  <h3 className="mt-5 text-[24px] font-extrabold leading-[30px] tracking-normal">{item.title}</h3>
+                  <p className="mt-3 text-[14px] font-medium leading-[22px] text-foreground/65">{item.desc}</p>
                 </div>
               ))}
             </div>
@@ -288,7 +288,7 @@ export default function LandingPage() {
               <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                 <div className="flex items-center gap-3">
                   <DatabaseZap className="h-6 w-6 text-primary" />
-                  <p className="font-extrabold">Жалобы → heatmap → эскалация → поручение → департамент</p>
+                  <p className="text-[16px] font-extrabold leading-[22px]">Жалобы → heatmap → эскалация → поручение → департамент</p>
                 </div>
                 <button
                   onClick={() => navigate('/app/map')}
@@ -305,8 +305,8 @@ export default function LandingPage() {
         <section id="rollout" className="mx-auto max-w-7xl px-5 py-20 lg:px-8 lg:py-28">
           <div className="mx-auto max-w-3xl text-center">
             <p className="section-heading text-primary">Внедрение</p>
-            <h2 className="mt-4 text-3xl font-extrabold tracking-tight lg:text-5xl">3 этапа без бюджета в презентации</h2>
-            <p className="mt-5 text-lg leading-8 text-muted-foreground">
+            <h2 className="mt-4 text-[32px] font-extrabold leading-[38px] tracking-normal lg:text-[48px] lg:leading-[54px]">3 этапа без бюджета в презентации</h2>
+            <p className="mt-5 text-[17px] font-medium leading-[29px] text-foreground/70">
               Сроки: 2 недели + 4 недели + 2 недели. Внутри третьего этапа — обучение команды 5–6 человек за 5 дней.
             </p>
           </div>
@@ -317,13 +317,13 @@ export default function LandingPage() {
                 <div className="mb-6 flex items-start justify-between gap-4">
                   <div>
                     <p className="text-[11px] font-extrabold uppercase tracking-[0.16em] text-muted-foreground">{phase.phase}</p>
-                    <h3 className="mt-2 text-2xl font-extrabold tracking-tight">{phase.title}</h3>
+                    <h3 className="mt-2 text-[24px] font-extrabold leading-[30px] tracking-normal">{phase.title}</h3>
                   </div>
                   <span className="rounded-full bg-primary/10 px-3 py-1 text-sm font-extrabold text-primary">{phase.duration}</span>
                 </div>
                 <ul className="space-y-3">
                   {phase.items.map((item) => (
-                    <li key={item} className="flex items-start gap-3 text-sm font-semibold text-muted-foreground">
+                    <li key={item} className="flex items-start gap-3 text-[14px] font-semibold leading-[21px] text-foreground/65">
                       <CheckCircle className="mt-0.5 h-4 w-4 flex-shrink-0 text-success" />
                       <span>{item}</span>
                     </li>
@@ -342,8 +342,8 @@ export default function LandingPage() {
                   <Sparkles className="h-4 w-4" />
                   Демо для заказчика
                 </div>
-                <h2 className="text-3xl font-extrabold tracking-tight lg:text-4xl">Покажите не кризис, а управляемость</h2>
-                <p className="mt-4 max-w-2xl text-primary-foreground/80">
+                <h2 className="text-[32px] font-extrabold leading-[38px] tracking-normal lg:text-[40px] lg:leading-[46px]">Покажите не кризис, а управляемость</h2>
+                <p className="mt-4 max-w-2xl text-[16px] font-medium leading-[26px] text-primary-foreground/85">
                   Откройте приложение, публичный дашборд и презентацию как одну связанную историю внедрения.
                 </p>
               </div>
