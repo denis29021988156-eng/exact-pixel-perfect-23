@@ -440,9 +440,9 @@ export default function LandingPage() {
                   <Sparkles className="h-4 w-4" />
                   Демо для заказчика
                 </div>
-                <h2 className="text-[32px] font-extrabold leading-[38px] tracking-normal lg:text-[40px] lg:leading-[46px]">Покажите не кризис, а управляемость</h2>
+                <h2 className="text-[32px] font-extrabold leading-[38px] tracking-normal lg:text-[40px] lg:leading-[46px]">Покажите, что уже работает и что будет настроено</h2>
                 <p className="mt-4 max-w-2xl text-[16px] font-medium leading-[26px] text-primary-foreground/85">
-                  Откройте приложение, публичный дашборд и презентацию как одну связанную историю внедрения.
+                  Откройте демо мэра и публичный дашборд как единую демонстрацию возможностей платформы и плана внедрения.
                 </p>
               </div>
               <div className="flex flex-col gap-3 sm:flex-row lg:flex-col">
@@ -450,7 +450,7 @@ export default function LandingPage() {
                   onClick={() => navigate('/app')}
                   className="inline-flex items-center justify-center gap-2 rounded-2xl bg-primary-foreground px-7 py-4 text-sm font-extrabold text-primary transition-all hover:-translate-y-0.5"
                 >
-                  Открыть приложение
+                  Открыть демо мэра
                   <ArrowRight className="h-4 w-4" />
                 </button>
                 <a
@@ -468,7 +468,7 @@ export default function LandingPage() {
 
       <footer className="relative z-10 border-t border-border bg-card/70 py-8">
         <div className="mx-auto flex max-w-7xl flex-col gap-3 px-5 text-sm text-muted-foreground md:flex-row md:items-center md:justify-between lg:px-8">
-          <p>© 2026 City Intelligence OS · Светлая платформа управления городом</p>
+          <p>© 2026 City Intelligence OS · Демонстрационная платформа управления городом</p>
           <div className="flex items-center gap-4">
             <span className="inline-flex items-center gap-1.5"><LockKeyhole className="h-3.5 w-3.5" /> RBAC</span>
             <span className="inline-flex items-center gap-1.5"><Users className="h-3.5 w-3.5" /> обучение 5–6 человек</span>
