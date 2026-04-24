@@ -271,15 +271,15 @@ export default function LandingPage() {
           <div className="mx-auto max-w-7xl px-5 lg:px-8">
             <div className="max-w-3xl">
               <p className="section-heading text-primary">Связность данных</p>
-              <h2 className="mt-4 text-3xl font-extrabold tracking-tight lg:text-5xl">Демо выглядит живым, потому что сущности связаны между собой</h2>
+              <h2 className="mt-4 text-[32px] font-extrabold leading-[38px] tracking-normal lg:text-[48px] lg:leading-[54px]">Демо выглядит живым, потому что сущности связаны между собой</h2>
             </div>
 
             <div className="mt-12 grid gap-5 lg:grid-cols-3">
               {workflow.map((item) => (
                 <div key={item.step} className="rounded-3xl border border-border bg-background p-7 shadow-sm">
                   <p className="text-sm font-extrabold text-primary">{item.step}</p>
-                  <h3 className="mt-5 text-2xl font-extrabold tracking-tight">{item.title}</h3>
-                  <p className="mt-3 text-sm leading-6 text-muted-foreground">{item.desc}</p>
+                  <h3 className="mt-5 text-[24px] font-extrabold leading-[30px] tracking-normal">{item.title}</h3>
+                  <p className="mt-3 text-[14px] font-medium leading-[22px] text-foreground/65">{item.desc}</p>
                 </div>
               ))}
             </div>
@@ -288,7 +288,7 @@ export default function LandingPage() {
               <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                 <div className="flex items-center gap-3">
                   <DatabaseZap className="h-6 w-6 text-primary" />
-                  <p className="font-extrabold">Жалобы → heatmap → эскалация → поручение → департамент</p>
+                  <p className="text-[16px] font-extrabold leading-[22px]">Жалобы → heatmap → эскалация → поручение → департамент</p>
                 </div>
                 <button
                   onClick={() => navigate('/app/map')}
@@ -305,8 +305,8 @@ export default function LandingPage() {
         <section id="rollout" className="mx-auto max-w-7xl px-5 py-20 lg:px-8 lg:py-28">
           <div className="mx-auto max-w-3xl text-center">
             <p className="section-heading text-primary">Внедрение</p>
-            <h2 className="mt-4 text-3xl font-extrabold tracking-tight lg:text-5xl">3 этапа без бюджета в презентации</h2>
-            <p className="mt-5 text-lg leading-8 text-muted-foreground">
+            <h2 className="mt-4 text-[32px] font-extrabold leading-[38px] tracking-normal lg:text-[48px] lg:leading-[54px]">3 этапа без бюджета в презентации</h2>
+            <p className="mt-5 text-[17px] font-medium leading-[29px] text-foreground/70">
               Сроки: 2 недели + 4 недели + 2 недели. Внутри третьего этапа — обучение команды 5–6 человек за 5 дней.
             </p>
           </div>
