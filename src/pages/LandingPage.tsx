@@ -221,9 +221,9 @@ export default function LandingPage() {
             style={{ animationDelay: particle.delay }}
           />
         ))}
-        <span className="landing-particle absolute left-[68%] top-[36%] h-3 w-3 rounded-full bg-primary/60" style={{ animationDelay: '880ms' }} />
-        <span className="landing-particle absolute left-[30%] top-[44%] h-2 w-2 rounded-full bg-success/65" style={{ animationDelay: '1320ms' }} />
-        <span className="landing-particle absolute left-[82%] top-[72%] h-2.5 w-2.5 rounded-full bg-info/65" style={{ animationDelay: '1680ms' }} />
+        <span className="landing-particle absolute left-[68%] top-[36%] h-8 w-8 rounded-xl border border-primary/30 bg-primary/10" style={{ animationDelay: '880ms' }} />
+        <span className="landing-particle absolute left-[30%] top-[44%] h-1.5 w-10 rounded-full bg-success/35" style={{ animationDelay: '1320ms' }} />
+        <span className="landing-particle absolute left-[82%] top-[72%] h-7 w-7 rounded-lg border border-info/30 bg-info/10" style={{ animationDelay: '1680ms' }} />
       </div>
 
       <header className="relative z-10 mx-auto flex h-20 max-w-7xl items-center justify-between px-5 lg:px-8">
@@ -298,7 +298,7 @@ export default function LandingPage() {
           </div>
 
           <div className="relative min-h-[640px] animate-fade-in-up lg:pl-2" style={{ animationDelay: '120ms' }}>
-              <div className="tablet-shell relative mx-auto w-full max-w-[760px] rounded-[3rem] border border-foreground/10 bg-foreground p-3 shadow-[0_42px_110px_hsl(var(--foreground)/0.22)] lg:-mr-6 lg:translate-y-8">
+              <div className="tablet-shell tablet-shell-front relative mx-auto w-full max-w-[760px] rounded-[3rem] border border-foreground/10 bg-foreground p-3 shadow-[0_42px_110px_hsl(var(--foreground)/0.22)] lg:-mr-6 lg:translate-y-8">
               <div className="rounded-[2.4rem] border border-card/20 bg-card p-2">
               <div className="tablet-screen rounded-[2rem] border border-border bg-background p-5 shadow-inner">
                 <div className="mb-4 flex items-center justify-between">
@@ -540,12 +540,12 @@ export default function LandingPage() {
               <div>
                 <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-primary-foreground/10 px-3 py-1 text-xs font-bold">
                   <Sparkles className="h-4 w-4" />
-                  MVP уже можно показать руководству
+                  Планшет Мэра
                 </div>
-                <h2 className="text-[32px] font-extrabold leading-[38px] tracking-normal lg:text-[40px] lg:leading-[46px]">Откройте MVP и покажите путь до промышленного запуска</h2>
+                <h2 className="text-[32px] font-extrabold leading-[38px] tracking-normal lg:text-[40px] lg:leading-[46px]">Откройте демо управленческого контура</h2>
                 <p className="mt-4 max-w-2xl text-[16px] font-medium leading-[26px] text-primary-foreground/85">
-                  Заказчик увидит живой интерфейс мэра, публичную витрину и понятную дорожную карту:
-                  что платформа умеет сейчас и какие настройки получит после заказа продукта.
+                  Посмотрите, какие сценарии уже работают в MVP: дашборд мэра, публичная витрина,
+                  инциденты, поручения, карта, AI-сводки и маршрут внедрения после заказа продукта.
                 </p>
               </div>
               <div className="flex flex-col gap-3 sm:flex-row lg:flex-col">
@@ -571,11 +571,7 @@ export default function LandingPage() {
 
       <footer className="relative z-10 border-t border-border bg-card/70 py-8">
         <div className="mx-auto flex max-w-7xl flex-col gap-3 px-5 text-sm text-muted-foreground md:flex-row md:items-center md:justify-between lg:px-8">
-          <p>© 2026 City Intelligence OS · Демонстрационная платформа управления городом</p>
-          <div className="flex items-center gap-4">
-            <span className="inline-flex items-center gap-1.5"><LockKeyhole className="h-3.5 w-3.5" /> RBAC</span>
-            <span className="inline-flex items-center gap-1.5"><Users className="h-3.5 w-3.5" /> обучение 5–6 человек</span>
-          </div>
+          <p>© 2026 Планшет Мэра · Демонстрационная платформа управления городом</p>
         </div>
       </footer>
     </div>
