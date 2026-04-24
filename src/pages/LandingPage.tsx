@@ -133,12 +133,14 @@ const metrics = [
 ];
 
 const particlePositions = [
-  { className: 'left-[8%] top-[14%] h-2 w-2 bg-primary/35', delay: '0ms' },
-  { className: 'left-[18%] top-[72%] h-1.5 w-1.5 bg-success/40', delay: '240ms' },
-  { className: 'left-[44%] top-[8%] h-2.5 w-2.5 bg-accent/50', delay: '520ms' },
-  { className: 'right-[12%] top-[20%] h-1.5 w-1.5 bg-primary/40', delay: '160ms' },
-  { className: 'right-[18%] bottom-[18%] h-2 w-2 bg-warning/45', delay: '420ms' },
-  { className: 'right-[42%] bottom-[8%] h-1.5 w-1.5 bg-info/40', delay: '720ms' },
+  { className: 'left-[5%] top-[12%] h-3 w-3 bg-primary/70', delay: '0ms' },
+  { className: 'left-[18%] top-[72%] h-2.5 w-2.5 bg-success/70', delay: '240ms' },
+  { className: 'left-[42%] top-[6%] h-4 w-4 bg-primary/45', delay: '520ms' },
+  { className: 'right-[8%] top-[18%] h-2.5 w-2.5 bg-primary/75', delay: '160ms' },
+  { className: 'right-[16%] bottom-[16%] h-3 w-3 bg-warning/70', delay: '420ms' },
+  { className: 'right-[40%] bottom-[6%] h-2.5 w-2.5 bg-info/70', delay: '720ms' },
+  { className: 'left-[3%] bottom-[30%] h-2 w-2 bg-danger/55', delay: '960ms' },
+  { className: 'right-[4%] bottom-[42%] h-2 w-2 bg-success/65', delay: '1160ms' },
 ];
 
 export default function LandingPage() {
@@ -226,22 +228,23 @@ export default function LandingPage() {
             </div>
           </div>
 
-          <div className="relative min-h-[560px] animate-fade-in-up lg:pl-6" style={{ animationDelay: '120ms' }}>
-            <div className="absolute inset-0 overflow-hidden rounded-[3rem]">
+          <div className="relative min-h-[600px] animate-fade-in-up lg:pl-6" style={{ animationDelay: '120ms' }}>
+            <div className="absolute inset-0 overflow-hidden rounded-[3rem] bg-gradient-to-br from-primary/5 via-card/30 to-success/5">
               {particlePositions.map((particle) => (
                 <span
                   key={particle.className}
-                  className={`absolute rounded-full shadow-[0_0_28px_hsl(var(--primary)/0.28)] animate-fade-in-up ${particle.className}`}
+                  className={`landing-particle absolute rounded-full ${particle.className}`}
                   style={{ animationDelay: particle.delay }}
                 />
               ))}
-              <span className="absolute left-[14%] top-[24%] h-px w-32 rotate-12 bg-gradient-to-r from-transparent via-primary/35 to-transparent" />
-              <span className="absolute right-[10%] top-[52%] h-px w-40 -rotate-12 bg-gradient-to-r from-transparent via-success/30 to-transparent" />
-              <span className="absolute bottom-[18%] left-[26%] h-px w-28 rotate-[28deg] bg-gradient-to-r from-transparent via-info/30 to-transparent" />
+              <span className="absolute left-[12%] top-[23%] h-px w-40 rotate-12 bg-gradient-to-r from-transparent via-primary/55 to-transparent" />
+              <span className="absolute right-[7%] top-[52%] h-px w-48 -rotate-12 bg-gradient-to-r from-transparent via-success/45 to-transparent" />
+              <span className="absolute bottom-[18%] left-[22%] h-px w-36 rotate-[28deg] bg-gradient-to-r from-transparent via-info/45 to-transparent" />
             </div>
 
-            <div className="relative mx-auto w-full max-w-[560px] rotate-[-5deg] rounded-[2.4rem] border border-border bg-card/95 p-4 shadow-[0_34px_90px_hsl(var(--primary)/0.18)] backdrop-blur-xl transition-transform duration-500 hover:rotate-[-3deg] lg:translate-y-8">
-              <div className="rounded-[1.7rem] border border-border bg-background p-4 shadow-inner">
+            <div className="tablet-shell relative mx-auto w-full max-w-[610px] rounded-[3rem] border border-foreground/10 bg-foreground p-3 shadow-[0_42px_110px_hsl(var(--foreground)/0.22)] lg:translate-y-8">
+              <div className="rounded-[2.4rem] border border-card/20 bg-card p-2">
+              <div className="tablet-screen rounded-[2rem] border border-border bg-background p-5 shadow-inner">
                 <div className="mb-4 flex items-center justify-between">
                   <div>
                     <p className="text-[11px] font-extrabold uppercase tracking-[0.18em] text-muted-foreground">Mayor tablet · MVP</p>
@@ -251,7 +254,7 @@ export default function LandingPage() {
                 </div>
 
                 <div className="grid gap-3">
-                  <div className="rounded-2xl border border-border bg-card p-4">
+                  <div className="live-signal-row rounded-2xl border border-border bg-card p-4">
                     <div className="flex items-start justify-between gap-4">
                       <div>
                         <p className="text-xs font-bold uppercase tracking-[0.14em] text-danger">Инцидент → задача → департамент</p>
@@ -277,9 +280,19 @@ export default function LandingPage() {
                       <Layers3 className="h-5 w-5 text-primary" />
                     </div>
                     <div className="mt-4 h-2 overflow-hidden rounded-full bg-secondary">
-                      <div className="h-full w-[76%] rounded-full bg-success" />
+                      <div className="live-progress-fill h-full rounded-full bg-success" />
                     </div>
                     <p className="mt-2 text-xs font-semibold text-muted-foreground">Исполнение: 76%, требуется контроль срока</p>
+                  </div>
+
+                  <div className="grid h-24 grid-cols-8 items-end gap-2 rounded-2xl border border-border bg-surface-muted p-4">
+                    {[42, 70, 56, 88, 62, 96, 68, 82].map((height, index) => (
+                      <span
+                        key={height + index}
+                        className="live-bar rounded-t-lg bg-primary/70"
+                        style={{ height: `${height}%`, animationDelay: `${index * 120}ms` }}
+                      />
+                    ))}
                   </div>
 
                   <div className="grid grid-cols-3 gap-3">
@@ -291,6 +304,7 @@ export default function LandingPage() {
                     ))}
                   </div>
                 </div>
+              </div>
               </div>
             </div>
           </div>
