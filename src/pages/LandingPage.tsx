@@ -5,17 +5,14 @@ import {
   BrainCircuit,
   CheckCircle,
   ChevronRight,
-  Clock,
   DatabaseZap,
   FileSpreadsheet,
   Globe,
-  GraduationCap,
   Layers3,
   LockKeyhole,
   Map,
   MessageSquare,
   Radio,
-  Rocket,
   Shield,
   Sparkles,
   Target,
@@ -23,9 +20,9 @@ import {
 } from 'lucide-react';
 
 const liveSignals = [
-  { label: 'Мэр', value: 'видит всё', tone: 'primary' },
-  { label: 'Операторы', value: 'вносят данные', tone: 'success' },
-  { label: 'AI', value: 'готовит сводки', tone: 'warning' },
+  { label: 'MVP', value: 'уже показывает контур', tone: 'primary' },
+  { label: 'Команда', value: 'видит роли и SLA', tone: 'success' },
+  { label: 'После заказа', value: 'подключаем данные города', tone: 'warning' },
 ];
 
 const capabilityCards = [
@@ -133,6 +130,15 @@ const metrics = [
   { value: '2–5', label: 'операторов вносят данные' },
   { value: '9', label: 'модулей демонстрации' },
   { value: '8', label: 'недель до приёмки' },
+];
+
+const particlePositions = [
+  { className: 'left-[8%] top-[14%] h-2 w-2 bg-primary/35', delay: '0ms' },
+  { className: 'left-[18%] top-[72%] h-1.5 w-1.5 bg-success/40', delay: '240ms' },
+  { className: 'left-[44%] top-[8%] h-2.5 w-2.5 bg-accent/50', delay: '520ms' },
+  { className: 'right-[12%] top-[20%] h-1.5 w-1.5 bg-primary/40', delay: '160ms' },
+  { className: 'right-[18%] bottom-[18%] h-2 w-2 bg-warning/45', delay: '420ms' },
+  { className: 'right-[42%] bottom-[8%] h-1.5 w-1.5 bg-info/40', delay: '720ms' },
 ];
 
 export default function LandingPage() {
