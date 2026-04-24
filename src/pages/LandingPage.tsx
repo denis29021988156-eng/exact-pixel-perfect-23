@@ -10,14 +10,12 @@ import {
   FileSpreadsheet,
   Globe,
   Layers3,
-  LockKeyhole,
   Map,
   MessageSquare,
   Radio,
   Shield,
   Sparkles,
   Target,
-  Users,
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -145,14 +143,14 @@ const metrics = [
 ];
 
 const particlePositions = [
-  { className: 'left-[5%] top-[12%] h-3 w-3 bg-primary/70', delay: '0ms' },
-  { className: 'left-[18%] top-[72%] h-2.5 w-2.5 bg-success/70', delay: '240ms' },
-  { className: 'left-[42%] top-[6%] h-4 w-4 bg-primary/45', delay: '520ms' },
-  { className: 'right-[8%] top-[18%] h-2.5 w-2.5 bg-primary/75', delay: '160ms' },
-  { className: 'right-[16%] bottom-[16%] h-3 w-3 bg-warning/70', delay: '420ms' },
-  { className: 'right-[40%] bottom-[6%] h-2.5 w-2.5 bg-info/70', delay: '720ms' },
-  { className: 'left-[3%] bottom-[30%] h-2 w-2 bg-danger/55', delay: '960ms' },
-  { className: 'right-[4%] bottom-[42%] h-2 w-2 bg-success/65', delay: '1160ms' },
+  { className: 'left-[5%] top-[12%] h-6 w-6 rounded-lg border border-primary/35 bg-primary/10', delay: '0ms' },
+  { className: 'left-[18%] top-[72%] h-8 w-1.5 rounded-full bg-success/35', delay: '240ms' },
+  { className: 'left-[42%] top-[6%] h-5 w-10 rounded-full border border-primary/30 bg-card/35', delay: '520ms' },
+  { className: 'right-[8%] top-[18%] h-7 w-7 rounded-full border border-primary/35 bg-primary/10', delay: '160ms' },
+  { className: 'right-[16%] bottom-[16%] h-5 w-12 rounded-lg bg-warning/25', delay: '420ms' },
+  { className: 'right-[40%] bottom-[6%] h-6 w-6 rounded-md border border-info/35 bg-info/10', delay: '720ms' },
+  { className: 'left-[3%] bottom-[30%] h-10 w-1.5 rounded-full bg-danger/25', delay: '960ms' },
+  { className: 'right-[4%] bottom-[42%] h-7 w-7 rounded-lg border border-success/35 bg-success/10', delay: '1160ms' },
 ];
 
 export default function LandingPage() {
