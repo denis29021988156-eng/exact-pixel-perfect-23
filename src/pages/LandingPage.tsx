@@ -184,12 +184,12 @@ export default function LandingPage() {
             </div>
 
             <h1 className="max-w-4xl text-[44px] font-extrabold leading-[0.98] tracking-normal text-foreground sm:text-[56px] lg:text-[68px]">
-              Автоматизируйте управление городом и покажите контроль за 8 недель
+              Автоматизируйте управление городом за 8 недель
             </h1>
 
             <p className="mt-7 max-w-2xl text-[18px] font-medium leading-[30px] text-foreground/75">
-              Светлая управленческая платформа для мэра: инциденты, поручения, департаменты,
-              проекты, контракты и жалобы связаны в единую картину принятия решений.
+              Демонстрационный контур показывает, как мэр видит город на одном экране: инциденты,
+              поручения, проекты, контракты, обращения граждан и AI-сводки для решений.
             </p>
 
             <div className="mt-10 flex flex-col gap-3 sm:flex-row">
@@ -197,7 +197,7 @@ export default function LandingPage() {
                 onClick={() => navigate('/app')}
                 className="group inline-flex items-center justify-center gap-2 rounded-2xl bg-primary px-7 py-4 text-sm font-extrabold text-primary-foreground shadow-btn transition-all hover:-translate-y-0.5 hover:bg-primary/90"
               >
-                Смотреть рабочее демо
+                Открыть демо мэра
                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
               </button>
               <a
@@ -225,7 +225,7 @@ export default function LandingPage() {
                 <div className="mb-4 flex items-center justify-between">
                   <div>
                     <p className="text-[11px] font-extrabold uppercase tracking-[0.18em] text-muted-foreground">Live command center</p>
-                    <h2 className="mt-1 text-[22px] font-extrabold leading-[28px] tracking-normal">Проверка управляемости</h2>
+                    <h2 className="mt-1 text-[22px] font-extrabold leading-[28px] tracking-normal">Демо мэра</h2>
                   </div>
                   <span className="rounded-full bg-success/10 px-3 py-1 text-xs font-bold text-success">online</span>
                 </div>
@@ -235,7 +235,7 @@ export default function LandingPage() {
                     <div className="flex items-start justify-between gap-4">
                       <div>
                         <p className="text-xs font-bold uppercase tracking-[0.14em] text-danger">Инцидент → задача → департамент</p>
-                        <p className="mt-2 text-[15px] font-bold leading-[22px] text-foreground">Прорыв теплотрассы связан с поручением ЖКХ</p>
+                        <p className="mt-2 text-[15px] font-bold leading-[22px] text-foreground">Прорыв теплотрассы передан в департамент ЖКХ</p>
                       </div>
                       <Target className="h-5 w-5 text-danger" />
                     </div>
@@ -252,14 +252,14 @@ export default function LandingPage() {
                     <div className="flex items-start justify-between gap-4">
                       <div>
                         <p className="text-xs font-bold uppercase tracking-[0.14em] text-primary">Проект → контракт</p>
-                        <p className="mt-2 text-[15px] font-bold leading-[22px] text-foreground">Ремонт школы выведен из риска, контракт под контролем</p>
+                        <p className="mt-2 text-[15px] font-bold leading-[22px] text-foreground">Ремонт школы: проект, подрядчик и статус исполнения</p>
                       </div>
                       <Layers3 className="h-5 w-5 text-primary" />
                     </div>
                     <div className="mt-4 h-2 overflow-hidden rounded-full bg-secondary">
                       <div className="h-full w-[76%] rounded-full bg-success" />
                     </div>
-                    <p className="mt-2 text-xs font-semibold text-muted-foreground">Исполнение: 76%, риск снижен</p>
+                    <p className="mt-2 text-xs font-semibold text-muted-foreground">Исполнение: 76%, требуется контроль срока</p>
                   </div>
 
                   <div className="grid grid-cols-3 gap-3">
