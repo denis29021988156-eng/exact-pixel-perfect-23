@@ -235,7 +235,7 @@ export default function LandingPage() {
             {metrics.map((metric) => (
               <div key={metric.label}>
                 <p className="text-3xl font-extrabold tracking-tight text-foreground">{metric.value}</p>
-                <p className="mt-1 text-sm font-semibold text-muted-foreground">{metric.label}</p>
+                <p className="mt-1 text-[13px] font-bold leading-[18px] text-foreground/65">{metric.label}</p>
               </div>
             ))}
           </div>
@@ -245,9 +245,9 @@ export default function LandingPage() {
           <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:items-end">
             <div>
               <p className="section-heading text-primary">Платформа</p>
-              <h2 className="mt-4 text-3xl font-extrabold tracking-tight lg:text-5xl">Часть функций уже работает, часть подключается на внедрении</h2>
+              <h2 className="mt-4 text-[32px] font-extrabold leading-[38px] tracking-normal lg:text-[48px] lg:leading-[54px]">Часть функций уже работает, часть подключается на внедрении</h2>
             </div>
-            <p className="max-w-2xl text-lg leading-8 text-muted-foreground lg:justify-self-end">
+            <p className="max-w-2xl text-[17px] font-medium leading-[29px] text-foreground/70 lg:justify-self-end">
               Лендинг честно показывает заказчику текущее демо и будущую настройку: не набор обещаний,
               а понятную систему, которую можно поэтапно довести до промышленного контура.
             </p>
@@ -260,8 +260,8 @@ export default function LandingPage() {
                   <card.icon className="h-6 w-6" />
                 </div>
                 <p className="mb-3 inline-flex rounded-full bg-secondary px-3 py-1 text-[11px] font-extrabold uppercase tracking-[0.12em] text-muted-foreground">{card.status}</p>
-                <h3 className="text-lg font-extrabold tracking-tight text-foreground">{card.title}</h3>
-                <p className="mt-3 text-sm leading-6 text-muted-foreground">{card.desc}</p>
+                <h3 className="text-[18px] font-extrabold leading-[24px] tracking-normal text-foreground">{card.title}</h3>
+                <p className="mt-3 text-[14px] font-medium leading-[22px] text-foreground/65">{card.desc}</p>
               </div>
             ))}
           </div>
