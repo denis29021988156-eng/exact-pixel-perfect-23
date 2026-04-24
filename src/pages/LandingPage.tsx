@@ -311,10 +311,11 @@ export default function LandingPage() {
           <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:items-end">
             <div>
               <p className="section-heading text-primary">Боли мэра</p>
-              <h2 className="mt-4 text-[32px] font-extrabold leading-[38px] tracking-normal lg:text-[48px] lg:leading-[54px]">Что демонстрация показывает заказчику</h2>
+              <h2 className="mt-4 text-[32px] font-extrabold leading-[38px] tracking-normal lg:text-[48px] lg:leading-[54px]">Что заказчик видит уже в MVP</h2>
             </div>
             <p className="max-w-2xl text-[17px] font-medium leading-[29px] text-foreground/70 lg:justify-self-end">
-              Лендинг не продаёт обещание, а объясняет сценарий: какие проблемы управления уже видны в демо и что будет доведено до промышленного режима.
+              Страница показывает рабочий контур продукта: какие управленческие сценарии уже можно открыть,
+              проверить и обсудить — и что будет настроено после запуска проекта.
             </p>
           </div>
 
@@ -367,7 +368,8 @@ export default function LandingPage() {
               <h2 className="mt-4 text-[32px] font-extrabold leading-[38px] tracking-normal lg:text-[48px] lg:leading-[54px]">9 модулей в одной демонстрационной платформе</h2>
             </div>
             <p className="max-w-2xl text-[17px] font-medium leading-[29px] text-foreground/70 lg:justify-self-end">
-              Часть модулей уже доступна в демо, часть требует подключения данных, регламентов и городских каналов на этапе внедрения.
+              MVP показывает основу платформы. На внедрении модули наполняются данными конкретного города,
+              ролями сотрудников, регламентами SLA и подключёнными каналами обращений.
             </p>
           </div>
 
@@ -458,11 +460,12 @@ export default function LandingPage() {
               <div>
                 <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-primary-foreground/10 px-3 py-1 text-xs font-bold">
                   <Sparkles className="h-4 w-4" />
-                  Демо для заказчика
+                  MVP уже можно показать руководству
                 </div>
-                <h2 className="text-[32px] font-extrabold leading-[38px] tracking-normal lg:text-[40px] lg:leading-[46px]">Покажите, что уже работает и что будет настроено</h2>
+                <h2 className="text-[32px] font-extrabold leading-[38px] tracking-normal lg:text-[40px] lg:leading-[46px]">Откройте MVP и покажите путь до промышленного запуска</h2>
                 <p className="mt-4 max-w-2xl text-[16px] font-medium leading-[26px] text-primary-foreground/85">
-                  Откройте демо мэра и публичный дашборд как единую демонстрацию возможностей платформы и плана внедрения.
+                  Заказчик увидит живой интерфейс мэра, публичную витрину и понятную дорожную карту:
+                  что платформа умеет сейчас и какие настройки получит после заказа продукта.
                 </p>
               </div>
               <div className="flex flex-col gap-3 sm:flex-row lg:flex-col">
