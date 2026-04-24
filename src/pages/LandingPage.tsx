@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   ArrowRight,
@@ -18,6 +19,17 @@ import {
   Target,
   Users,
 } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+
+const defaultPublicMetrics = {
+  activeIncidents: 24,
+  criticalIncidents: 3,
+  activeTasks: 42,
+  activeProjects: 11,
+  riskProjects: 2,
+  totalBudget: 840,
+  spentBudget: 512,
+};
 
 const liveSignals = [
   { label: 'MVP', value: 'уже показывает контур', tone: 'primary' },
@@ -145,6 +157,38 @@ const particlePositions = [
 
 export default function LandingPage() {
   const navigate = useNavigate();
+  const [publicMetrics, setPublicMetrics] = useState(defaultPublicMetrics);
+
+  useEffect(() => {
+    let mounted = true;
+
+    supabase
+      .from('public_metrics')
+      .select('*')
+      .maybeSingle()
+      .then(({ data }) => {
+        if (!mounted || !data) return;
+
+        setPublicMetrics({
+          activeIncidents: data.active_incidents ?? defaultPublicMetrics.activeIncidents,
+          criticalIncidents: data.critical_incidents ?? defaultPublicMetrics.criticalIncidents,
+          activeTasks: data.active_tasks ?? defaultPublicMetrics.activeTasks,
+          activeProjects: data.active_projects ?? defaultPublicMetrics.activeProjects,
+          riskProjects: data.risk_projects ?? defaultPublicMetrics.riskProjects,
+          totalBudget: data.total_budget ?? defaultPublicMetrics.totalBudget,
+          spentBudget: data.spent_budget ?? defaultPublicMetrics.spentBudget,
+        });
+      });
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  const budgetPct = publicMetrics.totalBudget > 0
+    ? Math.round((publicMetrics.spentBudget / publicMetrics.totalBudget) * 100)
+    : 0;
+  const healthScore = Math.max(42, Math.min(98, 92 - publicMetrics.criticalIncidents * 9 - publicMetrics.riskProjects * 4));
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-background text-foreground">
@@ -240,73 +284,72 @@ export default function LandingPage() {
             </div>
           </div>
 
-          <div className="relative min-h-[600px] animate-fade-in-up lg:pl-6" style={{ animationDelay: '120ms' }}>
-            <div className="absolute inset-0 overflow-hidden rounded-[3rem]">
-              <span className="absolute left-[12%] top-[23%] h-px w-40 rotate-12 bg-gradient-to-r from-transparent via-primary/55 to-transparent" />
-              <span className="absolute right-[7%] top-[52%] h-px w-48 -rotate-12 bg-gradient-to-r from-transparent via-success/45 to-transparent" />
-              <span className="absolute bottom-[18%] left-[22%] h-px w-36 rotate-[28deg] bg-gradient-to-r from-transparent via-info/45 to-transparent" />
-            </div>
-
-            <div className="tablet-shell relative mx-auto w-full max-w-[680px] rounded-[3rem] border border-foreground/10 bg-foreground p-3 shadow-[0_42px_110px_hsl(var(--foreground)/0.22)] lg:translate-y-8">
+          <div className="relative min-h-[640px] animate-fade-in-up lg:pl-2" style={{ animationDelay: '120ms' }}>
+            <div className="tablet-shell relative mx-auto w-full max-w-[760px] rounded-[3rem] border border-foreground/10 bg-foreground p-3 shadow-[0_42px_110px_hsl(var(--foreground)/0.22)] lg:-mr-6 lg:translate-y-8">
               <div className="rounded-[2.4rem] border border-card/20 bg-card p-2">
               <div className="tablet-screen rounded-[2rem] border border-border bg-background p-5 shadow-inner">
                 <div className="mb-4 flex items-center justify-between">
                   <div>
-                    <p className="text-[11px] font-extrabold uppercase tracking-[0.18em] text-muted-foreground">Mayor tablet · MVP</p>
-                    <h2 className="mt-1 text-[22px] font-extrabold leading-[28px] tracking-normal">Пульт управления городом</h2>
+                    <p className="text-[11px] font-extrabold uppercase tracking-[0.18em] text-muted-foreground">Public dashboard · live metrics</p>
+                    <h2 className="mt-1 text-[22px] font-extrabold leading-[28px] tracking-normal">City Health Index</h2>
                   </div>
                   <span className="rounded-full bg-success/10 px-3 py-1 text-xs font-bold text-success">online</span>
                 </div>
 
                 <div className="grid gap-3">
-                  <div className="live-signal-row rounded-2xl border border-border bg-card p-4">
+                  <div className="live-signal-row rounded-2xl border border-border bg-card p-5">
                     <div className="flex items-start justify-between gap-4">
                       <div>
-                        <p className="text-xs font-bold uppercase tracking-[0.14em] text-danger">Инцидент → задача → департамент</p>
-                        <p className="mt-2 text-[15px] font-bold leading-[22px] text-foreground">Прорыв теплотрассы передан в департамент ЖКХ</p>
+                        <p className="text-xs font-bold uppercase tracking-[0.14em] text-primary">Индекс здоровья города</p>
+                        <p className="mt-2 text-[44px] font-extrabold leading-none text-foreground">{healthScore}</p>
+                        <p className="mt-2 text-[13px] font-bold text-foreground/65">Сводный показатель по инцидентам, проектам и поручениям</p>
                       </div>
-                      <Target className="h-5 w-5 text-danger" />
+                      <BarChart3 className="h-6 w-6 text-primary" />
                     </div>
-                    <div className="mt-4 flex flex-wrap items-center gap-2 text-xs font-bold text-muted-foreground">
-                      <span className="rounded-full bg-danger/10 px-3 py-1 text-danger">high</span>
-                      <ChevronRight className="h-4 w-4" />
-                      <span className="rounded-full bg-primary/10 px-3 py-1 text-primary">SLA 2ч</span>
-                      <ChevronRight className="h-4 w-4" />
-                      <span className="rounded-full bg-success/10 px-3 py-1 text-success">ЖКХ</span>
+                    <div className="mt-5 h-2.5 overflow-hidden rounded-full bg-secondary">
+                      <div className="h-full rounded-full bg-primary transition-all duration-700" style={{ width: `${healthScore}%` }} />
                     </div>
                   </div>
 
-                  <div className="rounded-2xl border border-border bg-card p-4">
-                    <div className="flex items-start justify-between gap-4">
-                      <div>
-                        <p className="text-xs font-bold uppercase tracking-[0.14em] text-primary">Проект → контракт</p>
-                        <p className="mt-2 text-[15px] font-bold leading-[22px] text-foreground">Ремонт школы: проект, подрядчик и статус исполнения</p>
+                  <div className="grid grid-cols-3 gap-3">
+                    {[
+                      ['Инциденты', publicMetrics.activeIncidents, 'text-primary'],
+                      ['Критичные', publicMetrics.criticalIncidents, 'text-danger'],
+                      ['Поручения', publicMetrics.activeTasks, 'text-success'],
+                    ].map(([label, value, color]) => (
+                      <div key={label} className="rounded-2xl border border-border bg-surface-muted p-4 text-center">
+                        <p className={`text-2xl font-extrabold ${color}`}>{value}</p>
+                        <p className="mt-1 text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground">{label}</p>
                       </div>
-                      <Layers3 className="h-5 w-5 text-primary" />
-                    </div>
-                    <div className="mt-4 h-2 overflow-hidden rounded-full bg-secondary">
-                      <div className="live-progress-fill h-full rounded-full bg-success" />
-                    </div>
-                    <p className="mt-2 text-xs font-semibold text-muted-foreground">Исполнение: 76%, требуется контроль срока</p>
+                    ))}
                   </div>
 
-                  <div className="grid h-24 grid-cols-8 items-end gap-2 rounded-2xl border border-border bg-surface-muted p-4">
-                    {[42, 70, 56, 88, 62, 96, 68, 82].map((height, index) => (
+                  <div className="grid h-28 grid-cols-8 items-end gap-2 rounded-2xl border border-border bg-card p-4">
+                    {[publicMetrics.activeIncidents, publicMetrics.activeTasks, publicMetrics.activeProjects, publicMetrics.riskProjects + 8, budgetPct, healthScore, publicMetrics.criticalIncidents + 18, publicMetrics.activeProjects + 24].map((height, index) => (
                       <span
                         key={height + index}
                         className="live-bar rounded-t-lg bg-primary/70"
-                        style={{ height: `${height}%`, animationDelay: `${index * 120}ms` }}
+                        style={{ height: `${Math.max(22, Math.min(96, Number(height)))}%`, animationDelay: `${index * 120}ms` }}
                       />
                     ))}
                   </div>
 
                   <div className="grid grid-cols-3 gap-3">
-                    {metrics.slice(0, 3).map((metric) => (
-                      <div key={metric.label} className="rounded-2xl border border-border bg-surface-muted p-4 text-center">
-                        <p className="text-2xl font-extrabold text-foreground">{metric.value}</p>
-                        <p className="mt-1 text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground">{metric.label}</p>
-                      </div>
-                    ))}
+                    <div className="rounded-2xl border border-border bg-surface-muted p-4">
+                      <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground">Проекты</p>
+                      <p className="mt-2 text-2xl font-extrabold text-foreground">{publicMetrics.activeProjects}</p>
+                      <p className="text-xs font-bold text-warning">{publicMetrics.riskProjects} в риске</p>
+                    </div>
+                    <div className="rounded-2xl border border-border bg-surface-muted p-4">
+                      <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground">Бюджет</p>
+                      <p className="mt-2 text-2xl font-extrabold text-foreground">{budgetPct}%</p>
+                      <p className="text-xs font-bold text-success">освоение</p>
+                    </div>
+                    <div className="rounded-2xl border border-border bg-surface-muted p-4">
+                      <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground">Витрина</p>
+                      <p className="mt-2 text-2xl font-extrabold text-foreground">live</p>
+                      <p className="text-xs font-bold text-primary">/public</p>
+                    </div>
                   </div>
                 </div>
               </div>
