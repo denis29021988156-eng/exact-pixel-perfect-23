@@ -368,11 +368,11 @@ export default function LandingPage() {
         <section className="bg-card/70 py-20 lg:py-28">
           <div className="mx-auto max-w-7xl px-5 lg:px-8">
             <div className="max-w-3xl">
-              <p className="section-heading text-primary">Связность данных</p>
-              <h2 className="mt-4 text-[32px] font-extrabold leading-[38px] tracking-normal lg:text-[48px] lg:leading-[54px]">Демо выглядит живым, потому что сущности связаны между собой</h2>
+              <p className="section-heading text-primary">Поток данных</p>
+              <h2 className="mt-4 text-[32px] font-extrabold leading-[38px] tracking-normal lg:text-[48px] lg:leading-[54px]">От сырого сигнала до решения мэра — за минуты</h2>
             </div>
 
-            <div className="mt-12 grid gap-5 lg:grid-cols-3">
+            <div className="mt-12 grid gap-5 lg:grid-cols-4">
               {workflow.map((item) => (
                 <div key={item.step} className="rounded-3xl border border-border bg-background p-7 shadow-sm">
                   <p className="text-sm font-extrabold text-primary">{item.step}</p>
@@ -386,13 +386,13 @@ export default function LandingPage() {
               <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                 <div className="flex items-center gap-3">
                   <DatabaseZap className="h-6 w-6 text-primary" />
-                  <p className="text-[16px] font-extrabold leading-[22px]">Жалобы → heatmap → эскалация → поручение → департамент</p>
+                  <p className="text-[16px] font-extrabold leading-[22px]">Excel / Telegram / ручной ввод → AI → SLA → дашборд мэра</p>
                 </div>
                 <button
-                  onClick={() => navigate('/app/map')}
+                  onClick={() => navigate('/app')}
                   className="inline-flex items-center justify-center gap-2 rounded-xl border border-border bg-card px-5 py-3 text-sm font-bold transition-colors hover:bg-surface-muted"
                 >
-                  Открыть карту
+                  Открыть демо
                   <ArrowRight className="h-4 w-4" />
                 </button>
               </div>
@@ -403,9 +403,9 @@ export default function LandingPage() {
         <section id="rollout" className="mx-auto max-w-7xl px-5 py-20 lg:px-8 lg:py-28">
           <div className="mx-auto max-w-3xl text-center">
             <p className="section-heading text-primary">Внедрение</p>
-            <h2 className="mt-4 text-[32px] font-extrabold leading-[38px] tracking-normal lg:text-[48px] lg:leading-[54px]">3 этапа без бюджета в презентации</h2>
+            <h2 className="mt-4 text-[32px] font-extrabold leading-[38px] tracking-normal lg:text-[48px] lg:leading-[54px]">От договора до приёмки — 8 недель</h2>
             <p className="mt-5 text-[17px] font-medium leading-[29px] text-foreground/70">
-              Сроки: 2 недели + 4 недели + 2 недели. Внутри третьего этапа — обучение команды 5–6 человек за 5 дней.
+              Три этапа: запуск основы, настройка AI и интеграций, затем обучение 5–6 сотрудников за 5 рабочих дней.
             </p>
           </div>
 
