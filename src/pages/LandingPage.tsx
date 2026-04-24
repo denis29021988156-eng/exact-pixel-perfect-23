@@ -156,6 +156,18 @@ export default function LandingPage() {
           backgroundSize: 'auto, auto, 72px 72px, 72px 72px',
         }}
       />
+      <div className="fixed inset-0 pointer-events-none z-[1] overflow-hidden">
+        {particlePositions.map((particle) => (
+          <span
+            key={`page-${particle.className}`}
+            className={`landing-particle absolute rounded-full ${particle.className}`}
+            style={{ animationDelay: particle.delay }}
+          />
+        ))}
+        <span className="landing-particle absolute left-[68%] top-[36%] h-3 w-3 rounded-full bg-primary/60" style={{ animationDelay: '880ms' }} />
+        <span className="landing-particle absolute left-[30%] top-[44%] h-2 w-2 rounded-full bg-success/65" style={{ animationDelay: '1320ms' }} />
+        <span className="landing-particle absolute left-[82%] top-[72%] h-2.5 w-2.5 rounded-full bg-info/65" style={{ animationDelay: '1680ms' }} />
+      </div>
 
       <header className="relative z-10 mx-auto flex h-20 max-w-7xl items-center justify-between px-5 lg:px-8">
         <button onClick={() => navigate('/')} className="flex items-center gap-3 text-left">
@@ -229,20 +241,13 @@ export default function LandingPage() {
           </div>
 
           <div className="relative min-h-[600px] animate-fade-in-up lg:pl-6" style={{ animationDelay: '120ms' }}>
-            <div className="absolute inset-0 overflow-hidden rounded-[3rem] bg-gradient-to-br from-primary/5 via-card/30 to-success/5">
-              {particlePositions.map((particle) => (
-                <span
-                  key={particle.className}
-                  className={`landing-particle absolute rounded-full ${particle.className}`}
-                  style={{ animationDelay: particle.delay }}
-                />
-              ))}
+            <div className="absolute inset-0 overflow-hidden rounded-[3rem]">
               <span className="absolute left-[12%] top-[23%] h-px w-40 rotate-12 bg-gradient-to-r from-transparent via-primary/55 to-transparent" />
               <span className="absolute right-[7%] top-[52%] h-px w-48 -rotate-12 bg-gradient-to-r from-transparent via-success/45 to-transparent" />
               <span className="absolute bottom-[18%] left-[22%] h-px w-36 rotate-[28deg] bg-gradient-to-r from-transparent via-info/45 to-transparent" />
             </div>
 
-            <div className="tablet-shell relative mx-auto w-full max-w-[610px] rounded-[3rem] border border-foreground/10 bg-foreground p-3 shadow-[0_42px_110px_hsl(var(--foreground)/0.22)] lg:translate-y-8">
+            <div className="tablet-shell relative mx-auto w-full max-w-[680px] rounded-[3rem] border border-foreground/10 bg-foreground p-3 shadow-[0_42px_110px_hsl(var(--foreground)/0.22)] lg:translate-y-8">
               <div className="rounded-[2.4rem] border border-card/20 bg-card p-2">
               <div className="tablet-screen rounded-[2rem] border border-border bg-background p-5 shadow-inner">
                 <div className="mb-4 flex items-center justify-between">
