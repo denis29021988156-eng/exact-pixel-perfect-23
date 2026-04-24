@@ -137,11 +137,11 @@ export default function LandingPage() {
               <span className="text-[11px] font-extrabold uppercase tracking-[0.18em] text-muted-foreground">Управляемый город · AI · SLA</span>
             </div>
 
-            <h1 className="max-w-4xl text-5xl font-extrabold leading-[1.02] tracking-tight text-foreground sm:text-6xl lg:text-7xl">
+            <h1 className="max-w-4xl text-[44px] font-extrabold leading-[0.98] tracking-normal text-foreground sm:text-[56px] lg:text-[68px]">
               Автоматизируйте управление городом и покажите контроль за 8 недель
             </h1>
 
-            <p className="mt-7 max-w-2xl text-lg leading-8 text-muted-foreground">
+            <p className="mt-7 max-w-2xl text-[18px] font-medium leading-[30px] text-foreground/75">
               Светлая управленческая платформа для мэра: инциденты, поручения, департаменты,
               проекты, контракты и жалобы связаны в единую картину принятия решений.
             </p>
@@ -179,7 +179,7 @@ export default function LandingPage() {
                 <div className="mb-4 flex items-center justify-between">
                   <div>
                     <p className="text-[11px] font-extrabold uppercase tracking-[0.18em] text-muted-foreground">Live command center</p>
-                    <h2 className="mt-1 text-xl font-extrabold tracking-tight">Проверка управляемости</h2>
+                    <h2 className="mt-1 text-[22px] font-extrabold leading-[28px] tracking-normal">Проверка управляемости</h2>
                   </div>
                   <span className="rounded-full bg-success/10 px-3 py-1 text-xs font-bold text-success">online</span>
                 </div>
@@ -189,7 +189,7 @@ export default function LandingPage() {
                     <div className="flex items-start justify-between gap-4">
                       <div>
                         <p className="text-xs font-bold uppercase tracking-[0.14em] text-danger">Инцидент → задача → департамент</p>
-                        <p className="mt-2 text-sm font-semibold text-foreground">Прорыв теплотрассы связан с поручением ЖКХ</p>
+                        <p className="mt-2 text-[15px] font-bold leading-[22px] text-foreground">Прорыв теплотрассы связан с поручением ЖКХ</p>
                       </div>
                       <Target className="h-5 w-5 text-danger" />
                     </div>
@@ -206,7 +206,7 @@ export default function LandingPage() {
                     <div className="flex items-start justify-between gap-4">
                       <div>
                         <p className="text-xs font-bold uppercase tracking-[0.14em] text-primary">Проект → контракт</p>
-                        <p className="mt-2 text-sm font-semibold text-foreground">Ремонт школы выведен из риска, контракт под контролем</p>
+                        <p className="mt-2 text-[15px] font-bold leading-[22px] text-foreground">Ремонт школы выведен из риска, контракт под контролем</p>
                       </div>
                       <Layers3 className="h-5 w-5 text-primary" />
                     </div>
