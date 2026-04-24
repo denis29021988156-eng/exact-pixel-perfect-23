@@ -108,10 +108,10 @@ const operatingModel = [
 ];
 
 const workflow = [
-  { step: '01', title: 'Сбор', desc: 'Excel-файлы, Telegram-чаты, письма и ручной ввод попадают в одну систему.' },
-  { step: '02', title: 'Структурирование', desc: 'AI извлекает тип, адрес, срочность, ответственного и качество данных.' },
-  { step: '03', title: 'Контроль', desc: 'Система показывает SLA, риски, связи между сущностями и приоритеты.' },
-  { step: '04', title: 'Решение', desc: 'Мэр видит чистую картину и принимает решение без сбора ручных отчётов.' },
+  { step: '01', title: 'Сбор', desc: 'Excel-файлы, Telegram-чаты, письма, ручной ввод — 4 способа загрузки.' },
+  { step: '02', title: 'AI-структурирование', desc: 'Gemini извлекает тип, серьёзность, адрес, ответственного из сырого текста.' },
+  { step: '03', title: 'Оценка уверенности', desc: 'Каждая запись получает confidence-score. <60% — на модерацию оператору.' },
+  { step: '04', title: 'Решения мэра', desc: 'Чистые данные → дашборд мэра → AI-рекомендации → поручения с SLA.' },
 ];
 
 const rollout = [
@@ -471,7 +471,7 @@ export default function LandingPage() {
           <div className="mx-auto max-w-7xl px-5 lg:px-8">
             <div className="max-w-3xl">
               <p className="section-heading text-primary">Поток данных</p>
-              <h2 className="mt-4 text-[32px] font-extrabold leading-[38px] tracking-normal lg:text-[48px] lg:leading-[54px]">От сырого сигнала до решения мэра — за минуты</h2>
+              <h2 className="mt-4 text-[32px] font-extrabold leading-[38px] tracking-normal lg:text-[48px] lg:leading-[54px]">От Excel-файла оператора до решения мэра — за минуты</h2>
             </div>
 
             <div className="mt-12 grid gap-5 lg:grid-cols-4">
