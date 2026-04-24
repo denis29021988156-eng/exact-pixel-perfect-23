@@ -223,7 +223,7 @@
   }
 
   .tablet-shell {
-    transform: perspective(1100px) rotateX(9deg) rotateY(-18deg) rotateZ(-6deg);
+    transform: perspective(1100px) rotateX(8deg) rotateY(15deg) rotateZ(6deg);
     transform-style: preserve-3d;
     animation: tablet-float 6s ease-in-out infinite;
   }
@@ -263,8 +263,8 @@
   }
 
   @keyframes tablet-float {
-    0%, 100% { transform: perspective(1100px) rotateX(9deg) rotateY(-18deg) rotateZ(-6deg) translateY(0); }
-    50% { transform: perspective(1100px) rotateX(7deg) rotateY(-14deg) rotateZ(-4deg) translateY(-14px); }
+    0%, 100% { transform: perspective(1100px) rotateX(8deg) rotateY(15deg) rotateZ(6deg) translateY(0); }
+    50% { transform: perspective(1100px) rotateX(6deg) rotateY(12deg) rotateZ(8deg) translateY(-14px); }
   }
 
   @keyframes screen-sheen {
