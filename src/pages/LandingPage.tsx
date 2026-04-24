@@ -133,12 +133,14 @@ const metrics = [
 ];
 
 const particlePositions = [
-  { className: 'left-[8%] top-[14%] h-2 w-2 bg-primary/35', delay: '0ms' },
-  { className: 'left-[18%] top-[72%] h-1.5 w-1.5 bg-success/40', delay: '240ms' },
-  { className: 'left-[44%] top-[8%] h-2.5 w-2.5 bg-accent/50', delay: '520ms' },
-  { className: 'right-[12%] top-[20%] h-1.5 w-1.5 bg-primary/40', delay: '160ms' },
-  { className: 'right-[18%] bottom-[18%] h-2 w-2 bg-warning/45', delay: '420ms' },
-  { className: 'right-[42%] bottom-[8%] h-1.5 w-1.5 bg-info/40', delay: '720ms' },
+  { className: 'left-[5%] top-[12%] h-3 w-3 bg-primary/70', delay: '0ms' },
+  { className: 'left-[18%] top-[72%] h-2.5 w-2.5 bg-success/70', delay: '240ms' },
+  { className: 'left-[42%] top-[6%] h-4 w-4 bg-primary/45', delay: '520ms' },
+  { className: 'right-[8%] top-[18%] h-2.5 w-2.5 bg-primary/75', delay: '160ms' },
+  { className: 'right-[16%] bottom-[16%] h-3 w-3 bg-warning/70', delay: '420ms' },
+  { className: 'right-[40%] bottom-[6%] h-2.5 w-2.5 bg-info/70', delay: '720ms' },
+  { className: 'left-[3%] bottom-[30%] h-2 w-2 bg-danger/55', delay: '960ms' },
+  { className: 'right-[4%] bottom-[42%] h-2 w-2 bg-success/65', delay: '1160ms' },
 ];
 
 export default function LandingPage() {
