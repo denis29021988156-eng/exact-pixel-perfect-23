@@ -70,7 +70,7 @@ export default function PublicDashboard() {
             <Shield className="w-5 h-5 text-primary-foreground" />
           </div>
           <div className="text-left">
-            <p className="text-sm font-bold text-foreground tracking-tight leading-none">City Intelligence OS</p>
+            <p className="text-sm font-bold text-foreground tracking-tight leading-none">Планшет Мэра</p>
             <p className="text-[10px] text-muted-foreground tracking-widest uppercase mt-0.5">Открытые данные · Реутов</p>
           </div>
         </button>
@@ -86,7 +86,7 @@ export default function PublicDashboard() {
         <div className="text-center py-32 text-muted-foreground">Данные недоступны</div>
       ) : (
         <>
-          {/* ═══════ HERO — City Health Index ═══════ */}
+          {/* ═══════ HERO — Индекс здоровья города ═══════ */}
           <section className="relative z-10 max-w-6xl mx-auto px-6 lg:px-12 pt-12 lg:pt-16 pb-10 animate-fade-in-up">
             <div className="grid lg:grid-cols-[1.2fr_1fr] gap-8 items-stretch">
               {/* Left: Health gauge */}
@@ -95,7 +95,7 @@ export default function PublicDashboard() {
                 <div className="relative">
                   <div className="flex items-center gap-2 mb-6">
                     <div className="w-1.5 h-1.5 rounded-full bg-primary ai-pulse" />
-                    <span className="text-[10px] font-bold tracking-[0.2em] text-muted-foreground uppercase">City Health Index · обновляется в реальном времени</span>
+                    <span className="text-[10px] font-bold tracking-[0.2em] text-muted-foreground uppercase">Индекс здоровья города · обновляется в реальном времени</span>
                   </div>
                   <div className="flex items-end gap-6 mb-6">
                     <div>
@@ -250,7 +250,7 @@ export default function PublicDashboard() {
               </button>
             </div>
             <p className="text-center text-[11px] text-muted-foreground/60 mt-8">
-              Данные предоставлены в агрегированном виде · Источник: интеграционная платформа City Intelligence OS · Обновлено {now.toLocaleString('ru-RU', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' })}
+              Данные предоставлены в агрегированном виде · Источник: интеграционная платформа Планшет Мэра · Обновлено {now.toLocaleString('ru-RU', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' })}
             </p>
           </section>
         </>

@@ -10,14 +10,12 @@ import {
   FileSpreadsheet,
   Globe,
   Layers3,
-  LockKeyhole,
   Map,
   MessageSquare,
   Radio,
   Shield,
   Sparkles,
   Target,
-  Users,
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -145,14 +143,14 @@ const metrics = [
 ];
 
 const particlePositions = [
-  { className: 'left-[5%] top-[12%] h-3 w-3 bg-primary/70', delay: '0ms' },
-  { className: 'left-[18%] top-[72%] h-2.5 w-2.5 bg-success/70', delay: '240ms' },
-  { className: 'left-[42%] top-[6%] h-4 w-4 bg-primary/45', delay: '520ms' },
-  { className: 'right-[8%] top-[18%] h-2.5 w-2.5 bg-primary/75', delay: '160ms' },
-  { className: 'right-[16%] bottom-[16%] h-3 w-3 bg-warning/70', delay: '420ms' },
-  { className: 'right-[40%] bottom-[6%] h-2.5 w-2.5 bg-info/70', delay: '720ms' },
-  { className: 'left-[3%] bottom-[30%] h-2 w-2 bg-danger/55', delay: '960ms' },
-  { className: 'right-[4%] bottom-[42%] h-2 w-2 bg-success/65', delay: '1160ms' },
+  { className: 'left-[5%] top-[12%] h-6 w-6 rounded-lg border border-primary/35 bg-primary/10', delay: '0ms' },
+  { className: 'left-[18%] top-[72%] h-8 w-1.5 rounded-full bg-success/35', delay: '240ms' },
+  { className: 'left-[42%] top-[6%] h-5 w-10 rounded-full border border-primary/30 bg-card/35', delay: '520ms' },
+  { className: 'right-[8%] top-[18%] h-7 w-7 rounded-full border border-primary/35 bg-primary/10', delay: '160ms' },
+  { className: 'right-[16%] bottom-[16%] h-5 w-12 rounded-lg bg-warning/25', delay: '420ms' },
+  { className: 'right-[40%] bottom-[6%] h-6 w-6 rounded-md border border-info/35 bg-info/10', delay: '720ms' },
+  { className: 'left-[3%] bottom-[30%] h-10 w-1.5 rounded-full bg-danger/25', delay: '960ms' },
+  { className: 'right-[4%] bottom-[42%] h-7 w-7 rounded-lg border border-success/35 bg-success/10', delay: '1160ms' },
 ];
 
 export default function LandingPage() {
@@ -223,9 +221,9 @@ export default function LandingPage() {
             style={{ animationDelay: particle.delay }}
           />
         ))}
-        <span className="landing-particle absolute left-[68%] top-[36%] h-3 w-3 rounded-full bg-primary/60" style={{ animationDelay: '880ms' }} />
-        <span className="landing-particle absolute left-[30%] top-[44%] h-2 w-2 rounded-full bg-success/65" style={{ animationDelay: '1320ms' }} />
-        <span className="landing-particle absolute left-[82%] top-[72%] h-2.5 w-2.5 rounded-full bg-info/65" style={{ animationDelay: '1680ms' }} />
+        <span className="landing-particle absolute left-[68%] top-[36%] h-8 w-8 rounded-xl border border-primary/30 bg-primary/10" style={{ animationDelay: '880ms' }} />
+        <span className="landing-particle absolute left-[30%] top-[44%] h-1.5 w-10 rounded-full bg-success/35" style={{ animationDelay: '1320ms' }} />
+        <span className="landing-particle absolute left-[82%] top-[72%] h-7 w-7 rounded-lg border border-info/30 bg-info/10" style={{ animationDelay: '1680ms' }} />
       </div>
 
       <header className="relative z-10 mx-auto flex h-20 max-w-7xl items-center justify-between px-5 lg:px-8">
@@ -233,8 +231,8 @@ export default function LandingPage() {
           <span className="flex h-10 w-10 items-center justify-center rounded-xl border border-border bg-card shadow-sm">
             <Shield className="h-5 w-5 text-primary" />
           </span>
-          <span>
-            <span className="block text-sm font-extrabold leading-none tracking-tight">City Intelligence OS</span>
+            <span>
+              <span className="block text-sm font-extrabold leading-none tracking-tight">Планшет Мэра</span>
             <span className="mt-1 block text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">Reutov demo</span>
           </span>
         </button>
@@ -300,13 +298,13 @@ export default function LandingPage() {
           </div>
 
           <div className="relative min-h-[640px] animate-fade-in-up lg:pl-2" style={{ animationDelay: '120ms' }}>
-            <div className="tablet-shell relative mx-auto w-full max-w-[760px] rounded-[3rem] border border-foreground/10 bg-foreground p-3 shadow-[0_42px_110px_hsl(var(--foreground)/0.22)] lg:-mr-6 lg:translate-y-8">
+              <div className="tablet-shell tablet-shell-front relative mx-auto w-full max-w-[760px] rounded-[3rem] border border-foreground/10 bg-foreground p-3 shadow-[0_42px_110px_hsl(var(--foreground)/0.22)] lg:-mr-6 lg:translate-y-8">
               <div className="rounded-[2.4rem] border border-card/20 bg-card p-2">
               <div className="tablet-screen rounded-[2rem] border border-border bg-background p-5 shadow-inner">
                 <div className="mb-4 flex items-center justify-between">
                   <div>
-                    <p className="text-[11px] font-extrabold uppercase tracking-[0.18em] text-muted-foreground">Public dashboard · live metrics</p>
-                    <h2 className="mt-1 text-[22px] font-extrabold leading-[28px] tracking-normal">City Health Index</h2>
+                    <p className="text-[11px] font-extrabold uppercase tracking-[0.18em] text-muted-foreground">Публичный дашборд · живые метрики</p>
+                    <h2 className="mt-1 text-[22px] font-extrabold leading-[28px] tracking-normal">Индекс здоровья города</h2>
                   </div>
                   <span className="live-badge rounded-full bg-success/10 px-3 py-1 text-xs font-bold text-success">online</span>
                 </div>
@@ -392,7 +390,7 @@ export default function LandingPage() {
         <section className="mx-auto max-w-7xl px-5 py-20 lg:px-8 lg:py-28">
           <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:items-end">
             <div>
-              <p className="section-heading text-primary">Боли мэра</p>
+              <p className="section-heading text-primary">Вызовы мэра</p>
               <h2 className="mt-4 text-[32px] font-extrabold leading-[38px] tracking-normal lg:text-[48px] lg:leading-[54px]">Что заказчик видит уже в MVP</h2>
             </div>
             <p className="max-w-2xl text-[17px] font-medium leading-[29px] text-foreground/70 lg:justify-self-end">
@@ -405,7 +403,7 @@ export default function LandingPage() {
             {pains.map(([pain, solution]) => (
               <div key={pain} className="grid gap-4 rounded-3xl border border-border bg-card p-6 shadow-sm md:grid-cols-2">
                 <div>
-                  <p className="text-[11px] font-extrabold uppercase tracking-[0.14em] text-danger">Боль</p>
+                  <p className="text-[11px] font-extrabold uppercase tracking-[0.14em] text-danger">Вызов</p>
                   <p className="mt-3 text-[15px] font-extrabold leading-[23px] text-foreground">{pain}</p>
                 </div>
                 <div>
@@ -421,7 +419,7 @@ export default function LandingPage() {
           <div className="mx-auto max-w-7xl px-5 lg:px-8">
             <div className="max-w-3xl">
               <p className="section-heading text-primary">Модель работы</p>
-              <h2 className="mt-4 text-[32px] font-extrabold leading-[38px] tracking-normal lg:text-[48px] lg:leading-[54px]">Достаточно мэра и небольшой команды операторов</h2>
+              <h2 className="mt-4 text-[32px] font-extrabold leading-[38px] tracking-normal lg:text-[48px] lg:leading-[54px]">Достаточно небольшой команды сотрудников и операторов</h2>
             </div>
 
             <div className="mt-12 grid gap-5 lg:grid-cols-3">
@@ -542,12 +540,12 @@ export default function LandingPage() {
               <div>
                 <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-primary-foreground/10 px-3 py-1 text-xs font-bold">
                   <Sparkles className="h-4 w-4" />
-                  MVP уже можно показать руководству
+                  Планшет Мэра
                 </div>
-                <h2 className="text-[32px] font-extrabold leading-[38px] tracking-normal lg:text-[40px] lg:leading-[46px]">Откройте MVP и покажите путь до промышленного запуска</h2>
+                <h2 className="text-[32px] font-extrabold leading-[38px] tracking-normal lg:text-[40px] lg:leading-[46px]">Откройте демо управленческого контура</h2>
                 <p className="mt-4 max-w-2xl text-[16px] font-medium leading-[26px] text-primary-foreground/85">
-                  Заказчик увидит живой интерфейс мэра, публичную витрину и понятную дорожную карту:
-                  что платформа умеет сейчас и какие настройки получит после заказа продукта.
+                  Посмотрите, какие сценарии уже работают в MVP: дашборд мэра, публичная витрина,
+                  инциденты, поручения, карта, AI-сводки и маршрут внедрения после заказа продукта.
                 </p>
               </div>
               <div className="flex flex-col gap-3 sm:flex-row lg:flex-col">
@@ -573,11 +571,7 @@ export default function LandingPage() {
 
       <footer className="relative z-10 border-t border-border bg-card/70 py-8">
         <div className="mx-auto flex max-w-7xl flex-col gap-3 px-5 text-sm text-muted-foreground md:flex-row md:items-center md:justify-between lg:px-8">
-          <p>© 2026 City Intelligence OS · Демонстрационная платформа управления городом</p>
-          <div className="flex items-center gap-4">
-            <span className="inline-flex items-center gap-1.5"><LockKeyhole className="h-3.5 w-3.5" /> RBAC</span>
-            <span className="inline-flex items-center gap-1.5"><Users className="h-3.5 w-3.5" /> обучение 5–6 человек</span>
-          </div>
+          <p>© 2026 Планшет Мэра · Демонстрационная платформа управления городом</p>
         </div>
       </footer>
     </div>
