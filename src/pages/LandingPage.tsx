@@ -287,19 +287,71 @@ export default function LandingPage() {
           </div>
         </section>
 
-        <section id="capabilities" className="mx-auto max-w-7xl px-5 py-20 lg:px-8 lg:py-28">
+        <section className="mx-auto max-w-7xl px-5 py-20 lg:px-8 lg:py-28">
           <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:items-end">
             <div>
-              <p className="section-heading text-primary">Платформа</p>
-              <h2 className="mt-4 text-[32px] font-extrabold leading-[38px] tracking-normal lg:text-[48px] lg:leading-[54px]">Часть функций уже работает, часть подключается на внедрении</h2>
+              <p className="section-heading text-primary">Боли мэра</p>
+              <h2 className="mt-4 text-[32px] font-extrabold leading-[38px] tracking-normal lg:text-[48px] lg:leading-[54px]">Что демонстрация показывает заказчику</h2>
             </div>
             <p className="max-w-2xl text-[17px] font-medium leading-[29px] text-foreground/70 lg:justify-self-end">
-              Лендинг честно показывает заказчику текущее демо и будущую настройку: не набор обещаний,
-              а понятную систему, которую можно поэтапно довести до промышленного контура.
+              Лендинг не продаёт обещание, а объясняет сценарий: какие проблемы управления уже видны в демо и что будет доведено до промышленного режима.
             </p>
           </div>
 
-          <div className="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-12 grid gap-4 lg:grid-cols-2">
+            {pains.map(([pain, solution]) => (
+              <div key={pain} className="grid gap-4 rounded-3xl border border-border bg-card p-6 shadow-sm md:grid-cols-2">
+                <div>
+                  <p className="text-[11px] font-extrabold uppercase tracking-[0.14em] text-danger">Боль</p>
+                  <p className="mt-3 text-[15px] font-extrabold leading-[23px] text-foreground">{pain}</p>
+                </div>
+                <div>
+                  <p className="text-[11px] font-extrabold uppercase tracking-[0.14em] text-success">Что показывает платформа</p>
+                  <p className="mt-3 text-[14px] font-semibold leading-[22px] text-foreground/70">{solution}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className="border-y border-border bg-card/70 py-20 backdrop-blur lg:py-28">
+          <div className="mx-auto max-w-7xl px-5 lg:px-8">
+            <div className="max-w-3xl">
+              <p className="section-heading text-primary">Модель работы</p>
+              <h2 className="mt-4 text-[32px] font-extrabold leading-[38px] tracking-normal lg:text-[48px] lg:leading-[54px]">Достаточно мэра и небольшой команды операторов</h2>
+            </div>
+
+            <div className="mt-12 grid gap-5 lg:grid-cols-3">
+              {operatingModel.map((item) => (
+                <div key={item.role} className="rounded-3xl border border-border bg-background p-7 shadow-sm">
+                  <p className="text-[11px] font-extrabold uppercase tracking-[0.16em] text-muted-foreground">{item.title}</p>
+                  <h3 className="mt-3 text-[28px] font-extrabold leading-[34px] tracking-normal text-foreground">{item.role}</h3>
+                  <ul className="mt-6 space-y-3">
+                    {item.points.map((point) => (
+                      <li key={point} className="flex items-start gap-3 text-[14px] font-semibold leading-[21px] text-foreground/65">
+                        <CheckCircle className="mt-0.5 h-4 w-4 flex-shrink-0 text-success" />
+                        <span>{point}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section id="capabilities" className="mx-auto max-w-7xl px-5 py-20 lg:px-8 lg:py-28">
+          <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:items-end">
+            <div>
+              <p className="section-heading text-primary">Возможности</p>
+              <h2 className="mt-4 text-[32px] font-extrabold leading-[38px] tracking-normal lg:text-[48px] lg:leading-[54px]">9 модулей в одной демонстрационной платформе</h2>
+            </div>
+            <p className="max-w-2xl text-[17px] font-medium leading-[29px] text-foreground/70 lg:justify-self-end">
+              Часть модулей уже доступна в демо, часть требует подключения данных, регламентов и городских каналов на этапе внедрения.
+            </p>
+          </div>
+
+          <div className="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
             {capabilityCards.map((card) => (
               <div key={card.title} className="group rounded-3xl border border-border bg-card p-6 shadow-sm transition-all hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg">
                 <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
