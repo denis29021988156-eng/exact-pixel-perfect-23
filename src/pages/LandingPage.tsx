@@ -15,6 +15,7 @@ import {
   Radio,
   Shield,
   Sparkles,
+  Star,
   Target,
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
@@ -142,15 +143,21 @@ const metrics = [
   { value: '8', label: 'недель до приёмки' },
 ];
 
-const particlePositions = [
-  { className: 'left-[5%] top-[12%] h-6 w-6 rounded-lg border border-primary/35 bg-primary/10', delay: '0ms' },
-  { className: 'left-[18%] top-[72%] h-8 w-1.5 rounded-full bg-success/35', delay: '240ms' },
-  { className: 'left-[42%] top-[6%] h-5 w-10 rounded-full border border-primary/30 bg-card/35', delay: '520ms' },
-  { className: 'right-[8%] top-[18%] h-7 w-7 rounded-full border border-primary/35 bg-primary/10', delay: '160ms' },
-  { className: 'right-[16%] bottom-[16%] h-5 w-12 rounded-lg bg-warning/25', delay: '420ms' },
-  { className: 'right-[40%] bottom-[6%] h-6 w-6 rounded-md border border-info/35 bg-info/10', delay: '720ms' },
-  { className: 'left-[3%] bottom-[30%] h-10 w-1.5 rounded-full bg-danger/25', delay: '960ms' },
-  { className: 'right-[4%] bottom-[42%] h-7 w-7 rounded-lg border border-success/35 bg-success/10', delay: '1160ms' },
+const starPositions = [
+  { left: '6%',  top: '10%',  size: 14, delay: '0ms',   tone: 'text-primary/70' },
+  { left: '14%', top: '68%',  size: 10, delay: '320ms', tone: 'text-foreground/40' },
+  { left: '38%', top: '6%',   size: 12, delay: '520ms', tone: 'text-primary/60' },
+  { left: '46%', top: '54%',  size: 9,  delay: '1100ms',tone: 'text-foreground/35' },
+  { left: '62%', top: '22%',  size: 16, delay: '780ms', tone: 'text-primary/70' },
+  { left: '70%', top: '74%',  size: 11, delay: '1320ms',tone: 'text-foreground/40' },
+  { left: '88%', top: '14%',  size: 13, delay: '160ms', tone: 'text-primary/60' },
+  { left: '92%', top: '58%',  size: 10, delay: '1480ms',tone: 'text-foreground/45' },
+  { left: '4%',  top: '40%',  size: 8,  delay: '900ms', tone: 'text-foreground/35' },
+  { left: '24%', top: '32%',  size: 7,  delay: '1700ms',tone: 'text-foreground/30' },
+  { left: '54%', top: '88%',  size: 12, delay: '600ms', tone: 'text-primary/60' },
+  { left: '78%', top: '44%',  size: 9,  delay: '1900ms',tone: 'text-foreground/40' },
+  { left: '34%', top: '82%',  size: 10, delay: '420ms', tone: 'text-foreground/35' },
+  { left: '18%', top: '20%',  size: 11, delay: '1240ms',tone: 'text-primary/55' },
 ];
 
 export default function LandingPage() {
