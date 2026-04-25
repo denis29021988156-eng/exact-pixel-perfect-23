@@ -221,16 +221,21 @@ export default function LandingPage() {
         }}
       />
       <div className="fixed inset-0 pointer-events-none z-[1] overflow-hidden">
-        {particlePositions.map((particle) => (
-          <span
-            key={`page-${particle.className}`}
-            className={`landing-particle absolute rounded-full ${particle.className}`}
-            style={{ animationDelay: particle.delay }}
+        {starPositions.map((star, idx) => (
+          <Star
+            key={`star-${idx}`}
+            className={`landing-star absolute ${star.tone} drop-shadow-[0_0_10px_hsl(var(--primary)/0.45)]`}
+            style={{
+              left: star.left,
+              top: star.top,
+              width: star.size,
+              height: star.size,
+              animationDelay: star.delay,
+            }}
+            strokeWidth={1.25}
+            fill="currentColor"
           />
         ))}
-        <span className="landing-particle absolute left-[68%] top-[36%] h-8 w-8 rounded-xl border border-primary/30 bg-primary/10" style={{ animationDelay: '880ms' }} />
-        <span className="landing-particle absolute left-[30%] top-[44%] h-1.5 w-10 rounded-full bg-success/35" style={{ animationDelay: '1320ms' }} />
-        <span className="landing-particle absolute left-[82%] top-[72%] h-7 w-7 rounded-lg border border-info/30 bg-info/10" style={{ animationDelay: '1680ms' }} />
       </div>
 
       <header className="relative z-10 mx-auto flex h-20 max-w-7xl items-center justify-between px-5 lg:px-8">
