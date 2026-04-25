@@ -322,11 +322,13 @@ export default function LandingPage() {
               <div className="tablet-shell tablet-shell-front relative mx-auto w-full max-w-[760px] rounded-[3rem] border border-foreground/10 bg-foreground p-3 shadow-[0_42px_110px_hsl(var(--foreground)/0.22)] lg:-mr-6 lg:translate-y-8">
               <div className="rounded-[2.4rem] border border-card/20 bg-card p-2">
               <div className="tablet-screen rounded-[2rem] border border-border bg-background p-4 shadow-inner">
-                <div className="mb-3 flex items-center justify-between">
-                  <div>
-                    <h2 className="text-[20px] font-extrabold leading-[26px] tracking-normal">ИИ Дашборд</h2>
+                <div className="mb-3 flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
+                  <div className="min-w-0 flex-1">
+                    <h2 className="whitespace-nowrap text-[16px] font-extrabold leading-[22px] tracking-tight sm:text-[18px] sm:leading-[24px] md:text-[20px] md:leading-[26px]">
+                      ИИ Дашборд
+                    </h2>
                   </div>
-                  <span className="live-badge rounded-full bg-success/10 px-3 py-1 text-xs font-bold text-success">online</span>
+                  <span className="live-badge shrink-0 rounded-full bg-success/10 px-2.5 py-0.5 text-[10px] font-bold text-success sm:px-3 sm:py-1 sm:text-xs">online</span>
                 </div>
 
                 <div className="grid gap-2.5">
