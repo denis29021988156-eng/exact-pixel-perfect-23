@@ -318,52 +318,52 @@ export default function LandingPage() {
             </div>
           </div>
 
-          <div className="relative min-h-[640px] animate-fade-in-up lg:pl-2" style={{ animationDelay: '120ms' }}>
+          <div className="relative min-h-[512px] animate-fade-in-up lg:pl-2" style={{ animationDelay: '120ms' }}>
               <div className="tablet-shell tablet-shell-front relative mx-auto w-full max-w-[760px] rounded-[3rem] border border-foreground/10 bg-foreground p-3 shadow-[0_42px_110px_hsl(var(--foreground)/0.22)] lg:-mr-6 lg:translate-y-8">
               <div className="rounded-[2.4rem] border border-card/20 bg-card p-2">
-              <div className="tablet-screen rounded-[2rem] border border-border bg-background p-5 shadow-inner">
-                <div className="mb-4 flex items-center justify-between">
+              <div className="tablet-screen rounded-[2rem] border border-border bg-background p-4 shadow-inner">
+                <div className="mb-3 flex items-center justify-between">
                   <div>
                     <p className="text-[11px] font-extrabold uppercase tracking-[0.18em] text-muted-foreground">Публичный дашборд · живые метрики</p>
-                    <h2 className="mt-1 text-[22px] font-extrabold leading-[28px] tracking-normal">Индекс здоровья города</h2>
+                    <h2 className="mt-1 text-[20px] font-extrabold leading-[26px] tracking-normal">Индекс здоровья города</h2>
                   </div>
                   <span className="live-badge rounded-full bg-success/10 px-3 py-1 text-xs font-bold text-success">online</span>
                 </div>
 
-                <div className="grid gap-3">
-                  <div className="live-signal-row rounded-2xl border border-border bg-card p-5">
+                <div className="grid gap-2.5">
+                  <div className="live-signal-row rounded-2xl border border-border bg-card p-4">
                     <div className="flex items-start justify-between gap-4">
                       <div>
                         <p className="text-xs font-bold uppercase tracking-[0.14em] text-primary">Индекс здоровья города</p>
-                        <p className="mt-2 text-[44px] font-extrabold leading-none text-foreground">{healthScore}</p>
-                        <p className="mt-2 text-[13px] font-bold text-foreground/65">Сводный показатель по инцидентам, проектам и поручениям</p>
+                        <p className="mt-1.5 text-[36px] font-extrabold leading-none text-foreground">{healthScore}</p>
+                        <p className="mt-1.5 text-[12px] font-bold text-foreground/65">Сводный показатель по инцидентам, проектам и поручениям</p>
                       </div>
                       <BarChart3 className="h-6 w-6 text-primary" />
                     </div>
-                    <div className="mt-5 h-2.5 overflow-hidden rounded-full bg-secondary">
+                    <div className="mt-3 h-2 overflow-hidden rounded-full bg-secondary">
                       <div className="live-progress-fill h-full rounded-full bg-primary transition-all duration-700" style={progressStyle} />
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-3 gap-3">
+                  <div className="grid grid-cols-3 gap-2.5">
                     {[
                       ['Инциденты', publicMetrics.activeIncidents, 'text-primary'],
                       ['Критичные', publicMetrics.criticalIncidents, 'text-danger'],
                       ['Поручения', publicMetrics.activeTasks, 'text-success'],
                     ].map(([label, value, color]) => (
-                      <div key={label} className="rounded-2xl border border-border bg-surface-muted p-4 text-center">
-                        <p className={`text-2xl font-extrabold ${color}`}>{value}</p>
+                      <div key={label} className="rounded-2xl border border-border bg-surface-muted p-3 text-center">
+                        <p className={`text-xl font-extrabold ${color}`}>{value}</p>
                         <p className="mt-1 text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground">{label}</p>
                       </div>
                     ))}
                   </div>
 
-                  <div className="rounded-2xl border border-border bg-card p-4">
-                    <div className="mb-3 flex items-center justify-between">
+                  <div className="rounded-2xl border border-border bg-card p-3">
+                    <div className="mb-2 flex items-center justify-between">
                       <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-muted-foreground">Активность за 24 часа</p>
                       <p className="text-[10px] font-bold tracking-wide text-success">+12.4%</p>
                     </div>
-                    <div className="grid h-24 grid-cols-6 items-end gap-2 sm:h-28 sm:grid-cols-8 sm:gap-2.5">
+                    <div className="grid h-16 grid-cols-6 items-end gap-2 sm:h-20 sm:grid-cols-8 sm:gap-2.5">
                       {barMetrics.slice(0, 8).map((height, index) => (
                         <span
                           key={height + index}
@@ -379,14 +379,14 @@ export default function LandingPage() {
                     </div>
                   </div>
 
-                  <div className="rounded-2xl border border-border bg-card p-4">
-                    <div className="mb-3 flex items-center justify-between">
+                  <div className="rounded-2xl border border-border bg-card p-3">
+                    <div className="mb-2 flex items-center justify-between">
                       <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-muted-foreground">Оперативная сводка</p>
                       <span className="live-badge text-[10px] font-bold text-success">live</span>
                     </div>
-                    <ul className="space-y-2">
+                    <ul className="space-y-1.5">
                       {opsRows.map((row) => (
-                        <li key={row.dept} className="flex items-center justify-between gap-3 rounded-lg bg-surface-muted px-3 py-2">
+                        <li key={row.dept} className="flex items-center justify-between gap-3 rounded-lg bg-surface-muted px-3 py-1.5">
                           <div className="flex items-center gap-2 min-w-0">
                             <span className={`h-1.5 w-1.5 rounded-full ${row.dot} ai-pulse`} />
                             <span className="text-[12px] font-bold text-foreground truncate">{row.dept}</span>
@@ -400,20 +400,20 @@ export default function LandingPage() {
                     </ul>
                   </div>
 
-                  <div className="grid grid-cols-3 gap-3">
-                    <div className="rounded-2xl border border-border bg-surface-muted p-4">
+                  <div className="grid grid-cols-3 gap-2.5">
+                    <div className="rounded-2xl border border-border bg-surface-muted p-3">
                       <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground">Проекты</p>
-                      <p className="mt-2 text-2xl font-extrabold text-foreground">{publicMetrics.activeProjects}</p>
+                      <p className="mt-1.5 text-xl font-extrabold text-foreground">{publicMetrics.activeProjects}</p>
                       <p className="live-badge text-xs font-bold text-warning">{publicMetrics.riskProjects} в риске</p>
                     </div>
-                    <div className="rounded-2xl border border-border bg-surface-muted p-4">
+                    <div className="rounded-2xl border border-border bg-surface-muted p-3">
                       <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground">Бюджет</p>
-                      <p className="mt-2 text-2xl font-extrabold text-foreground">{budgetPct}%</p>
+                      <p className="mt-1.5 text-xl font-extrabold text-foreground">{budgetPct}%</p>
                       <p className="live-badge text-xs font-bold text-success">освоение</p>
                     </div>
-                    <div className="rounded-2xl border border-border bg-surface-muted p-4">
+                    <div className="rounded-2xl border border-border bg-surface-muted p-3">
                       <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground">Витрина</p>
-                      <p className="mt-2 text-2xl font-extrabold text-foreground">live</p>
+                      <p className="mt-1.5 text-xl font-extrabold text-foreground">live</p>
                       <p className="live-badge text-xs font-bold text-primary">/public</p>
                     </div>
                   </div>
