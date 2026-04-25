@@ -358,19 +358,46 @@ export default function LandingPage() {
                     ))}
                   </div>
 
-                  <div className="grid h-28 grid-cols-8 items-end gap-2 rounded-2xl border border-border bg-card p-4">
-                    {barMetrics.map((height, index) => (
-                      <span
-                        key={height + index}
-                        className="live-bar rounded-t-lg bg-primary/70"
-                        style={{
-                          height: `${height}%`,
-                          animationDelay: `${index * 120}ms`,
-                          '--bar-low': Math.max(0.38, (height - 18) / height),
-                          '--bar-high': Math.min(1.16, (height + 10) / height),
-                        } as CSSProperties}
-                      />
-                    ))}
+                  <div className="rounded-2xl border border-border bg-card p-4">
+                    <div className="mb-3 flex items-center justify-between">
+                      <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-muted-foreground">Активность за 24 часа</p>
+                      <p className="text-[10px] font-bold tracking-wide text-success">+12.4%</p>
+                    </div>
+                    <div className="grid h-24 grid-cols-6 items-end gap-2 sm:h-28 sm:grid-cols-8 sm:gap-2.5">
+                      {barMetrics.slice(0, 8).map((height, index) => (
+                        <span
+                          key={height + index}
+                          className={`live-bar rounded-t-lg ${index >= 6 ? 'hidden sm:block' : ''} bg-gradient-to-t from-primary/80 to-primary/40`}
+                          style={{
+                            height: `${height}%`,
+                            animationDelay: `${index * 120}ms`,
+                            '--bar-low': Math.max(0.38, (height - 18) / height),
+                            '--bar-high': Math.min(1.16, (height + 10) / height),
+                          } as CSSProperties}
+                        />
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="rounded-2xl border border-border bg-card p-4">
+                    <div className="mb-3 flex items-center justify-between">
+                      <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-muted-foreground">Оперативная сводка</p>
+                      <span className="live-badge text-[10px] font-bold text-success">live</span>
+                    </div>
+                    <ul className="space-y-2">
+                      {opsRows.map((row) => (
+                        <li key={row.dept} className="flex items-center justify-between gap-3 rounded-lg bg-surface-muted px-3 py-2">
+                          <div className="flex items-center gap-2 min-w-0">
+                            <span className={`h-1.5 w-1.5 rounded-full ${row.dot} ai-pulse`} />
+                            <span className="text-[12px] font-bold text-foreground truncate">{row.dept}</span>
+                          </div>
+                          <div className="flex items-center gap-2 shrink-0">
+                            <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">{row.metric}</span>
+                            <span className={`text-[12px] font-extrabold ${row.tone}`}>{row.value}</span>
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
                   </div>
 
                   <div className="grid grid-cols-3 gap-3">
