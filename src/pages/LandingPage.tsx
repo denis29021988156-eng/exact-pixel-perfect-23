@@ -474,25 +474,34 @@ export default function LandingPage() {
               <h2 className="mt-4 text-[32px] font-extrabold leading-[38px] tracking-normal lg:text-[48px] lg:leading-[54px]">От Excel-файла оператора до решения мэра — за минуты</h2>
             </div>
 
-            <div className="mt-12 grid gap-5 lg:grid-cols-4">
+            <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:mt-12 lg:grid-cols-4">
               {workflow.map((item) => (
-                <div key={item.step} className="rounded-3xl border border-border bg-background p-7 shadow-sm">
-                  <p className="text-sm font-extrabold text-primary">{item.step}</p>
-                  <h3 className="mt-5 text-[24px] font-extrabold leading-[30px] tracking-normal">{item.title}</h3>
-                  <p className="mt-3 text-[14px] font-medium leading-[22px] text-foreground/65">{item.desc}</p>
+                <div
+                  key={item.step}
+                  className="flex h-full flex-col rounded-2xl border border-border bg-background p-5 shadow-sm sm:rounded-3xl sm:p-6 lg:p-7"
+                >
+                  <p className="text-xs font-extrabold tracking-wide text-primary sm:text-sm">{item.step}</p>
+                  <h3 className="mt-3 text-[20px] font-extrabold leading-[26px] tracking-normal sm:mt-4 sm:text-[22px] sm:leading-[28px] lg:mt-5 lg:text-[24px] lg:leading-[30px]">
+                    {item.title}
+                  </h3>
+                  <p className="mt-2 text-[14px] font-medium leading-[21px] text-foreground/65 sm:mt-3 sm:leading-[22px] [text-wrap:pretty]">
+                    {item.desc}
+                  </p>
                 </div>
               ))}
             </div>
 
-            <div className="mt-8 rounded-3xl border border-border bg-background p-6 shadow-sm">
+            <div className="mt-6 rounded-2xl border border-border bg-background p-5 shadow-sm sm:mt-8 sm:rounded-3xl sm:p-6">
               <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-                <div className="flex items-center gap-3">
-                  <DatabaseZap className="h-6 w-6 text-primary" />
-                  <p className="text-[16px] font-extrabold leading-[22px]">Excel / Telegram / ручной ввод → AI → SLA → дашборд мэра</p>
+                <div className="flex items-start gap-3 sm:items-center">
+                  <DatabaseZap className="mt-0.5 h-6 w-6 shrink-0 text-primary sm:mt-0" />
+                  <p className="text-[14px] font-extrabold leading-[20px] sm:text-[16px] sm:leading-[22px] [text-wrap:balance]">
+                    Excel / Telegram / ручной ввод → AI → SLA → дашборд мэра
+                  </p>
                 </div>
                 <button
                   onClick={() => navigate('/app')}
-                  className="inline-flex items-center justify-center gap-2 rounded-xl border border-border bg-card px-5 py-3 text-sm font-bold transition-colors hover:bg-surface-muted"
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-border bg-card px-5 py-3 text-sm font-bold transition-colors hover:bg-surface-muted lg:w-auto"
                 >
                   Открыть демо
                   <ArrowRight className="h-4 w-4" />
