@@ -15,6 +15,7 @@ import {
   Radio,
   Shield,
   Sparkles,
+  Star,
   Target,
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
@@ -142,15 +143,21 @@ const metrics = [
   { value: '8', label: 'недель до приёмки' },
 ];
 
-const particlePositions = [
-  { className: 'left-[5%] top-[12%] h-6 w-6 rounded-lg border border-primary/35 bg-primary/10', delay: '0ms' },
-  { className: 'left-[18%] top-[72%] h-8 w-1.5 rounded-full bg-success/35', delay: '240ms' },
-  { className: 'left-[42%] top-[6%] h-5 w-10 rounded-full border border-primary/30 bg-card/35', delay: '520ms' },
-  { className: 'right-[8%] top-[18%] h-7 w-7 rounded-full border border-primary/35 bg-primary/10', delay: '160ms' },
-  { className: 'right-[16%] bottom-[16%] h-5 w-12 rounded-lg bg-warning/25', delay: '420ms' },
-  { className: 'right-[40%] bottom-[6%] h-6 w-6 rounded-md border border-info/35 bg-info/10', delay: '720ms' },
-  { className: 'left-[3%] bottom-[30%] h-10 w-1.5 rounded-full bg-danger/25', delay: '960ms' },
-  { className: 'right-[4%] bottom-[42%] h-7 w-7 rounded-lg border border-success/35 bg-success/10', delay: '1160ms' },
+const starPositions = [
+  { left: '6%',  top: '10%',  size: 14, delay: '0ms',   tone: 'text-primary/70' },
+  { left: '14%', top: '68%',  size: 10, delay: '320ms', tone: 'text-foreground/40' },
+  { left: '38%', top: '6%',   size: 12, delay: '520ms', tone: 'text-primary/60' },
+  { left: '46%', top: '54%',  size: 9,  delay: '1100ms',tone: 'text-foreground/35' },
+  { left: '62%', top: '22%',  size: 16, delay: '780ms', tone: 'text-primary/70' },
+  { left: '70%', top: '74%',  size: 11, delay: '1320ms',tone: 'text-foreground/40' },
+  { left: '88%', top: '14%',  size: 13, delay: '160ms', tone: 'text-primary/60' },
+  { left: '92%', top: '58%',  size: 10, delay: '1480ms',tone: 'text-foreground/45' },
+  { left: '4%',  top: '40%',  size: 8,  delay: '900ms', tone: 'text-foreground/35' },
+  { left: '24%', top: '32%',  size: 7,  delay: '1700ms',tone: 'text-foreground/30' },
+  { left: '54%', top: '88%',  size: 12, delay: '600ms', tone: 'text-primary/60' },
+  { left: '78%', top: '44%',  size: 9,  delay: '1900ms',tone: 'text-foreground/40' },
+  { left: '34%', top: '82%',  size: 10, delay: '420ms', tone: 'text-foreground/35' },
+  { left: '18%', top: '20%',  size: 11, delay: '1240ms',tone: 'text-primary/55' },
 ];
 
 export default function LandingPage() {
@@ -203,6 +210,15 @@ export default function LandingPage() {
     Math.max(24, 100 - publicMetrics.riskProjects * 11),
   ].map((value) => Math.max(20, Math.min(96, Math.round(value))));
 
+  // Premium mock operational rows for tablet (looks rich & alive)
+  const opsRows = [
+    { dept: 'ЖКХ',         metric: 'SLA',     value: '98%', tone: 'text-success', dot: 'bg-success' },
+    { dept: 'Дороги',      metric: 'Задач',   value: '14',  tone: 'text-primary', dot: 'bg-primary' },
+    { dept: 'Транспорт',   metric: 'Риск',    value: 'low', tone: 'text-success', dot: 'bg-success' },
+    { dept: 'Соц. сфера',  metric: 'Жалоб',   value: '7',   tone: 'text-warning', dot: 'bg-warning' },
+    { dept: 'Бюджет',      metric: 'Освоение',value: `${budgetPct}%`, tone: 'text-primary', dot: 'bg-primary' },
+  ];
+
   return (
     <div className="min-h-screen overflow-x-hidden bg-background text-foreground">
       <div
@@ -214,16 +230,21 @@ export default function LandingPage() {
         }}
       />
       <div className="fixed inset-0 pointer-events-none z-[1] overflow-hidden">
-        {particlePositions.map((particle) => (
-          <span
-            key={`page-${particle.className}`}
-            className={`landing-particle absolute rounded-full ${particle.className}`}
-            style={{ animationDelay: particle.delay }}
+        {starPositions.map((star, idx) => (
+          <Star
+            key={`star-${idx}`}
+            className={`landing-star absolute ${star.tone} drop-shadow-[0_0_10px_hsl(var(--primary)/0.45)]`}
+            style={{
+              left: star.left,
+              top: star.top,
+              width: star.size,
+              height: star.size,
+              animationDelay: star.delay,
+            }}
+            strokeWidth={1.25}
+            fill="currentColor"
           />
         ))}
-        <span className="landing-particle absolute left-[68%] top-[36%] h-8 w-8 rounded-xl border border-primary/30 bg-primary/10" style={{ animationDelay: '880ms' }} />
-        <span className="landing-particle absolute left-[30%] top-[44%] h-1.5 w-10 rounded-full bg-success/35" style={{ animationDelay: '1320ms' }} />
-        <span className="landing-particle absolute left-[82%] top-[72%] h-7 w-7 rounded-lg border border-info/30 bg-info/10" style={{ animationDelay: '1680ms' }} />
       </div>
 
       <header className="relative z-10 mx-auto flex h-20 max-w-7xl items-center justify-between px-5 lg:px-8">
@@ -337,19 +358,46 @@ export default function LandingPage() {
                     ))}
                   </div>
 
-                  <div className="grid h-28 grid-cols-8 items-end gap-2 rounded-2xl border border-border bg-card p-4">
-                    {barMetrics.map((height, index) => (
-                      <span
-                        key={height + index}
-                        className="live-bar rounded-t-lg bg-primary/70"
-                        style={{
-                          height: `${height}%`,
-                          animationDelay: `${index * 120}ms`,
-                          '--bar-low': Math.max(0.38, (height - 18) / height),
-                          '--bar-high': Math.min(1.16, (height + 10) / height),
-                        } as CSSProperties}
-                      />
-                    ))}
+                  <div className="rounded-2xl border border-border bg-card p-4">
+                    <div className="mb-3 flex items-center justify-between">
+                      <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-muted-foreground">Активность за 24 часа</p>
+                      <p className="text-[10px] font-bold tracking-wide text-success">+12.4%</p>
+                    </div>
+                    <div className="grid h-24 grid-cols-6 items-end gap-2 sm:h-28 sm:grid-cols-8 sm:gap-2.5">
+                      {barMetrics.slice(0, 8).map((height, index) => (
+                        <span
+                          key={height + index}
+                          className={`live-bar rounded-t-lg ${index >= 6 ? 'hidden sm:block' : ''} bg-gradient-to-t from-primary/80 to-primary/40`}
+                          style={{
+                            height: `${height}%`,
+                            animationDelay: `${index * 120}ms`,
+                            '--bar-low': Math.max(0.38, (height - 18) / height),
+                            '--bar-high': Math.min(1.16, (height + 10) / height),
+                          } as CSSProperties}
+                        />
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="rounded-2xl border border-border bg-card p-4">
+                    <div className="mb-3 flex items-center justify-between">
+                      <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-muted-foreground">Оперативная сводка</p>
+                      <span className="live-badge text-[10px] font-bold text-success">live</span>
+                    </div>
+                    <ul className="space-y-2">
+                      {opsRows.map((row) => (
+                        <li key={row.dept} className="flex items-center justify-between gap-3 rounded-lg bg-surface-muted px-3 py-2">
+                          <div className="flex items-center gap-2 min-w-0">
+                            <span className={`h-1.5 w-1.5 rounded-full ${row.dot} ai-pulse`} />
+                            <span className="text-[12px] font-bold text-foreground truncate">{row.dept}</span>
+                          </div>
+                          <div className="flex items-center gap-2 shrink-0">
+                            <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">{row.metric}</span>
+                            <span className={`text-[12px] font-extrabold ${row.tone}`}>{row.value}</span>
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
                   </div>
 
                   <div className="grid grid-cols-3 gap-3">
