@@ -325,7 +325,7 @@ export default function LandingPage() {
                 <div className="mb-3 flex items-center justify-between">
                   <div>
                     <p className="text-[11px] font-extrabold uppercase tracking-[0.18em] text-muted-foreground">Публичный дашборд · живые метрики</p>
-                    <h2 className="mt-1 text-[20px] font-extrabold leading-[26px] tracking-normal">Индекс здоровья города</h2>
+                    <h2 className="mt-1 text-[20px] font-extrabold leading-[26px] tracking-normal">ИИ Дашборд</h2>
                   </div>
                   <span className="live-badge rounded-full bg-success/10 px-3 py-1 text-xs font-bold text-success">online</span>
                 </div>
@@ -554,6 +554,73 @@ export default function LandingPage() {
                   Открыть демо
                   <ArrowRight className="h-4 w-4" />
                 </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="ai-assistant" className="mx-auto max-w-7xl px-5 py-20 lg:px-8 lg:py-24">
+          <div className="grid gap-10 rounded-[2.5rem] border border-primary/20 bg-gradient-to-br from-primary/[0.06] via-card to-card p-8 shadow-sm lg:grid-cols-[1.1fr_0.9fr] lg:gap-14 lg:p-14">
+            <div>
+              <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-[11px] font-extrabold uppercase tracking-[0.16em] text-primary">
+                <BrainCircuit className="h-4 w-4" />
+                AI-ассистент в планшете
+              </div>
+              <h2 className="mt-5 text-[32px] font-extrabold leading-[38px] tracking-normal lg:text-[44px] lg:leading-[52px]">
+                Не чат-бот. Полноценный AI-ассистент мэра прямо внутри планшета
+              </h2>
+              <p className="mt-5 text-[17px] font-medium leading-[28px] text-foreground/70">
+                Ассистент видит весь контекст города в реальном времени: инциденты, поручения,
+                проекты, бюджет, жалобы, карту и SLA. Отвечает на вопросы текстом и готовит
+                управленческие сводки за секунды — без переключения между вкладками.
+              </p>
+              <ul className="mt-7 grid gap-3 sm:grid-cols-2">
+                {[
+                  ['Полный контекст', 'Видит все данные платформы — от инцидентов до контрактов'],
+                  ['Аналитика на лету', '«Что критично сейчас?», «Подготовь доклад» — за секунды'],
+                  ['Прогнозы и риски', 'Объясняет причины и подсвечивает зоны напряжения'],
+                  ['Безопасность', 'Не меняет данные без подтверждения мэра'],
+                ].map(([t, d]) => (
+                  <li key={t} className="rounded-2xl border border-border bg-card p-4">
+                    <p className="text-[13px] font-extrabold text-foreground">{t}</p>
+                    <p className="mt-1.5 text-[13px] font-medium leading-[19px] text-foreground/65">{d}</p>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="relative">
+              <div className="rounded-3xl border border-border bg-background p-5 shadow-[0_24px_60px_hsl(var(--primary)/0.12)]">
+                <div className="mb-4 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="ai-pulse h-2 w-2 rounded-full bg-success" />
+                    <p className="text-[11px] font-extrabold uppercase tracking-[0.16em] text-muted-foreground">AI-ассистент · online</p>
+                  </div>
+                  <Sparkles className="h-4 w-4 text-primary" />
+                </div>
+                <div className="space-y-3">
+                  <div className="ml-auto max-w-[80%] rounded-2xl rounded-br-md bg-primary px-4 py-2.5 text-[13px] font-semibold text-primary-foreground shadow-sm">
+                    Что критично сейчас?
+                  </div>
+                  <div className="max-w-[88%] rounded-2xl rounded-bl-md bg-surface-muted px-4 py-3 text-[13px] font-medium leading-[20px] text-foreground">
+                    <p>3 критичных инцидента в красной зоне. Главный риск — авария ЖКХ на ул. Победы, SLA через 40 минут.</p>
+                    <div className="mt-2.5 grid grid-cols-3 gap-2 text-[11px] font-bold">
+                      <span className="rounded-lg bg-danger/10 px-2 py-1 text-danger">3 critical</span>
+                      <span className="rounded-lg bg-warning/10 px-2 py-1 text-warning">2 SLA risk</span>
+                      <span className="rounded-lg bg-primary/10 px-2 py-1 text-primary">1 эскалация</span>
+                    </div>
+                  </div>
+                  <div className="ml-auto max-w-[80%] rounded-2xl rounded-br-md bg-primary px-4 py-2.5 text-[13px] font-semibold text-primary-foreground shadow-sm">
+                    Подготовь сводку для совещания
+                  </div>
+                  <div className="max-w-[92%] rounded-2xl rounded-bl-md bg-surface-muted px-4 py-3 text-[13px] font-medium leading-[20px] text-foreground/85">
+                    Готовлю короткий брифинг по 5 департаментам с приоритетами и предложениями…
+                  </div>
+                </div>
+                <div className="mt-4 flex items-center gap-2 rounded-xl border border-border bg-card px-3 py-2.5">
+                  <MessageSquare className="h-4 w-4 text-muted-foreground" />
+                  <p className="text-[13px] font-medium text-muted-foreground">Спросите ассистента о городе…</p>
+                </div>
               </div>
             </div>
           </div>
