@@ -210,6 +210,15 @@ export default function LandingPage() {
     Math.max(24, 100 - publicMetrics.riskProjects * 11),
   ].map((value) => Math.max(20, Math.min(96, Math.round(value))));
 
+  // Premium mock operational rows for tablet (looks rich & alive)
+  const opsRows = [
+    { dept: 'ЖКХ',         metric: 'SLA',     value: '98%', tone: 'text-success', dot: 'bg-success' },
+    { dept: 'Дороги',      metric: 'Задач',   value: '14',  tone: 'text-primary', dot: 'bg-primary' },
+    { dept: 'Транспорт',   metric: 'Риск',    value: 'low', tone: 'text-success', dot: 'bg-success' },
+    { dept: 'Соц. сфера',  metric: 'Жалоб',   value: '7',   tone: 'text-warning', dot: 'bg-warning' },
+    { dept: 'Бюджет',      metric: 'Освоение',value: `${budgetPct}%`, tone: 'text-primary', dot: 'bg-primary' },
+  ];
+
   return (
     <div className="min-h-screen overflow-x-hidden bg-background text-foreground">
       <div
