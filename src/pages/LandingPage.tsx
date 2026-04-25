@@ -324,8 +324,7 @@ export default function LandingPage() {
               <div className="tablet-screen rounded-[2rem] border border-border bg-background p-4 shadow-inner">
                 <div className="mb-3 flex items-center justify-between">
                   <div>
-                    <p className="text-[11px] font-extrabold uppercase tracking-[0.18em] text-muted-foreground">Публичный дашборд · живые метрики</p>
-                    <h2 className="mt-1 text-[20px] font-extrabold leading-[26px] tracking-normal">ИИ Дашборд</h2>
+                    <h2 className="text-[20px] font-extrabold leading-[26px] tracking-normal">ИИ Дашборд</h2>
                   </div>
                   <span className="live-badge rounded-full bg-success/10 px-3 py-1 text-xs font-bold text-success">online</span>
                 </div>
