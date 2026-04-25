@@ -21,7 +21,7 @@ interface SectorBlock {
   metrics: MetricItem[];
 }
 
-// ─── Тестовые данные по отраслям Балашихи ───
+// ─── Тестовые данные по отраслям Реутова ───
 const staticBlocks: SectorBlock[] = [
   {
     name: 'Строительство объектов',
