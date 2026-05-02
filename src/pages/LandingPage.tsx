@@ -364,17 +364,12 @@ export default function LandingPage() {
                       <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-muted-foreground">Активность за 24 часа</p>
                       <p className="text-[10px] font-bold tracking-wide text-success">+12.4%</p>
                     </div>
-                    <div className="grid h-16 grid-cols-6 items-end gap-2 sm:h-20 sm:grid-cols-8 sm:gap-2.5">
+                    <div className="flex h-16 w-full items-end gap-1.5 sm:h-20 sm:gap-2">
                       {barMetrics.slice(0, 8).map((height, index) => (
                         <span
                           key={height + index}
-                          className={`live-bar rounded-t-lg ${index >= 6 ? 'hidden sm:block' : ''} bg-gradient-to-t from-primary/80 to-primary/40`}
-                          style={{
-                            height: `${height}%`,
-                            animationDelay: `${index * 120}ms`,
-                            '--bar-low': Math.max(0.38, (height - 18) / height),
-                            '--bar-high': Math.min(1.16, (height + 10) / height),
-                          } as CSSProperties}
+                          className="flex-1 min-w-0 rounded-t-lg bg-gradient-to-t from-primary/80 to-primary/40"
+                          style={{ height: `${height}%` }}
                         />
                       ))}
                     </div>
