@@ -59,6 +59,7 @@ function AppRoutes() {
           <Route path="/ai-extract" element={<AIExtractPage />} />
           <Route path="/telegram-inbox" element={<TelegramInboxPage />} />
           <Route path="/cheatsheet" element={<CheatsheetPage />} />
+          <Route path="/sla-matrix" element={<SlaMatrixPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </AppLayout>
