@@ -14,6 +14,8 @@ interface BriefingData {
   briefing: string;
   structured?: BriefingStructured;
   riskIndex?: number;
+  mode?: 'ai' | 'fallback';
+  fallbackReason?: string;
   stats: {
     activeIncidents: number;
     criticalIncidents: number;
