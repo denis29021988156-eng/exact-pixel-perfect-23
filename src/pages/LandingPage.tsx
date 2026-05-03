@@ -120,19 +120,19 @@ export default function LandingPage() {
 
         <motion.div
           style={{ y: heroY, opacity: heroOpacity }}
-          className="relative z-10 max-w-[1400px] mx-auto px-6 lg:px-12 pt-24 pb-32 min-h-screen grid lg:grid-cols-[1.1fr_1fr] gap-12 items-center"
+          className="relative z-10 max-w-[1400px] mx-auto px-6 lg:px-12 pt-24 pb-32 min-h-screen grid lg:grid-cols-[1.1fr_1fr] gap-16 xl:gap-24 items-center"
         >
           <div>
             <motion.p
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, ease: EASE }}
-              className="text-[11px] tracking-[0.2em] uppercase text-[#94A3B8] font-mono mb-10"
+              className="text-[12px] tracking-[0.18em] uppercase text-[#94A3B8] font-mono mb-8"
             >
               {META_LINE}
             </motion.p>
 
-            <h1 className="font-medium leading-[0.95] tracking-[-0.04em]" style={{ fontSize: 'clamp(56px, 8vw, 120px)' }}>
+            <h1 className="font-semibold leading-[0.95] tracking-[-0.04em]" style={{ fontSize: 'clamp(56px, 6.4vw, 96px)' }}>
               {HERO_LINES.map((line, i) => (
                 <span key={i} className="block overflow-hidden">
                   <motion.span
@@ -155,7 +155,7 @@ export default function LandingPage() {
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.7, ease: EASE }}
-              className="mt-10 max-w-xl text-base lg:text-lg text-[#94A3B8] leading-relaxed"
+              className="mt-10 max-w-xl text-[15px] lg:text-[17px] text-[#94A3B8] leading-[1.6]"
             >
               Платформа, где сходятся все сигналы города — от аварии ЖКХ до риска срыва контракта.
               Без совещаний. Без Excel. Без отчётов в почте.
@@ -169,12 +169,15 @@ export default function LandingPage() {
             >
               <button
                 onClick={() => navigate('/auth')}
-                className="group relative inline-flex items-center gap-3 px-7 py-4 rounded-full text-sm font-semibold text-white bg-gradient-to-r from-[#3B82F6] to-[#06B6D4] shadow-[0_10px_40px_-10px_rgba(59,130,246,0.6)] hover:shadow-[0_20px_60px_-10px_rgba(6,182,212,0.7)] transition-shadow duration-500"
+                className="group relative inline-flex items-center gap-3 px-8 py-4 rounded-full text-[15px] font-medium text-white bg-gradient-to-r from-[#3B82F6] to-[#06B6D4] shadow-[0_10px_40px_-10px_rgba(59,130,246,0.6)] hover:shadow-[0_20px_60px_-10px_rgba(6,182,212,0.7)] transition-shadow duration-500"
               >
                 Открыть живое демо
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
               </button>
-              <a href="#plan" className="text-sm text-[#E5E7EB]/80 hover:text-white transition-colors inline-flex items-center gap-2 group">
+              <a
+                href="#plan"
+                className="text-[14px] text-[#E5E7EB]/80 hover:text-white transition-colors inline-flex items-center gap-2 pb-1 border-b border-white/10 hover:border-white/40 group"
+              >
                 Посмотреть план внедрения
                 <span className="transition-transform duration-300 group-hover:translate-x-1">→</span>
               </a>
