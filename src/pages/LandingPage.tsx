@@ -195,13 +195,7 @@ export default function LandingPage() {
         </motion.div>
 
         <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-3">
-          <div className="relative h-12 w-px bg-white/15 overflow-hidden">
-            <motion.span
-              animate={{ y: [-12, 48] }}
-              transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut' }}
-              className="absolute left-1/2 -translate-x-1/2 w-1 h-3 rounded-full bg-[#3B82F6]"
-            />
-          </div>
+          <div className="h-14 w-px bg-gradient-to-b from-transparent via-white/30 to-transparent" />
           <span className="text-[10px] tracking-[0.25em] uppercase text-[#94A3B8] font-mono">прокрутите</span>
         </div>
       </section>
