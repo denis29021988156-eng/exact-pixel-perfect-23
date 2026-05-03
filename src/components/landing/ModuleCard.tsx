@@ -21,7 +21,7 @@ export default function ModuleCard({
     const r = el.getBoundingClientRect();
     const dx = (e.clientX - r.left) / r.width - 0.5;
     const dy = (e.clientY - r.top) / r.height - 0.5;
-    setTilt({ ry: dx * 8, rx: -dy * 8 });
+    setTilt({ ry: dx * 4, rx: -dy * 4 });
   };
   const onLeave = () => setTilt({ rx: 0, ry: 0 });
 
