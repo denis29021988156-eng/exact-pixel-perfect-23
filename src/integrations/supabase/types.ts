@@ -819,6 +819,42 @@ export type Database = {
         }
         Relationships: []
       }
+      sla_matrix_draft: {
+        Row: {
+          approved: boolean
+          id: string
+          incident_type: Database["public"]["Enums"]["incident_type"]
+          note: string | null
+          reaction_hours: number
+          resolution_hours: number
+          severity: Database["public"]["Enums"]["incident_severity"]
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          approved?: boolean
+          id?: string
+          incident_type: Database["public"]["Enums"]["incident_type"]
+          note?: string | null
+          reaction_hours?: number
+          resolution_hours?: number
+          severity: Database["public"]["Enums"]["incident_severity"]
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          approved?: boolean
+          id?: string
+          incident_type?: Database["public"]["Enums"]["incident_type"]
+          note?: string | null
+          reaction_hours?: number
+          resolution_hours?: number
+          severity?: Database["public"]["Enums"]["incident_severity"]
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
       staging_raw: {
         Row: {
           confidence: number

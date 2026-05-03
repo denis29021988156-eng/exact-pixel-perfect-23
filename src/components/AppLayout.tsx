@@ -19,7 +19,8 @@ import {
   FileSpreadsheet,
   Inbox,
   Sparkles,
-  Send
+  Send,
+  ShieldAlert
 } from 'lucide-react';
 
 const navItems = [
@@ -35,6 +36,7 @@ const navItems = [
   { path: '/app/ai-extract', label: 'AI-структурирование', icon: Sparkles },
   { path: '/app/moderation', label: 'Модерация', icon: Inbox },
   { path: '/app/cheatsheet', label: 'Шпаргалка', icon: BookOpen },
+  { path: '/app/sla-matrix', label: 'Матрица SLA', icon: ShieldAlert },
 ];
 
 const roleLabels: Record<string, string> = {
