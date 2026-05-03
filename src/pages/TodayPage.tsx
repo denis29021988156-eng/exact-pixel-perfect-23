@@ -306,6 +306,14 @@ export default function TodayPage() {
               <BrainCircuit className="w-4.5 h-4.5 text-primary" />
             </div>
             AI-сводка для руководства
+            {briefing?.mode === 'fallback' && (
+              <span
+                className="ml-2 px-2.5 py-1 rounded-lg text-[10px] font-bold bg-warning/10 text-warning border border-warning/30"
+                title={briefing.fallbackReason ? `AI недоступен: ${briefing.fallbackReason}` : 'AI недоступен'}
+              >
+                Технический режим
+              </span>
+            )}
             {briefing?.riskIndex !== undefined && (
               <span className={`ml-2 px-2.5 py-1 rounded-lg text-[10px] font-bold ${
                 briefing.riskIndex > 70 ? 'bg-danger/10 text-danger' :
