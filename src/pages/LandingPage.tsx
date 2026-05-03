@@ -201,18 +201,18 @@ export default function LandingPage() {
       </section>
 
       {/* ─── Section 2 — Metrics ─── */}
-      <section className="relative py-32 lg:py-44 px-6 lg:px-12 border-t border-white/[0.06]">
+      <section className="relative py-40 lg:py-52 px-6 lg:px-12 border-t border-white/[0.08]">
         <div className="max-w-[1400px] mx-auto">
           <motion.p
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="text-[11px] tracking-[0.25em] uppercase text-[#94A3B8] font-mono mb-16"
+            className="text-[12px] tracking-[0.18em] uppercase text-[#94A3B8] font-mono mb-8"
           >
             01 — цифры
           </motion.p>
-          <div className="grid grid-cols-2 lg:grid-cols-4 divide-x divide-white/[0.06]">
+          <div className="grid grid-cols-2 lg:grid-cols-4 lg:divide-x divide-white/[0.08] gap-y-12 lg:gap-y-0">
             {METRICS.map((m, i) => (
               <motion.div
                 key={i}
@@ -222,7 +222,7 @@ export default function LandingPage() {
                 transition={{ duration: 0.7, delay: i * 0.1, ease: EASE }}
                 className="px-6 lg:px-10 first:pl-0 last:pr-0"
               >
-                <div className="font-light tracking-[-0.04em] leading-none text-[#E5E7EB]" style={{ fontSize: 'clamp(72px, 9vw, 160px)' }}>
+                <div className="font-bold tracking-[-0.05em] leading-none text-[#E5E7EB]" style={{ fontSize: 'clamp(72px, 9vw, 160px)' }}>
                   <CountUp to={m.value} />
                 </div>
                 <p className="mt-6 text-[11px] tracking-[0.18em] uppercase text-[#94A3B8] font-mono whitespace-pre-line leading-relaxed">
@@ -235,7 +235,7 @@ export default function LandingPage() {
       </section>
 
       {/* ─── Section 3 — Pains ─── */}
-      <section className="relative py-32 lg:py-44 px-6 lg:px-12 border-t border-white/[0.06]">
+      <section className="relative py-40 lg:py-52 px-6 lg:px-12 border-t border-white/[0.08]">
         <div className="max-w-[1400px] mx-auto">
           <div className="grid lg:grid-cols-[1.1fr_1fr] gap-10 lg:gap-20 items-end mb-20">
             <motion.h2
@@ -243,8 +243,8 @@ export default function LandingPage() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.8, ease: EASE }}
-              className="font-medium tracking-[-0.04em] leading-[0.95] text-[#E5E7EB]"
-              style={{ fontSize: 'clamp(56px, 7vw, 110px)' }}
+              className="font-semibold tracking-[-0.04em] leading-[0.95] text-[#E5E7EB]"
+              style={{ fontSize: 'clamp(48px, 5.5vw, 88px)' }}
             >
               Знакомо?
             </motion.h2>
@@ -253,7 +253,7 @@ export default function LandingPage() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.8, delay: 0.15, ease: EASE }}
-              className="text-base lg:text-lg text-[#94A3B8] leading-relaxed max-w-md lg:justify-self-end"
+              className="text-[15px] lg:text-[17px] text-[#94A3B8] leading-[1.6] max-w-md lg:justify-self-end"
             >
               Если хотя бы три из этих фраз — про вас, дальше есть смысл читать.
             </motion.p>
@@ -269,8 +269,8 @@ export default function LandingPage() {
                 transition={{ duration: 0.7, delay: i * 0.08, ease: EASE }}
                 className={`${p.off} ${p.w} max-w-full`}
               >
-                <div className="group relative px-7 py-6 rounded-2xl bg-[#0F1524]/60 backdrop-blur-md border border-white/[0.06] hover:border-[#3B82F6]/40 hover:-translate-y-2 hover:shadow-[0_20px_50px_-20px_rgba(59,130,246,0.4)] transition-all duration-300 cursor-default">
-                  <p className="text-base lg:text-lg text-[#E5E7EB] font-light leading-snug tracking-[-0.01em]">{p.text}</p>
+                <div className="group relative px-7 py-6 rounded-2xl bg-[#0F1524]/60 backdrop-blur-md border border-white/[0.08] hover:border-[#3B82F6]/40 hover:-translate-y-2 hover:shadow-[0_20px_50px_-20px_rgba(59,130,246,0.4)] transition-all duration-300 cursor-default">
+                  <p className="text-[15px] lg:text-[17px] text-[#E5E7EB] font-light leading-snug tracking-[-0.01em]">{p.text}</p>
                 </div>
               </motion.div>
             ))}
@@ -290,14 +290,14 @@ export default function LandingPage() {
       </section>
 
       {/* ─── Section 4 — Solution ─── */}
-      <section className="relative py-32 lg:py-44 px-6 lg:px-12 border-t border-white/[0.06] overflow-hidden">
+      <section className="relative py-40 lg:py-52 px-6 lg:px-12 border-t border-white/[0.08] overflow-hidden">
         <div className="max-w-[1400px] mx-auto grid lg:grid-cols-[0.9fr_1.1fr] gap-16 lg:gap-24 items-center">
           <div>
-            <p className="text-[11px] tracking-[0.25em] uppercase text-[#94A3B8] font-mono mb-10">02 — решение</p>
-            <h2 className="font-medium tracking-[-0.04em] leading-[0.95] text-[#E5E7EB]" style={{ fontSize: 'clamp(44px, 5.5vw, 80px)' }}>
+            <p className="text-[12px] tracking-[0.18em] uppercase text-[#94A3B8] font-mono mb-8">02 — решение</p>
+            <h2 className="font-semibold tracking-[-0.04em] leading-[0.95] text-[#E5E7EB]" style={{ fontSize: 'clamp(40px, 4.6vw, 72px)' }}>
               Один источник правды о городе
             </h2>
-            <div className="mt-12 space-y-6 text-base lg:text-lg text-[#94A3B8] leading-relaxed max-w-lg">
+            <div className="mt-12 space-y-5 text-[15px] lg:text-[17px] text-[#94A3B8] leading-[1.6] max-w-lg">
               <p>Все департаменты работают в одной системе. Не в десяти Excel.</p>
               <p>У каждого поручения — срок и ответственный. Без срока — нельзя создать.</p>
               <p>Опоздание видно сразу. Не на следующей планёрке.</p>
@@ -308,15 +308,15 @@ export default function LandingPage() {
       </section>
 
       {/* ─── Section 5 — Discipline ─── */}
-      <section className="relative py-32 lg:py-44 px-6 lg:px-12 border-t border-white/[0.06]">
+      <section className="relative py-40 lg:py-52 px-6 lg:px-12 border-t border-white/[0.08]">
         <div className="max-w-[1400px] mx-auto">
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8, ease: EASE }}
-            className="font-medium tracking-[-0.04em] leading-[0.95] text-[#E5E7EB] max-w-4xl"
-            style={{ fontSize: 'clamp(44px, 5.5vw, 80px)' }}
+            className="font-semibold tracking-[-0.04em] leading-[0.95] text-[#E5E7EB] max-w-4xl"
+            style={{ fontSize: 'clamp(40px, 4.6vw, 72px)' }}
           >
             Дисциплина становится автоматической
           </motion.h2>
@@ -330,7 +330,7 @@ export default function LandingPage() {
             Не потому что вы давите. Потому что система не позволяет иначе.
           </motion.p>
 
-          <div className="mt-20 space-y-3">
+          <div className="mt-20 space-y-5">
             {COMPARE.map((row, i) => (
               <div key={i} className="grid md:grid-cols-2 gap-3">
                 <motion.div
@@ -374,10 +374,10 @@ export default function LandingPage() {
       </section>
 
       {/* ─── Section 6 — Day ─── */}
-      <section className="relative py-32 lg:py-44 px-6 lg:px-12 border-t border-white/[0.06]">
+      <section className="relative py-40 lg:py-52 px-6 lg:px-12 border-t border-white/[0.08]">
         <div className="max-w-[1400px] mx-auto">
-          <p className="text-[11px] tracking-[0.25em] uppercase text-[#94A3B8] font-mono mb-10">03 — день мэра</p>
-          <h2 className="font-medium tracking-[-0.04em] leading-[0.95] text-[#E5E7EB] max-w-3xl" style={{ fontSize: 'clamp(44px, 5.5vw, 80px)' }}>
+          <p className="text-[12px] tracking-[0.18em] uppercase text-[#94A3B8] font-mono mb-8">03 — день мэра</p>
+          <h2 className="font-semibold tracking-[-0.04em] leading-[0.95] text-[#E5E7EB] max-w-3xl" style={{ fontSize: 'clamp(40px, 4.6vw, 72px)' }}>
             Один день. Без совещаний.
           </h2>
 
@@ -413,7 +413,7 @@ export default function LandingPage() {
               ['0', 'ручных сводок'],
             ].map(([n, l]) => (
               <div key={l}>
-                <div className="font-light tracking-[-0.05em] leading-none text-[#3B82F6]" style={{ fontSize: 'clamp(80px, 10vw, 160px)' }}>{n}</div>
+                <div className="font-bold tracking-[-0.05em] leading-none text-[#3B82F6]" style={{ fontSize: 'clamp(80px, 10vw, 160px)' }}>{n}</div>
                 <p className="mt-4 text-xs uppercase tracking-[0.18em] font-mono text-[#94A3B8]">{l}</p>
               </div>
             ))}
@@ -422,11 +422,11 @@ export default function LandingPage() {
       </section>
 
       {/* ─── Section 7 — AI ─── */}
-      <section className="relative py-32 lg:py-44 px-6 lg:px-12 border-t border-white/[0.06]">
+      <section className="relative py-40 lg:py-52 px-6 lg:px-12 border-t border-white/[0.08]">
         <div className="max-w-[1400px] mx-auto grid lg:grid-cols-2 gap-16 lg:gap-24 items-center">
           <div>
-            <p className="text-[11px] tracking-[0.25em] uppercase text-[#94A3B8] font-mono mb-10">04 — ai-помощник</p>
-            <h2 className="font-medium tracking-[-0.04em] leading-[0.95] text-[#E5E7EB]" style={{ fontSize: 'clamp(40px, 5vw, 72px)' }}>
+            <p className="text-[12px] tracking-[0.18em] uppercase text-[#94A3B8] font-mono mb-8">04 — ai-помощник</p>
+            <h2 className="font-semibold tracking-[-0.04em] leading-[0.95] text-[#E5E7EB]" style={{ fontSize: 'clamp(36px, 4.2vw, 64px)' }}>
               AI-помощник, который видит весь город
             </h2>
             <p className="mt-8 text-lg text-[#94A3B8] max-w-lg">Не чат-бот из 2023. Полноценный аналитик внутри планшета.</p>
@@ -449,10 +449,10 @@ export default function LandingPage() {
       </section>
 
       {/* ─── Section 8 — Modules ─── */}
-      <section className="relative py-32 lg:py-44 px-6 lg:px-12 border-t border-white/[0.06]">
+      <section className="relative py-40 lg:py-52 px-6 lg:px-12 border-t border-white/[0.08]">
         <div className="max-w-[1400px] mx-auto">
-          <p className="text-[11px] tracking-[0.25em] uppercase text-[#94A3B8] font-mono mb-10">05 — возможности</p>
-          <h2 className="font-medium tracking-[-0.04em] leading-[0.95] text-[#E5E7EB] max-w-3xl" style={{ fontSize: 'clamp(44px, 5.5vw, 80px)' }}>
+          <p className="text-[12px] tracking-[0.18em] uppercase text-[#94A3B8] font-mono mb-8">05 — возможности</p>
+          <h2 className="font-semibold tracking-[-0.04em] leading-[0.95] text-[#E5E7EB] max-w-3xl" style={{ fontSize: 'clamp(40px, 4.6vw, 72px)' }}>
             9 модулей. Один интерфейс.
           </h2>
           <div className="mt-20 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -464,10 +464,10 @@ export default function LandingPage() {
       </section>
 
       {/* ─── Section 9 — Plan ─── */}
-      <section id="plan" className="relative py-32 lg:py-44 px-6 lg:px-12 border-t border-white/[0.06]">
+      <section id="plan" className="relative py-40 lg:py-52 px-6 lg:px-12 border-t border-white/[0.08]">
         <div className="max-w-[1400px] mx-auto">
-          <p className="text-[11px] tracking-[0.25em] uppercase text-[#94A3B8] font-mono mb-10">06 — внедрение</p>
-          <h2 className="font-medium tracking-[-0.04em] leading-[0.95] text-[#E5E7EB] max-w-3xl" style={{ fontSize: 'clamp(44px, 5.5vw, 80px)' }}>
+          <p className="text-[12px] tracking-[0.18em] uppercase text-[#94A3B8] font-mono mb-8">06 — внедрение</p>
+          <h2 className="font-semibold tracking-[-0.04em] leading-[0.95] text-[#E5E7EB] max-w-3xl" style={{ fontSize: 'clamp(40px, 4.6vw, 72px)' }}>
             8 недель. Три этапа.
           </h2>
           <div className="mt-20 grid md:grid-cols-3 gap-4">
@@ -479,7 +479,7 @@ export default function LandingPage() {
                 viewport={{ once: true, amount: 0.4 }}
                 transition={{ duration: 0.8, delay: i * 0.15, ease: EASE }}
                 style={{ transformOrigin: 'left' }}
-                className="relative rounded-2xl p-7 lg:p-8 border border-white/[0.06] overflow-hidden"
+                className="relative rounded-2xl p-7 lg:p-8 border border-white/[0.08] overflow-hidden"
               >
                 <div className="absolute inset-0" style={{ background: p.bg }} />
                 <div className="relative">
@@ -512,7 +512,7 @@ export default function LandingPage() {
       </section>
 
       {/* ─── Section 10 — Final CTA ─── */}
-      <section className="relative min-h-[90vh] flex items-center justify-center px-6 py-32 border-t border-white/[0.06] overflow-hidden">
+      <section className="relative min-h-[90vh] flex items-center justify-center px-6 py-32 border-t border-white/[0.08] overflow-hidden">
         <GradientMeshBg static />
         <div className="absolute inset-0 bg-[#0A0E1A]/30" />
         <div className="relative z-10 max-w-5xl mx-auto text-center">
@@ -521,8 +521,8 @@ export default function LandingPage() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 1, ease: EASE }}
-            className="font-medium tracking-[-0.04em] leading-[0.95] text-[#E5E7EB]"
-            style={{ fontSize: 'clamp(48px, 7vw, 120px)' }}
+            className="font-semibold tracking-[-0.04em] leading-[0.95] text-[#E5E7EB]"
+            style={{ fontSize: 'clamp(48px, 6vw, 96px)' }}
           >
             Через 8 недель вы открываете планшет — и видите{' '}
             <span className="bg-gradient-to-r from-[#3B82F6] to-[#06B6D4] bg-clip-text text-transparent">весь город</span>.
@@ -557,7 +557,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <footer className="border-t border-white/[0.06] py-10 px-6 bg-[#0A0E1A]">
+      <footer className="border-t border-white/[0.08] py-14 px-6 bg-[#0A0E1A]">
         <div className="max-w-[1400px] mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-[11px] font-mono tracking-[0.15em] uppercase text-[#94A3B8]">
           <span>Планшет Мэра</span>
           <span>tablet.su · 2026 · команда@tablet.su</span>
