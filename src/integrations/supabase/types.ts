@@ -77,6 +77,30 @@ export type Database = {
         }
         Relationships: []
       }
+      ai_status_state: {
+        Row: {
+          consecutive_failures: number
+          current_state: string
+          id: number
+          last_alert_at: string | null
+          last_changed_at: string
+        }
+        Insert: {
+          consecutive_failures?: number
+          current_state?: string
+          id?: number
+          last_alert_at?: string | null
+          last_changed_at?: string
+        }
+        Update: {
+          consecutive_failures?: number
+          current_state?: string
+          id?: number
+          last_alert_at?: string | null
+          last_changed_at?: string
+        }
+        Relationships: []
+      }
       app_settings: {
         Row: {
           city_lat: number | null
