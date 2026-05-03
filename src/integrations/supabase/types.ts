@@ -101,6 +101,42 @@ export type Database = {
         }
         Relationships: []
       }
+      audit_log: {
+        Row: {
+          action: string
+          after_data: Json | null
+          before_data: Json | null
+          created_at: string
+          diff: Json | null
+          entity_id: string | null
+          entity_type: string
+          id: string
+          user_id: string | null
+        }
+        Insert: {
+          action: string
+          after_data?: Json | null
+          before_data?: Json | null
+          created_at?: string
+          diff?: Json | null
+          entity_id?: string | null
+          entity_type: string
+          id?: string
+          user_id?: string | null
+        }
+        Update: {
+          action?: string
+          after_data?: Json | null
+          before_data?: Json | null
+          created_at?: string
+          diff?: Json | null
+          entity_id?: string | null
+          entity_type?: string
+          id?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       benchmarks: {
         Row: {
           category: string | null
@@ -313,6 +349,36 @@ export type Database = {
         }
         Relationships: []
       }
+      feature_flags: {
+        Row: {
+          description: string | null
+          enabled: boolean
+          enabled_at: string | null
+          enabled_for_roles: string[]
+          key: string
+          payload: Json
+          updated_at: string
+        }
+        Insert: {
+          description?: string | null
+          enabled?: boolean
+          enabled_at?: string | null
+          enabled_for_roles?: string[]
+          key: string
+          payload?: Json
+          updated_at?: string
+        }
+        Update: {
+          description?: string | null
+          enabled?: boolean
+          enabled_at?: string | null
+          enabled_for_roles?: string[]
+          key?: string
+          payload?: Json
+          updated_at?: string
+        }
+        Relationships: []
+      }
       incidents: {
         Row: {
           address: string | null
@@ -400,6 +466,36 @@ export type Database = {
           },
         ]
       }
+      incidents_severity_log: {
+        Row: {
+          changed_at: string
+          changed_by: string | null
+          id: string
+          incident_id: string
+          previous_severity: string | null
+          severity: string
+          source: string
+        }
+        Insert: {
+          changed_at?: string
+          changed_by?: string | null
+          id?: string
+          incident_id: string
+          previous_severity?: string | null
+          severity: string
+          source?: string
+        }
+        Update: {
+          changed_at?: string
+          changed_by?: string | null
+          id?: string
+          incident_id?: string
+          previous_severity?: string | null
+          severity?: string
+          source?: string
+        }
+        Relationships: []
+      }
       ingestion_log: {
         Row: {
           created_at: string
@@ -474,6 +570,30 @@ export type Database = {
           title?: string
           topic?: string | null
           url?: string | null
+        }
+        Relationships: []
+      }
+      metrics_baseline: {
+        Row: {
+          captured_at: string
+          context: Json
+          id: string
+          metric: string
+          value: number
+        }
+        Insert: {
+          captured_at?: string
+          context?: Json
+          id?: string
+          metric: string
+          value: number
+        }
+        Update: {
+          captured_at?: string
+          context?: Json
+          id?: string
+          metric?: string
+          value?: number
         }
         Relationships: []
       }
@@ -617,6 +737,36 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      risk_index_snapshots: {
+        Row: {
+          components: Json
+          created_at: string
+          formula_version: string
+          id: string
+          index_value: number
+          level: string
+          snapshot_date: string
+        }
+        Insert: {
+          components?: Json
+          created_at?: string
+          formula_version?: string
+          id?: string
+          index_value: number
+          level: string
+          snapshot_date: string
+        }
+        Update: {
+          components?: Json
+          created_at?: string
+          formula_version?: string
+          id?: string
+          index_value?: number
+          level?: string
+          snapshot_date?: string
+        }
+        Relationships: []
       }
       scenario_history: {
         Row: {
