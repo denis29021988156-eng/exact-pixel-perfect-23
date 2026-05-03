@@ -18,7 +18,7 @@ function SlideDashboard() {
           <span className="text-[10px] font-semibold text-[#EF4444]">RED ZONE</span>
         </div>
       </div>
-      <div className="rounded-lg border border-[#EF4444]/30 bg-[#EF4444]/8 p-3 flex items-start gap-2.5">
+      <div className="rounded-lg border border-[#EF4444]/30 bg-[#EF4444]/10 p-3 flex items-start gap-2.5">
         <AlertTriangle className="w-4 h-4 text-[#EF4444] mt-0.5 flex-shrink-0" />
         <div>
           <p className="text-xs font-semibold">Авария ЖКХ · ул. Победы 14</p>
@@ -142,7 +142,7 @@ const SLIDE_MAP: Record<Slide, () => JSX.Element> = {
 
 export default function TabletMockup() {
   const wrapRef = useRef<HTMLDivElement>(null);
-  const [tilt, setTilt] = useState({ rx: 8, ry: -15 });
+  const [tilt, setTilt] = useState({ rx: 6, ry: -12 });
   const [idx, setIdx] = useState(0);
 
   useEffect(() => {
@@ -159,7 +159,7 @@ export default function TabletMockup() {
       const cy = r.top + r.height / 2;
       const dx = (e.clientX - cx) / r.width;
       const dy = (e.clientY - cy) / r.height;
-      setTilt({ ry: -15 + dx * 10, rx: 8 - dy * 8 });
+      setTilt({ ry: -12 + dx * 8, rx: 6 - dy * 6 });
     };
     window.addEventListener('mousemove', handler);
     return () => window.removeEventListener('mousemove', handler);
@@ -184,10 +184,10 @@ export default function TabletMockup() {
           <AnimatePresence mode="wait">
             <motion.div
               key={SLIDES[idx]}
-              initial={{ opacity: 0, filter: 'blur(8px)' }}
-              animate={{ opacity: 1, filter: 'blur(0px)' }}
-              exit={{ opacity: 0, filter: 'blur(8px)' }}
-              transition={{ duration: 0.5 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.35, ease: [0.65, 0, 0.35, 1] }}
               className="absolute inset-0"
             >
               <Current />
