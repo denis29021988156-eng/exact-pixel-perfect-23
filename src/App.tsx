@@ -20,6 +20,7 @@ import ModerationPage from "./pages/ModerationPage";
 import AIExtractPage from "./pages/AIExtractPage";
 import TelegramInboxPage from "./pages/TelegramInboxPage";
 import PublicDashboard from "./pages/PublicDashboard";
+import SlaMatrixPage from "./pages/SlaMatrixPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
