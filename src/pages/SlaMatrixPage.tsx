@@ -5,7 +5,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Check, Clock, ShieldAlert, Save } from 'lucide-react';
+import { Check, Clock, ShieldAlert, Save, Rocket, Lock } from 'lucide-react';
 
 const TYPES = ['housing', 'road', 'social', 'ecology', 'transport', 'other'] as const;
 const TYPE_LABEL: Record<string, string> = {
@@ -35,21 +35,28 @@ export default function SlaMatrixPage() {
   const { userRole, user } = useAuth();
   const { toast } = useToast();
   const canManage = userRole === 'mayor' || userRole === 'deputy';
+  const isMayor = userRole === 'mayor';
   const [rows, setRows] = useState<Row[]>([]);
   const [loading, setLoading] = useState(true);
   const [savingId, setSavingId] = useState<string | null>(null);
+  const [flagEnabled, setFlagEnabled] = useState(false);
+  const [flagEnabledAt, setFlagEnabledAt] = useState<string | null>(null);
+  const [launching, setLaunching] = useState(false);
 
   async function load() {
     setLoading(true);
-    const { data, error } = await supabase
-      .from('sla_matrix_draft')
-      .select('*')
-      .order('incident_type')
-      .order('severity');
-    if (error) {
-      toast({ title: 'Ошибка загрузки', description: error.message, variant: 'destructive' });
+    const [matrixRes, flagRes] = await Promise.all([
+      supabase.from('sla_matrix_draft').select('*').order('incident_type').order('severity'),
+      supabase.from('feature_flags').select('enabled, enabled_at').eq('key', 'sla_matrix_active').maybeSingle(),
+    ]);
+    if (matrixRes.error) {
+      toast({ title: 'Ошибка загрузки', description: matrixRes.error.message, variant: 'destructive' });
     } else {
-      setRows((data || []) as Row[]);
+      setRows((matrixRes.data || []) as Row[]);
+    }
+    if (flagRes.data) {
+      setFlagEnabled(!!flagRes.data.enabled);
+      setFlagEnabledAt(flagRes.data.enabled_at);
     }
     setLoading(false);
   }
@@ -96,6 +103,24 @@ export default function SlaMatrixPage() {
 
   const approvedCount = rows.filter((r) => r.approved).length;
   const totalCount = rows.length;
+  const allApproved = totalCount > 0 && approvedCount === totalCount;
+
+  async function launchStage1() {
+    if (!isMayor) return;
+    if (!confirm(`Запустить Этап 1? После этого матрица SLA (${totalCount} правил) начнёт применяться к новым инцидентам и пересчёту дедлайнов. Откат потребует отдельной операции.`)) return;
+    setLaunching(true);
+    const { error } = await supabase
+      .from('feature_flags')
+      .update({ enabled: true, enabled_at: new Date().toISOString() })
+      .eq('key', 'sla_matrix_active');
+    setLaunching(false);
+    if (error) {
+      toast({ title: 'Не удалось запустить', description: error.message, variant: 'destructive' });
+    } else {
+      toast({ title: 'Этап 1 запущен', description: 'Матрица SLA активна.' });
+      load();
+    }
+  }
 
   if (!canManage) {
     return (
@@ -130,6 +155,49 @@ export default function SlaMatrixPage() {
           </Button>
         </div>
       </header>
+
+      <div className={`rounded-2xl border p-5 flex items-center justify-between gap-6 ${
+        flagEnabled
+          ? 'border-success/30 bg-success/5'
+          : allApproved
+            ? 'border-primary/30 bg-primary/5'
+            : 'border-border bg-surface-muted/40'
+      }`}>
+        <div className="flex items-start gap-3">
+          {flagEnabled ? (
+            <Check className="w-5 h-5 text-success mt-0.5" />
+          ) : allApproved ? (
+            <Rocket className="w-5 h-5 text-primary mt-0.5" />
+          ) : (
+            <Lock className="w-5 h-5 text-muted-foreground mt-0.5" />
+          )}
+          <div>
+            <p className="text-sm font-semibold text-foreground">
+              {flagEnabled
+                ? 'Этап 1 активен — матрица SLA применяется'
+                : allApproved
+                  ? 'Готово к запуску Этапа 1'
+                  : `Согласуйте все ${totalCount} строк, чтобы запустить Этап 1`}
+            </p>
+            <p className="text-xs text-muted-foreground mt-1">
+              {flagEnabled && flagEnabledAt
+                ? `Запущено ${new Date(flagEnabledAt).toLocaleString('ru-RU')}`
+                : !isMayor
+                  ? 'Запуск доступен только мэру.'
+                  : 'После запуска новые дедлайны и эскалации будут считаться по утверждённой матрице.'}
+            </p>
+          </div>
+        </div>
+        <Button
+          onClick={launchStage1}
+          disabled={!isMayor || !allApproved || flagEnabled || launching}
+          variant="default"
+          size="lg"
+        >
+          <Rocket className="w-4 h-4 mr-2" />
+          {flagEnabled ? 'Этап 1 запущен' : launching ? 'Запуск…' : 'Старт Этапа 1'}
+        </Button>
+      </div>
 
       {loading ? (
         <div className="text-sm text-muted-foreground">Загрузка…</div>
