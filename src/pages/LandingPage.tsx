@@ -32,11 +32,11 @@ const METRICS = [
 ];
 
 const PAINS = [
-  { text: '«О ЧП я узнаю последним — из новостей.»', w: 'md:w-[380px]', off: 'md:ml-0' },
-  { text: '«У каждого зама свой Excel. Общей картины нет.»', w: 'md:w-[420px]', off: 'md:ml-32' },
-  { text: '«Дал поручение — забыли. Узнаю через неделю.»', w: 'md:w-[340px]', off: 'md:ml-16' },
-  { text: '«О срыве контракта узнаём в день дедлайна.»', w: 'md:w-[400px]', off: 'md:ml-48' },
-  { text: '«Жалобы граждан расползаются по чатам.»', w: 'md:w-[360px]', off: 'md:ml-24' },
+  { text: 'О ЧП я узнаю последним — из новостей.', tag: 'Прозрачность' },
+  { text: 'У каждого зама свой Excel. Общей картины нет.', tag: 'Фрагментация' },
+  { text: 'Дал поручение — забыли. Узнаю через неделю.', tag: 'Контроль' },
+  { text: 'О срыве контракта узнаём в день дедлайна.', tag: 'Бюджет' },
+  { text: 'Жалобы граждан расползаются по чатам.', tag: 'Обратная связь' },
 ];
 
 const COMPARE = [
@@ -259,33 +259,50 @@ export default function LandingPage() {
             </motion.p>
           </div>
 
-          <div className="space-y-5">
+          <div className="grid md:grid-cols-2 gap-px bg-white/[0.06] border border-white/[0.08] rounded-2xl overflow-hidden">
             {PAINS.map((p, i) => (
               <motion.div
                 key={i}
-                initial={{ opacity: 0, y: 24 }}
+                initial={{ opacity: 0, y: 16 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.5 }}
-                transition={{ duration: 0.7, delay: i * 0.08, ease: EASE }}
-                className={`${p.off} ${p.w} max-w-full`}
+                viewport={{ once: true, amount: 0.4 }}
+                transition={{ duration: 0.6, delay: i * 0.06, ease: EASE }}
+                className="group relative bg-[#0A0E1A] p-8 lg:p-10 hover:bg-[#0F1524] transition-colors duration-300"
               >
-                <div className="group relative px-7 py-6 rounded-2xl bg-[#0F1524]/60 backdrop-blur-md border border-white/[0.08] hover:border-[#3B82F6]/40 hover:-translate-y-2 hover:shadow-[0_20px_50px_-20px_rgba(59,130,246,0.4)] transition-all duration-300 cursor-default">
-                  <p className="text-[15px] lg:text-[17px] text-[#E5E7EB] font-light leading-snug tracking-[-0.01em]">{p.text}</p>
+                <div className="flex items-start gap-5">
+                  <span className="shrink-0 mt-1 font-mono text-[11px] tracking-[0.18em] text-[#475569]">
+                    0{i + 1}
+                  </span>
+                  <div className="flex-1">
+                    <p className="text-[18px] lg:text-[22px] text-[#E5E7EB] font-light leading-[1.4] tracking-[-0.015em]">
+                      «{p.text}»
+                    </p>
+                    <p className="mt-4 text-[11px] tracking-[0.18em] uppercase font-mono text-[#64748B] group-hover:text-[#3B82F6] transition-colors">
+                      {p.tag}
+                    </p>
+                  </div>
                 </div>
               </motion.div>
             ))}
+            <div className="hidden md:block bg-[#0A0E1A] p-8 lg:p-10" />
           </div>
 
-          <motion.p
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 1, delay: 0.2 }}
-            className="mt-32 text-center italic font-light text-[#94A3B8] tracking-[-0.02em]"
-            style={{ fontSize: 'clamp(28px, 3.5vw, 48px)' }}
+            transition={{ duration: 0.9, delay: 0.1, ease: EASE }}
+            className="mt-28 lg:mt-36 max-w-3xl"
           >
-            Это не управление. Это разбор завалов.
-          </motion.p>
+            <p
+              className="font-semibold tracking-[-0.03em] leading-[1.05] text-[#E5E7EB]"
+              style={{ fontSize: 'clamp(32px, 3.6vw, 52px)' }}
+            >
+              Это не управление.
+              <br />
+              <span className="text-[#475569]">Это разбор завалов.</span>
+            </p>
+          </motion.div>
         </div>
       </section>
 
