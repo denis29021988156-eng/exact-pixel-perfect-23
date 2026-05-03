@@ -1,80 +1,54 @@
+# Старт: Этап 0 + 7a (две миграции в одном коммите)
 
+Финальный план — готовый к выполнению. После approve начну с миграции, затем cron, затем baseline-метрики, потом Этап 5.
 
-## Демо-данные Реутова — кризис + управляемость + сквозные связи
+## Миграция 1 — baseline tables
 
-Доработка предыдущего плана: добавляем позитивные сигналы и связываем сущности в цепочки, чтобы заказчик видел не таблицы, а живую систему управления.
+Создаю 5 таблиц с RLS:
 
-### Что меняется в датасете
+- **`feature_flags`** — `key`, `enabled`, `enabled_for_roles[]`, `payload jsonb`, `enabled_at`, `description`. Сидирую 9 флагов (`risk_engine_v2`, `sla_matrix_active`, `moderation_thresholds_v2`, `copilot_token_budget`, `escalation_dedup`, `audit_enabled=true`, `public_aggregation_v2`, `excel_strict_validation`, `ai_fallback_briefing`) — все `false`, кроме `audit_enabled`.
+- **`risk_index_snapshots`** — ежедневные снимки индекса (`snapshot_date UNIQUE`, `index_value`, `level`, `components jsonb`, `formula_version`).
+- **`metrics_baseline`** — фиксация метрик «до» (`metric`, `value`, `context`, `captured_at`).
+- **`incidents_severity_log`** — история severity (`incident_id`, `severity`, `previous_severity`, `changed_by`, `source`).
+- **`audit_log`** — журнал мутаций (`user_id`, `action`, `entity_type`, `entity_id`, `before_data`, `after_data`, `diff`).
 
-**Распределение по «настроению» (вместо чистого красного):**
+**RLS:**
+- Чтение `feature_flags`/`risk_index_snapshots`/`metrics_baseline`/`incidents_severity_log` — все авторизованные.
+- Управление `feature_flags`, INSERT в snapshots/baseline — `mayor`.
+- `incidents_severity_log` INSERT — только триггер (SECURITY DEFINER), пользователям INSERT/UPDATE/DELETE запрещён.
+- `audit_log` SELECT — только `mayor`. INSERT — только триггер.
 
-| Категория | Кризис | Под контролем | Норма |
-|---|---|---|---|
-| Инциденты (20) | 5 критических активных + 4 SLA-просрочки | **1 локализован** (high → resolved сегодня, с пометкой «Локализовано за 2ч») | 10 в работе/новых |
-| Проекты (8) | 1 overdue (школа №2, блокер), 1 risk | **1 «выведен из риска»** (был risk → стал on_track, прогресс 65%, заметка) | 5 on_track |
-| Контракты (6) | 2 с risk_of_non_execution > 70% | **1 «под контролем»** (risk был 65% → execution_rate 78%, статус active, заметка в name) | 2 нормальных |
-| Задачи (15) | 5 просроченных | 3 завершённых сегодня | 7 активных |
+## Миграция 2 — функции, baseline-сид, триггеры
 
-**Risk Index прогноз:** 60–70 («Повышенный»), не 75+. Это лучше продаёт идею «система держит ситуацию», а не «всё горит».
+1. Функция `log_audit()` (SECURITY DEFINER) — пишет в `audit_log` для INSERT/UPDATE/DELETE; для UPDATE считает diff по изменившимся ключам.
+2. Функция `log_incident_severity()` — пишет в `incidents_severity_log` при создании или смене severity.
+3. **Baseline-сид (до триггеров)**:
+   ```sql
+   INSERT INTO incidents_severity_log (incident_id, severity, changed_at, source)
+   SELECT id, severity::text, created_at, 'baseline_seed' FROM incidents;
+   ```
+4. Триггеры на `incidents`:
+   - `trg_audit_incidents` (AFTER INSERT/UPDATE/DELETE)
+   - `trg_severity_log_incidents` (AFTER INSERT/UPDATE)
 
-### Сквозные связи между сущностями
+Аудит-триггеры на `tasks`/`contracts`/`projects`/`escalations` — в Этапе 7b (позже).
 
-Сейчас в БД нет жёстких FK между incidents/tasks/projects/contracts, но есть **семантические поля** (`department`, `responsible`, текстовые ссылки в title/description). Сделаем 4 явных цепочки, которые заказчик увидит при клике:
+## После миграции
 
-**Цепочка 1 — Инцидент → Поручение → Департамент**
-- Incident: «[DEMO] Прорыв магистрали ХВС, Юбилейный пр. 14», dept=ЖКХ, severity=high
-- Task: «Устранить прорыв на Юбилейном пр. 14 (инцидент #...)», dept=ЖКХ, responsible=Иванов А.П., deadline=сегодня+1д. В description ссылка на title инцидента.
-- Связь по тексту title + одинаковому department.
+1. **Cron `daily-risk-snapshot`** — `0 0 * * *` UTC (= 03:00 МСК), вызывает edge `risk-snapshot`, вычисляет текущий индекс по существующей формуле v1 и пишет в `risk_index_snapshots`. Включаю pg_cron + pg_net.
+2. **Edge `risk-snapshot`** — деплой, читает incidents/tasks/projects, считает индекс, инсертит снимок.
+3. **Одноразовый INSERT** текущей точки в `risk_index_snapshots` (стартовая точка серии).
+4. **Baseline-метрики** — INSERT в `metrics_baseline`:
+   - `escalations_per_day` — за доступный месяц
+   - `escalation_avg_lifetime_minutes`
+   - `confidence_p25/p50/p75/p95` из `staging_raw`
+   - `ai_failure_rate_30d` из `ai_logs`
+5. **Экспорт** `/mnt/documents/baseline_2026-05-03.csv`.
 
-**Цепочка 2 — Проект → Контракт**
-- Project: «[DEMO] Капремонт школы №2 (мкрн Центральный)», status=overdue, blocker=«Подрядчик сорвал график монтажа кровли»
-- Contract: «[DEMO] СМР по школе №2 — кровля и фасад», contractor=ООО «СтройГарант», risk_of_non_execution=82, deadline=просрочен на 14 дней
-- Связь по упоминанию «школы №2» в обоих + одинаковый department=Образование.
+## Дальше (по плану v3)
 
-**Цепочка 3 — Жалобы → Heatmap → Эскалация**
-- 6 public_complaints с topic=«ЖКХ», district=«Юбилейный», sentiment=negative → концентрация в `CityPulseBlock` (negativePct ≈ 75%).
-- Те же координаты (lat 55.760–55.762, lng 37.853–37.857) у 3 incidents → кластер на MapPage.
-- Escalation type=«public_pressure», severity=4, message=«75% жалоб по ЖКХ за неделю — мкрн Юбилейный. Совпадение с инцидентами на ХВС».
+После завершения Этапа 0+7a — **Этап 5: Fallback ИИ + дедуп Telegram-алертов**. Без миграций (только код фронта + новая edge `notify-admin` + sessionStorage для статуса AI).
 
-**Цепочка 4 — Позитив (для контраста)**
-- Incident «локализован»: «[DEMO] Авария на ТП-7 — РЕШЕНО», status=resolved, в description: «Локализовано бригадой за 2ч 15мин. SLA соблюден.»
-- Связанная completed task: «Восстановить электроснабжение ТП-7» с пометкой о времени выполнения.
+---
 
-### Технические детали
-
-- **Запись:** прямой `INSERT` через DB-инструмент (не миграция).
-- **Идемпотентность:** перед каждым блоком — `DELETE WHERE title LIKE '[DEMO]%'` (или name/topic в зависимости от таблицы). Префикс `[DEMO]` обязателен везде, чтобы продакшен-данные не пересеклись.
-- **Связи через текст:** в `task.description` и `contract.name` явно упоминаем title связанной сущности — заказчик при клике увидит связь визуально, без необходимости JOIN.
-- **Координаты:** 3 кластера для heatmap — Юбилейный (ЖКХ), Носовихинское ш. (дороги/ДТП), мкрн Фабричный (благоустройство).
-- **Таймстемпы:** `created_at` разбросан по последним 7 дням → график на TodayPage оживёт.
-- **Эскалации:** триггер `check_and_create_escalation()` сработает автоматически на 3 incidents (high + sla_overdue). Ещё 1 эскалацию (public_pressure) и 1 (budget_risk) вставим вручную.
-- **AI-брифинг:** после засева станет осмысленным — будет о чём говорить (конкретные адреса, цепочки причин).
-
-### Что увидит заказчик после засева
-
-1. **TodayPage:** Risk Index 65 (оранжевый), Красная зона с 3 эскалациями (включая public_pressure), но в KPI видны 1 локализованный + 3 завершённые задачи → «система работает».
-2. **MapPage:** 20 маркеров, 3 явных кластера, heatmap концентрируется на Юбилейном.
-3. **IncidentsPage:** при клике на инцидент «Прорыв ХВС» в описании упоминается task — можно показать переход.
-4. **TasksPage:** видны и просроченные, и завершённые сегодня.
-5. **ProgramPage:** проект «Школа №2» в красном с блокером + контракт-двойник в риске. Рядом — проект «выведен из риска» (зелёный).
-6. **CityPulseBlock:** топик «ЖКХ» 75% negative, divergence высокий → кнопка «Создать поручение».
-7. **BudgetRiskCard:** 2 контракта в риске + 1 «под контролем» (для контраста).
-8. **PublicDashboard:** реалистичные публичные KPI.
-
-### Сценарий показа на демо (15 мин, как побочный артефакт)
-
-После засева я могу подготовить файл `DEMO_SCRIPT.md` с пошаговым сценарием, который проводит заказчика по этим 4 цепочкам:
-1. Мэр открывает Today → видит Risk Index 65 + Красную зону.
-2. Кликает на эскалацию public_pressure → переходит к жалобам → видит heatmap на Юбилейном.
-3. Открывает связанный инцидент → создаёт поручение через AI Copilot.
-4. Переходит в Program → видит школу №2 (overdue) + контракт-двойник в риске → нажимает «Пересчитать бюджет».
-5. Завершение: показывает 1 локализованный инцидент + проект «выведен из риска» → «вот как платформа возвращает контроль».
-
-### Если результат разойдётся с целью
-
-Risk Index целимся в 60–70. Если выйдет за рамки — точечно подкручу:
-- Вышло >75: уберу 1 критический или верну 1 SLA в норму.
-- Вышло <55: добавлю 1 high-severity инцидент.
-
-После засева отчитаюсь с фактическими числами и попрошу подтвердить, делать ли `DEMO_SCRIPT.md`.
-
+Подтверждаю готовность. Жму approve — выполняю миграцию.
