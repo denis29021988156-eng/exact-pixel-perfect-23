@@ -153,25 +153,67 @@ export default function TabletMockup() {
   useEffect(() => {
     let raf = 0;
     let pending: { x: number; y: number } | null = null;
+    let cached: { cx: number; cy: number; w: number; h: number } | null = null;
+
+    const measure = () => {
+      const el = wrapRef.current;
+      if (!el) {
+        cached = null;
+        return;
+      }
+      const r = el.getBoundingClientRect();
+      cached = {
+        cx: r.left + r.width / 2,
+        cy: r.top + r.height / 2,
+        w: r.width,
+        h: r.height,
+      };
+    };
+
+    measure();
+
+    const onScroll = () => {
+      // position changes on scroll, but size doesn't — only refresh centers
+      const el = wrapRef.current;
+      if (!el || !cached) return;
+      const r = el.getBoundingClientRect();
+      cached.cx = r.left + r.width / 2;
+      cached.cy = r.top + r.height / 2;
+    };
+
+    let scrollRaf = 0;
+    const onScrollThrottled = () => {
+      if (scrollRaf) return;
+      scrollRaf = requestAnimationFrame(() => {
+        scrollRaf = 0;
+        onScroll();
+      });
+    };
+
+    const ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(measure) : null;
+    if (ro && wrapRef.current) ro.observe(wrapRef.current);
+    window.addEventListener('resize', measure);
+    window.addEventListener('scroll', onScrollThrottled, { passive: true });
+
     const handler = (e: MouseEvent) => {
       pending = { x: e.clientX, y: e.clientY };
       if (raf) return;
       raf = requestAnimationFrame(() => {
         raf = 0;
-        const el = wrapRef.current;
-        if (!el || !pending) return;
-        const r = el.getBoundingClientRect();
-        const cx = r.left + r.width / 2;
-        const cy = r.top + r.height / 2;
-        const dx = (pending.x - cx) / r.width;
-        const dy = (pending.y - cy) / r.height;
+        if (!pending || !cached || !cached.w || !cached.h) return;
+        const dx = (pending.x - cached.cx) / cached.w;
+        const dy = (pending.y - cached.cy) / cached.h;
         setTilt({ ry: -12 + dx * 8, rx: 6 - dy * 6 });
       });
     };
     window.addEventListener('mousemove', handler, { passive: true });
     return () => {
       window.removeEventListener('mousemove', handler);
+      window.removeEventListener('resize', measure);
+      window.removeEventListener('scroll', onScrollThrottled);
+      if (ro) ro.disconnect();
       if (raf) cancelAnimationFrame(raf);
+      if (scrollRaf) cancelAnimationFrame(scrollRaf);
     };
   }, []);
 
