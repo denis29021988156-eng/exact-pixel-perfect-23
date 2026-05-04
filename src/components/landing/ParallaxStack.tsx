@@ -12,7 +12,7 @@ export default function ParallaxStack() {
   return (
     <div ref={ref} className="relative aspect-[5/4] w-full">
       <motion.div
-        style={{ y: yBack }}
+        style={{ y: yBack, willChange: 'transform' }}
         className="absolute inset-6 rounded-2xl bg-[#0A0E1A] border border-white/[0.06] overflow-hidden"
       >
         <div
@@ -31,7 +31,7 @@ export default function ParallaxStack() {
           { x: 50, y: 45, c: '#3B82F6' },
         ].map((d, i) => (
           <div key={i} className="absolute" style={{ left: `${d.x}%`, top: `${d.y}%` }}>
-            <span className="absolute -inset-2 rounded-full animate-ping" style={{ background: `${d.c}40` }} />
+            <span className="absolute -inset-1.5 rounded-full opacity-40" style={{ background: `${d.c}30` }} />
             <span className="relative block w-2 h-2 rounded-full" style={{ background: d.c }} />
           </div>
         ))}
@@ -41,8 +41,8 @@ export default function ParallaxStack() {
       </motion.div>
 
       <motion.div
-        style={{ y: yMid, rotate: -2 }}
-        className="absolute left-0 right-12 top-12 rounded-2xl bg-gradient-to-br from-[#0F1524]/95 to-[#0A0E1A]/95 backdrop-blur-xl border border-white/10 p-5 shadow-[0_30px_80px_-20px_rgba(0,0,0,0.6)]"
+        style={{ y: yMid, rotate: -2, willChange: 'transform' }}
+        className="absolute left-0 right-12 top-12 rounded-2xl bg-gradient-to-br from-[#0F1524] to-[#0A0E1A] border border-white/10 p-5 shadow-[0_20px_40px_-15px_rgba(0,0,0,0.6)]"
       >
         <div className="flex items-center justify-between mb-4">
           <div>
@@ -65,8 +65,8 @@ export default function ParallaxStack() {
       </motion.div>
 
       <motion.div
-        style={{ y: yFront, rotate: 4 }}
-        className="absolute right-0 top-2 w-[230px] rounded-xl bg-[#0F1524]/90 backdrop-blur-xl border border-[#EF4444]/30 p-4 shadow-[0_30px_60px_-15px_rgba(239,68,68,0.3)]"
+        style={{ y: yFront, rotate: 4, willChange: 'transform' }}
+        className="absolute right-0 top-2 w-[230px] rounded-xl bg-[#0F1524] border border-[#EF4444]/30 p-4 shadow-[0_15px_30px_-10px_rgba(239,68,68,0.25)]"
       >
         <div className="flex items-start gap-2.5">
           <AlertTriangle className="w-4 h-4 text-[#EF4444] mt-0.5" />
@@ -78,8 +78,8 @@ export default function ParallaxStack() {
       </motion.div>
 
       <motion.div
-        style={{ y: yFront, rotate: -3 }}
-        className="absolute right-16 bottom-12 w-[210px] rounded-xl bg-[#0F1524]/90 backdrop-blur-xl border border-[#06B6D4]/30 p-4 shadow-[0_30px_60px_-15px_rgba(6,182,212,0.3)]"
+        style={{ y: yFront, rotate: -3, willChange: 'transform' }}
+        className="absolute right-16 bottom-12 w-[210px] rounded-xl bg-[#0F1524] border border-[#06B6D4]/30 p-4 shadow-[0_15px_30px_-10px_rgba(6,182,212,0.25)]"
       >
         <div className="flex items-start gap-2.5">
           <Sparkles className="w-4 h-4 text-[#06B6D4] mt-0.5" />
@@ -91,8 +91,8 @@ export default function ParallaxStack() {
       </motion.div>
 
       <motion.div
-        style={{ y: yFront, rotate: 2 }}
-        className="absolute left-4 bottom-0 w-[180px] rounded-xl bg-[#0F1524]/90 backdrop-blur-xl border border-[#F59E0B]/30 p-4 shadow-[0_30px_60px_-15px_rgba(245,158,11,0.25)]"
+        style={{ y: yFront, rotate: 2, willChange: 'transform' }}
+        className="absolute left-4 bottom-0 w-[180px] rounded-xl bg-[#0F1524] border border-[#F59E0B]/30 p-4 shadow-[0_15px_30px_-10px_rgba(245,158,11,0.2)]"
       >
         <div className="flex items-start gap-2.5">
           <Activity className="w-4 h-4 text-[#F59E0B] mt-0.5" />
