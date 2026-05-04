@@ -39,10 +39,10 @@ export default function ModuleCard({
           transition: 'transform 300ms cubic-bezier(0.65,0,0.35,1)',
           transformStyle: 'preserve-3d',
         }}
-        className={`relative h-full rounded-2xl p-7 backdrop-blur-md transition-all duration-300 ${
+        className={`relative h-full rounded-2xl p-7 transition-all duration-300 ${
           accent
-            ? 'bg-gradient-to-br from-[#3B82F6]/10 via-[#0F1524]/80 to-[#06B6D4]/10 border border-[#3B82F6]/30'
-            : 'bg-[#0F1524]/60 border border-white/[0.08] hover:border-white/[0.15]'
+            ? 'bg-gradient-to-br from-[#162033] via-[#0F1524] to-[#0F2330] border border-[#3B82F6]/30'
+            : 'bg-[#0F1524] border border-white/[0.08] hover:border-white/[0.15]'
         }`}
       >
         <Icon
