@@ -14,12 +14,12 @@ function SlideDashboard() {
           <p className="text-5xl font-light tracking-tight mt-1">87<span className="text-xl text-[#94A3B8]">/100</span></p>
         </div>
         <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#EF4444]/15 border border-[#EF4444]/30">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#EF4444] animate-pulse" />
+          <span className="w-1.5 h-1.5 rounded-full bg-[#EF4444] animate-pulse-red" />
           <span className="text-[10px] font-semibold text-[#EF4444]">RED ZONE</span>
         </div>
       </div>
       <div className="rounded-lg border border-[#EF4444]/30 bg-[#EF4444]/10 p-3 flex items-start gap-2.5">
-        <AlertTriangle className="w-4 h-4 text-[#EF4444] mt-0.5 flex-shrink-0" />
+        <AlertTriangle className="w-4 h-4 text-[#EF4444] mt-0.5 flex-shrink-0 animate-pulse-red" />
         <div>
           <p className="text-xs font-semibold">Авария ЖКХ · ул. Победы 14</p>
           <p className="text-[10px] text-[#94A3B8] mt-0.5">SLA 38 мин · зам по ЖКХ</p>
