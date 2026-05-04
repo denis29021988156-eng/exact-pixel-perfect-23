@@ -120,9 +120,9 @@ export default function LandingPage() {
 
         <motion.div
           style={{ y: heroY, opacity: heroOpacity }}
-          className="relative z-10 max-w-[1400px] mx-auto px-6 lg:px-12 pt-24 pb-32 min-h-screen grid lg:grid-cols-[1.1fr_1fr] gap-16 xl:gap-24 items-center"
+          className="relative z-10 max-w-[1400px] mx-auto px-6 lg:px-12 pt-24 pb-32 min-h-screen grid lg:grid-cols-[1fr_1fr] gap-16 lg:gap-20 xl:gap-[80px] items-center"
         >
-          <div>
+          <div className="lg:max-w-[560px]">
             <motion.p
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
@@ -155,7 +155,7 @@ export default function LandingPage() {
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.7, ease: EASE }}
-              className="mt-10 max-w-xl text-[15px] lg:text-[17px] text-[#94A3B8] leading-[1.6]"
+              className="mt-10 max-w-xl text-[18px] lg:text-[20px] font-medium text-[#94A3B8] leading-[1.5]"
             >
               Платформа, где сходятся все сигналы города — от аварии ЖКХ до риска срыва контракта.
               Без совещаний. Без Excel. Без отчётов в почте.
@@ -188,7 +188,7 @@ export default function LandingPage() {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 1.2, delay: 0.4, ease: EASE }}
-            className="hidden lg:block"
+            className="hidden lg:block lg:-translate-x-[60px]"
           >
             <TabletMockup />
           </motion.div>

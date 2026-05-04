@@ -14,12 +14,12 @@ function SlideDashboard() {
           <p className="text-5xl font-light tracking-tight mt-1">87<span className="text-xl text-[#94A3B8]">/100</span></p>
         </div>
         <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#EF4444]/15 border border-[#EF4444]/30">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#EF4444] animate-pulse" />
+          <span className="w-1.5 h-1.5 rounded-full bg-[#EF4444] animate-pulse-red" />
           <span className="text-[10px] font-semibold text-[#EF4444]">RED ZONE</span>
         </div>
       </div>
       <div className="rounded-lg border border-[#EF4444]/30 bg-[#EF4444]/10 p-3 flex items-start gap-2.5">
-        <AlertTriangle className="w-4 h-4 text-[#EF4444] mt-0.5 flex-shrink-0" />
+        <AlertTriangle className="w-4 h-4 text-[#EF4444] mt-0.5 flex-shrink-0 animate-pulse-red" />
         <div>
           <p className="text-xs font-semibold">Авария ЖКХ · ул. Победы 14</p>
           <p className="text-[10px] text-[#94A3B8] mt-0.5">SLA 38 мин · зам по ЖКХ</p>
@@ -178,7 +178,7 @@ export default function TabletMockup() {
         animate={{ rotateX: tilt.rx, rotateY: tilt.ry }}
         transition={{ type: 'spring', stiffness: 60, damping: 18 }}
         style={{ transformStyle: 'preserve-3d' }}
-        className="relative aspect-[4/3] rounded-[28px] p-[10px] bg-gradient-to-br from-white/[0.12] via-white/[0.04] to-white/[0.10] border border-white/10 shadow-[0_40px_80px_-20px_rgba(0,0,0,0.7)]"
+        className="relative aspect-[4/3] rounded-[28px] p-[10px] bg-gradient-to-br from-white/[0.12] via-white/[0.04] to-white/[0.10] border border-white/10 shadow-[0_80px_120px_-40px_rgba(59,130,246,0.25),0_40px_80px_-20px_rgba(0,0,0,0.5)]"
       >
         <div className="relative h-full w-full rounded-[20px] overflow-hidden bg-[#0A0E1A] border border-white/10">
           <AnimatePresence mode="wait">
@@ -203,6 +203,18 @@ export default function TabletMockup() {
           />
         </div>
       </motion.div>
+      {/* floating ground glow */}
+      <div
+        aria-hidden
+        className="absolute left-1/2 -translate-x-1/2 pointer-events-none"
+        style={{
+          bottom: '-30px',
+          width: '80%',
+          height: '60px',
+          background: 'radial-gradient(ellipse, rgba(59,130,246,0.3) 0%, transparent 70%)',
+          filter: 'blur(40px)',
+        }}
+      />
       <div className="mt-6 flex justify-center gap-1.5">
         {SLIDES.map((s, i) => (
           <span
