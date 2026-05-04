@@ -178,7 +178,7 @@ export default function TabletMockup() {
         animate={{ rotateX: tilt.rx, rotateY: tilt.ry }}
         transition={{ type: 'spring', stiffness: 60, damping: 18 }}
         style={{ transformStyle: 'preserve-3d' }}
-        className="relative aspect-[4/3] rounded-[28px] p-[10px] bg-gradient-to-br from-white/[0.12] via-white/[0.04] to-white/[0.10] border border-white/10 shadow-[0_40px_80px_-20px_rgba(0,0,0,0.7)]"
+        className="relative aspect-[4/3] rounded-[28px] p-[10px] bg-gradient-to-br from-white/[0.12] via-white/[0.04] to-white/[0.10] border border-white/10 shadow-[0_80px_120px_-40px_rgba(59,130,246,0.25),0_40px_80px_-20px_rgba(0,0,0,0.5)]"
       >
         <div className="relative h-full w-full rounded-[20px] overflow-hidden bg-[#0A0E1A] border border-white/10">
           <AnimatePresence mode="wait">
@@ -203,6 +203,18 @@ export default function TabletMockup() {
           />
         </div>
       </motion.div>
+      {/* floating ground glow */}
+      <div
+        aria-hidden
+        className="absolute left-1/2 -translate-x-1/2 pointer-events-none"
+        style={{
+          bottom: '-30px',
+          width: '80%',
+          height: '60px',
+          background: 'radial-gradient(ellipse, rgba(59,130,246,0.3) 0%, transparent 70%)',
+          filter: 'blur(40px)',
+        }}
+      />
       <div className="mt-6 flex justify-center gap-1.5">
         {SLIDES.map((s, i) => (
           <span
