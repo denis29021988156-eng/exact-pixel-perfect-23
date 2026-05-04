@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
 import {
   ArrowRight,
   AlertTriangle,
@@ -91,8 +91,9 @@ export default function LandingPage() {
   const navigate = useNavigate();
   const heroRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ['start start', 'end start'] });
-  const heroY = useTransform(scrollYProgress, [0, 1], [0, 120]);
-  const heroOpacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
+  const smoothProgress = useSpring(scrollYProgress, { stiffness: 80, damping: 24, mass: 0.4 });
+  const heroY = useTransform(smoothProgress, [0, 1], [0, 120]);
+  const heroOpacity = useTransform(smoothProgress, [0, 0.8], [1, 0]);
 
   useEffect(() => {
     document.title = 'Планшет Мэра — один экран, весь город, восемь недель';

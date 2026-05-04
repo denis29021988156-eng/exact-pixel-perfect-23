@@ -1,13 +1,14 @@
 import { useRef } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
 import { AlertTriangle, Sparkles, MapPin, Activity } from 'lucide-react';
 
 export default function ParallaxStack() {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] });
-  const yBack = useTransform(scrollYProgress, [0, 1], [60, -60]);
-  const yMid = useTransform(scrollYProgress, [0, 1], [30, -30]);
-  const yFront = useTransform(scrollYProgress, [0, 1], [-40, 80]);
+  const smooth = useSpring(scrollYProgress, { stiffness: 70, damping: 22, mass: 0.4 });
+  const yBack = useTransform(smooth, [0, 1], [60, -60]);
+  const yMid = useTransform(smooth, [0, 1], [30, -30]);
+  const yFront = useTransform(smooth, [0, 1], [-40, 80]);
 
   return (
     <div ref={ref} className="relative aspect-[5/4] w-full">
