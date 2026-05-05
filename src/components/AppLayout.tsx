@@ -123,7 +123,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
             <Shield className="w-5 h-5 text-white" />
           </div>
           <div className="hidden lg:block">
-            <h1 className="text-[13px] font-bold text-white leading-tight tracking-tight">Балашиха</h1>
+            <h1 className="text-[13px] font-bold text-white leading-tight tracking-tight">Реутов</h1>
             <p className="text-[10px] text-sidebar-foreground/60 tracking-[0.12em] uppercase">Цифровая платформа</p>
           </div>
         </div>

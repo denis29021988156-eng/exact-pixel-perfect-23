@@ -137,7 +137,7 @@ export default function MapPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-[28px] font-bold text-foreground tracking-tight">Карта города</h1>
-          <p className="text-sm text-muted-foreground mt-0.5">Балашиха · Инциденты на карте</p>
+          <p className="text-sm text-muted-foreground mt-0.5">Реутов · Инциденты на карте</p>
         </div>
         <div className="flex items-center gap-3">
           {stats.high > 0 && <span className="red-zone-badge">RED ZONE · {stats.high}</span>}
