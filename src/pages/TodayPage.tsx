@@ -59,8 +59,8 @@ function RiskGauge({ value }: { value: number }) {
             className="transition-all duration-1000 ease-out" />
         </svg>
         <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <span className="text-3xl font-extrabold text-foreground tracking-tight">{animVal}</span>
-          <span className="text-[10px] font-semibold text-muted-foreground tracking-wider uppercase mt-0.5">/ 100</span>
+          <span className="text-5xl font-extrabold text-foreground tracking-tight leading-none">{animVal}</span>
+          <span className="text-[10px] font-semibold text-muted-foreground tracking-wider uppercase mt-1">/ 100</span>
         </div>
       </div>
       <StatusBadge variant={colorName === 'info' ? 'info' : colorName === 'danger' ? 'danger' : colorName === 'warning' ? 'warning' : 'success'} className="mt-2">
