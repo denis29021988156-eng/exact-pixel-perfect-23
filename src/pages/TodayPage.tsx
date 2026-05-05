@@ -336,7 +336,7 @@ export default function TodayPage() {
         </div>
         {briefing ? (
           <div className="text-sm text-foreground/90 whitespace-pre-line leading-relaxed">
-            <div className="prose prose-sm max-w-none">
+            <div className="prose prose-sm prose-invert max-w-none">
               <ReactMarkdown>{briefing.briefing}</ReactMarkdown>
             </div>
             <p className="meta-text mt-4 text-xs">
