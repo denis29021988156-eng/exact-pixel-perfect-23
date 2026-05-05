@@ -64,7 +64,9 @@ function createIcon(severity: string) {
   });
 }
 
-const CITY_CENTER: [number, number] = [55.7611, 37.8589];
+// Реутов — центр города и оптимальный зум, чтобы границы Реутова занимали экран
+const CITY_CENTER: [number, number] = [55.7613, 37.8617];
+const CITY_ZOOM = 14;
 
 type Incident = Tables<'incidents'> & { lat?: number | null; lng?: number | null };
 
@@ -186,7 +188,7 @@ export default function MapPage() {
             <p className="text-muted-foreground">Загрузка карты...</p>
           </div>
         ) : (
-          <MapContainer center={CITY_CENTER} zoom={13} style={{ height: '100%', width: '100%', background: '#0F1524' }} zoomControl={true} attributionControl={false}>
+          <MapContainer center={CITY_CENTER} zoom={CITY_ZOOM} minZoom={12} maxZoom={19} style={{ height: '100%', width: '100%', background: '#0F1524' }} zoomControl={true} attributionControl={false}>
             <TileLayer
               url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
               subdomains="abcd"
