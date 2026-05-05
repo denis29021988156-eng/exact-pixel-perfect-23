@@ -67,8 +67,21 @@ function createIcon(severity: string) {
 // Реутов — центр города и оптимальный зум, чтобы границы Реутова занимали экран
 const CITY_CENTER: [number, number] = [55.7613, 37.8617];
 const CITY_ZOOM = 14;
+const REUTOV_BOUNDS: L.LatLngBoundsExpression = [
+  [55.7445, 37.8420],
+  [55.7825, 37.8910],
+];
 
 type Incident = Tables<'incidents'> & { lat?: number | null; lng?: number | null };
+
+// Автоподгон под границы Реутова при загрузке
+function FitToReutov() {
+  const map = useMap();
+  useEffect(() => {
+    map.fitBounds(REUTOV_BOUNDS, { padding: [24, 24] });
+  }, [map]);
+  return null;
+}
 
 // Heatmap layer component
 function HeatmapLayer({ incidents }: { incidents: Incident[] }) {
@@ -188,7 +201,8 @@ export default function MapPage() {
             <p className="text-muted-foreground">Загрузка карты...</p>
           </div>
         ) : (
-          <MapContainer center={CITY_CENTER} zoom={CITY_ZOOM} minZoom={12} maxZoom={19} style={{ height: '100%', width: '100%', background: '#0F1524' }} zoomControl={true} attributionControl={false}>
+          <MapContainer center={CITY_CENTER} zoom={CITY_ZOOM} minZoom={12} maxZoom={19} maxBounds={REUTOV_BOUNDS} maxBoundsViscosity={0.6} style={{ height: '100%', width: '100%', background: '#0F1524' }} zoomControl={true} attributionControl={false}>
+            <FitToReutov />
             <TileLayer
               url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
               subdomains="abcd"
