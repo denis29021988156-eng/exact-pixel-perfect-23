@@ -48,6 +48,7 @@ const roleLabels: Record<string, string> = {
 function AIStatusIndicator() {
   const [status, setStatus] = useState<'active' | 'elevated' | 'unavailable'>('active');
   const [lastUpdate, setLastUpdate] = useState<Date>(new Date());
+  const [criticalCount, setCriticalCount] = useState(0);
 
   useEffect(() => {
     const check = () => {
@@ -57,7 +58,9 @@ function AIStatusIndicator() {
           if (error) {
             setStatus('unavailable');
           } else {
-            setStatus((count || 0) >= 3 ? 'elevated' : 'active');
+            const c = count || 0;
+            setCriticalCount(c);
+            setStatus(c >= 3 ? 'elevated' : 'active');
             setLastUpdate(new Date());
           }
         });
@@ -77,9 +80,12 @@ function AIStatusIndicator() {
 
   return (
     <div className="flex items-center gap-3">
+      {criticalCount >= 3 && (
+        <span className="red-zone-badge">RED ZONE · {criticalCount}</span>
+      )}
       {minutesAgo > 0 && (
-        <span className="text-xs text-muted-foreground/50">
-          Updated {minutesAgo}m ago
+        <span className="text-xs text-muted-foreground/60">
+          обновлено {minutesAgo} мин назад
         </span>
       )}
       <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-surface-muted border border-border">
@@ -112,13 +118,13 @@ export default function AppLayout({ children }: { children: ReactNode }) {
       {/* Dark Navy Sidebar */}
       <aside className="w-20 lg:w-64 flex-shrink-0 bg-sidebar flex flex-col border-r border-sidebar-border">
         {/* Logo */}
-        <div className="h-16 flex items-center gap-3 px-4">
-          <div className="w-10 h-10 rounded-lg bg-sidebar-primary flex items-center justify-center flex-shrink-0">
+        <div className="h-20 flex items-center gap-3 px-5 border-b border-sidebar-border">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-primary-glow flex items-center justify-center flex-shrink-0 shadow-[0_0_20px_-4px_hsl(var(--primary)/0.6)]">
             <Shield className="w-5 h-5 text-white" />
           </div>
           <div className="hidden lg:block">
-            <h1 className="text-sm font-bold text-white leading-tight tracking-tight">City Intelligence</h1>
-            <p className="text-xs text-sidebar-foreground/60 tracking-wide">Операционная система</p>
+            <h1 className="text-[13px] font-bold text-white leading-tight tracking-tight">Балашиха</h1>
+            <p className="text-[10px] text-sidebar-foreground/60 tracking-[0.12em] uppercase">Цифровая платформа</p>
           </div>
         </div>
 
@@ -146,8 +152,8 @@ export default function AppLayout({ children }: { children: ReactNode }) {
         </nav>
 
         {/* User info */}
-        <div className="p-3 space-y-2">
-          <div className="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-sidebar-accent/40">
+        <div className="p-3 space-y-2 border-t border-sidebar-border">
+          <div className="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-sidebar-accent/40">
             <div className="w-8 h-8 rounded-lg bg-sidebar-primary/20 flex items-center justify-center flex-shrink-0">
               <User className="w-4 h-4 text-sidebar-primary" />
             </div>
@@ -158,7 +164,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
           </div>
           <button
             onClick={handleSignOut}
-            className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sidebar-foreground hover:bg-sidebar-accent/50 hover:text-white transition-colors"
+            className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-sidebar-foreground hover:bg-sidebar-accent/50 hover:text-white transition-colors"
           >
             <LogOut className="w-4 h-4 flex-shrink-0" />
             <span className="hidden lg:block text-xs font-medium">Выйти</span>
@@ -169,10 +175,10 @@ export default function AppLayout({ children }: { children: ReactNode }) {
       {/* Main */}
       <main className="flex-1 overflow-y-auto">
         {/* Top bar */}
-        <div className="sticky top-0 z-10 h-14 flex items-center justify-end px-6 bg-background/80 backdrop-blur-sm border-b border-border/50">
+        <div className="sticky top-0 z-10 h-16 flex items-center justify-end px-8 bg-background/85 backdrop-blur-md border-b border-border/60">
           <AIStatusIndicator />
         </div>
-        <div className="p-8 max-w-7xl mx-auto animate-fade-in-up">
+        <div className="px-8 py-8 max-w-[1600px] mx-auto animate-fade-in-up">
           {children}
         </div>
       </main>
