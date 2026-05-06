@@ -23,20 +23,44 @@ import {
   ShieldAlert
 } from 'lucide-react';
 
-const navItems = [
-  { path: '/app', label: 'Сегодня', icon: LayoutDashboard },
-  { path: '/app/incidents', label: 'Инциденты', icon: AlertTriangle },
-  { path: '/app/map', label: 'Карта', icon: Map },
-  { path: '/app/program', label: 'Программа', icon: FolderKanban },
-  { path: '/app/tasks', label: 'Поручения', icon: ClipboardCheck },
-  { path: '/app/reputation', label: 'Репутация', icon: Newspaper },
-  { path: '/app/data-quality', label: 'Качество данных', icon: Database },
-  { path: '/app/excel-upload', label: 'Excel загрузка', icon: FileSpreadsheet },
-  { path: '/app/telegram-inbox', label: 'Telegram', icon: Send },
-  { path: '/app/ai-extract', label: 'AI-структурирование', icon: Sparkles },
-  { path: '/app/moderation', label: 'Модерация', icon: Inbox },
-  { path: '/app/cheatsheet', label: 'Шпаргалка', icon: BookOpen },
-  { path: '/app/sla-matrix', label: 'Матрица SLA', icon: ShieldAlert },
+type NavItem = { path: string; label: string; icon: any; roles?: string[] };
+type NavGroup = { label: string; roles?: string[]; items: NavItem[] };
+
+const navGroups: NavGroup[] = [
+  {
+    label: 'Обзор',
+    items: [
+      { path: '/app', label: 'Сегодня', icon: LayoutDashboard },
+      { path: '/app/map', label: 'Карта', icon: Map },
+    ],
+  },
+  {
+    label: 'Управление',
+    items: [
+      { path: '/app/incidents', label: 'Инциденты', icon: AlertTriangle },
+      { path: '/app/program', label: 'Программа', icon: FolderKanban },
+      { path: '/app/tasks', label: 'Поручения', icon: ClipboardCheck },
+      { path: '/app/reputation', label: 'Репутация', icon: Newspaper },
+    ],
+  },
+  {
+    label: 'Интеллект',
+    items: [
+      { path: '/app/cheatsheet', label: 'Шпаргалка', icon: BookOpen },
+      { path: '/app/sla-matrix', label: 'Матрица SLA', icon: ShieldAlert, roles: ['deputy', 'employee'] },
+    ],
+  },
+  {
+    label: 'Источники данных',
+    roles: ['deputy', 'employee'],
+    items: [
+      { path: '/app/data-quality', label: 'Качество данных', icon: Database },
+      { path: '/app/excel-upload', label: 'Excel загрузка', icon: FileSpreadsheet },
+      { path: '/app/telegram-inbox', label: 'Telegram', icon: Send },
+      { path: '/app/ai-extract', label: 'AI-структурирование', icon: Sparkles },
+      { path: '/app/moderation', label: 'Модерация', icon: Inbox },
+    ],
+  },
 ];
 
 const roleLabels: Record<string, string> = {
@@ -129,26 +153,45 @@ export default function AppLayout({ children }: { children: ReactNode }) {
         </div>
 
         {/* Nav */}
-        <nav className="flex-1 py-6 space-y-1 px-3">
-          {navItems.map((item) => {
-            const isActive = item.path === '/app' 
-              ? location.pathname === '/app' || location.pathname === '/app/'
-              : location.pathname.startsWith(item.path);
-            return (
-              <NavLink
-                key={item.path}
-                to={item.path}
-                className={`flex items-center gap-3 px-3 py-3 rounded-lg transition-all duration-150 text-sm font-medium
-                  ${isActive 
-                    ? 'bg-sidebar-accent text-white' 
-                    : 'text-sidebar-foreground hover:bg-sidebar-accent/50 hover:text-white'
-                  }`}
-              >
-                <item.icon className={`w-[22px] h-[22px] flex-shrink-0 ${isActive ? 'text-sidebar-primary' : ''}`} />
-                <span className="hidden lg:block">{item.label}</span>
-              </NavLink>
-            );
-          })}
+        <nav className="flex-1 py-4 px-3 overflow-y-auto">
+          {navGroups
+            .filter((g) => !g.roles || g.roles.includes(userRole || ''))
+            .map((group) => {
+              const items = group.items.filter(
+                (it) => !it.roles || it.roles.includes(userRole || '')
+              );
+              if (items.length === 0) return null;
+              return (
+                <div key={group.label} className="mb-2">
+                  <p className="hidden lg:block text-[10px] uppercase tracking-[0.14em] text-sidebar-foreground/40 px-3 pt-4 pb-2 font-semibold">
+                    {group.label}
+                  </p>
+                  <div className="hidden lg:block h-px bg-sidebar-border/40 mx-3 mb-1 lg:hidden" />
+                  <div className="lg:hidden h-px bg-sidebar-border/40 mx-3 my-2" />
+                  <div className="space-y-1">
+                    {items.map((item) => {
+                      const isActive = item.path === '/app'
+                        ? location.pathname === '/app' || location.pathname === '/app/'
+                        : location.pathname.startsWith(item.path);
+                      return (
+                        <NavLink
+                          key={item.path}
+                          to={item.path}
+                          className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-150 text-sm font-medium
+                            ${isActive
+                              ? 'bg-sidebar-accent text-white'
+                              : 'text-sidebar-foreground hover:bg-sidebar-accent/50 hover:text-white'
+                            }`}
+                        >
+                          <item.icon className={`w-[22px] h-[22px] flex-shrink-0 ${isActive ? 'text-sidebar-primary' : ''}`} />
+                          <span className="hidden lg:block">{item.label}</span>
+                        </NavLink>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            })}
         </nav>
 
         {/* User info */}
