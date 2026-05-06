@@ -77,7 +77,10 @@ type Incident = Tables<'incidents'> & { lat?: number | null; lng?: number | null
 // Автоподгон под границы Реутова при загрузке
 function FitToReutov() {
   const map = useMap();
+  const didFitRef = useRef(false);
   useEffect(() => {
+    if (didFitRef.current) return;
+    didFitRef.current = true;
     map.fitBounds(REUTOV_BOUNDS, { padding: [24, 24] });
   }, [map]);
   return null;
