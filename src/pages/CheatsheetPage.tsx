@@ -197,12 +197,6 @@ export default function CheatsheetPage() {
 
     setDbBlocks(blocks);
     setLoading(false);
-
-    // Open first sections by default
-    const defaults: Record<string, boolean> = {};
-    blocks.forEach(b => { defaults[b.name] = true; });
-    staticBlocks.slice(0, 2).forEach(b => { defaults[b.name] = true; });
-    setOpenSections(defaults);
   }
 
   const toggleSection = (name: string) => {
