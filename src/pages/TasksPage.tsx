@@ -5,6 +5,8 @@ import StatusBadge from '@/components/StatusBadge';
 import CreateTaskDialog from '@/components/forms/CreateTaskDialog';
 import { ClipboardCheck, Search, Filter, User, Calendar, Plus, Clock, AlertTriangle, CheckCircle2, ListChecks } from 'lucide-react';
 import { useCanManage } from '@/hooks/useCanManage';
+import { useAuth } from '@/contexts/AuthContext';
+import { useToast } from '@/hooks/use-toast';
 
 const statusLabels: Record<string, string> = { new: 'Новое', in_progress: 'В работе', completed: 'Выполнено', cancelled: 'Отменено' };
 const statusVariants: Record<string, 'danger' | 'warning' | 'success' | 'info' | 'muted'> = {
@@ -39,6 +41,8 @@ function StatPill({ icon: Icon, label, value, variant = 'default' }: { icon: any
 
 export default function TasksPage() {
   const canManage = useCanManage();
+  const { user } = useAuth();
+  const { toast } = useToast();
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [search, setSearch] = useState('');
   const [tasks, setTasks] = useState<Tables<'tasks'>[]>([]);
@@ -53,6 +57,21 @@ export default function TasksPage() {
   }, []);
 
   useEffect(() => { loadData(); }, [loadData]);
+
+  // Realtime: listen for any task change so mayor dashboard reflects status updates live
+  useEffect(() => {
+    const channel = supabase
+      .channel('tasks-changes')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'tasks' }, () => loadData())
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
+  }, [loadData]);
+
+  async function updateStatus(id: string, status: 'in_progress' | 'completed') {
+    const { error } = await supabase.from('tasks').update({ status }).eq('id', id);
+    if (error) toast({ title: 'Ошибка', description: error.message, variant: 'destructive' });
+    else toast({ title: status === 'completed' ? 'Поручение выполнено' : 'Взято в работу' });
+  }
 
   const filtered = tasks.filter(t => {
     if (statusFilter !== 'all' && t.status !== statusFilter) return false;
@@ -152,6 +171,20 @@ export default function TasksPage() {
                     <span className="text-[11px] px-3 py-1.5 rounded-lg bg-surface-muted text-muted-foreground font-semibold">{t.created_by_name}</span>
                   )}
                   <span className="text-[10px] text-muted-foreground/60">{new Date(t.created_at).toLocaleDateString('ru-RU')}</span>
+                  {t.assigned_to === user?.id && t.status !== 'completed' && t.status !== 'cancelled' && (
+                    <div className="flex gap-1.5 mt-1">
+                      {t.status === 'new' && (
+                        <button onClick={() => updateStatus(t.id, 'in_progress')}
+                          className="text-[10px] font-semibold px-2.5 py-1 rounded-md bg-warning/10 text-warning hover:bg-warning/20 transition-colors">
+                          В работу
+                        </button>
+                      )}
+                      <button onClick={() => updateStatus(t.id, 'completed')}
+                        className="text-[10px] font-semibold px-2.5 py-1 rounded-md bg-success/10 text-success hover:bg-success/20 transition-colors">
+                        Выполнить
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
