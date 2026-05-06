@@ -72,7 +72,7 @@ export default function AIExtractPage() {
             <Brain className="w-6 h-6 text-primary" /> AI-структурирование
           </h1>
           <p className="text-sm text-muted-foreground mt-1">
-            Phase C · Lovable AI · извлечение структурированных полей из сырого текста писем и обращений
+            Phase C · AI · извлечение структурированных полей из сырого текста писем и обращений
           </p>
         </div>
         <Badge variant="outline" className="gap-1.5">
