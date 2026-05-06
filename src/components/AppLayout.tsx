@@ -153,7 +153,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
         </div>
 
         {/* Nav */}
-        <nav className="flex-1 py-3 px-3 overflow-y-auto space-y-1">
+        <nav className="flex-1 py-2 px-2 lg:px-3 overflow-y-auto">
           {navGroups
             .filter((g) => !g.roles || g.roles.includes(userRole || ''))
             .map((group, gi) => {
@@ -162,14 +162,14 @@ export default function AppLayout({ children }: { children: ReactNode }) {
               );
               if (items.length === 0) return null;
               return (
-                <div key={group.label}>
+                <div key={group.label} className={gi > 0 ? 'mt-4' : ''}>
                   {gi > 0 && (
-                    <div className="lg:hidden h-px bg-sidebar-border/60 mx-2 my-2" />
+                    <div className="lg:hidden h-px bg-sidebar-border/60 mx-2 mb-3" />
                   )}
-                  <p className="hidden lg:block text-[10px] uppercase tracking-[0.14em] text-sidebar-foreground/40 px-3 pt-4 pb-2 font-semibold">
+                  <p className="hidden lg:block text-[11px] uppercase tracking-[0.16em] text-sidebar-foreground/45 px-3 mb-1.5 font-semibold">
                     {group.label}
                   </p>
-                  <div className="space-y-1">
+                  <div className="space-y-0.5">
                     {items.map((item) => {
                       const isActive = item.path === '/app'
                         ? location.pathname === '/app' || location.pathname === '/app/'
@@ -178,14 +178,14 @@ export default function AppLayout({ children }: { children: ReactNode }) {
                         <NavLink
                           key={item.path}
                           to={item.path}
-                          className={`flex items-center gap-3 px-3 py-3 rounded-lg transition-all duration-150 text-sm font-medium
+                          className={`flex items-center gap-3 h-10 px-3 justify-center lg:justify-start rounded-lg transition-all duration-150 text-sm font-medium
                             ${isActive
-                              ? 'bg-sidebar-accent text-white'
+                              ? 'bg-sidebar-accent text-white shadow-sm'
                               : 'text-sidebar-foreground hover:bg-sidebar-accent/50 hover:text-white'
                             }`}
                         >
-                          <item.icon className={`w-[22px] h-[22px] flex-shrink-0 ${isActive ? 'text-sidebar-primary' : ''}`} />
-                          <span className="hidden lg:block">{item.label}</span>
+                          <item.icon className={`w-5 h-5 flex-shrink-0 ${isActive ? 'text-sidebar-primary' : ''}`} />
+                          <span className="hidden lg:block leading-none">{item.label}</span>
                         </NavLink>
                       );
                     })}
