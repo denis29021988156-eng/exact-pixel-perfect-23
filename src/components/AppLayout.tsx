@@ -153,21 +153,22 @@ export default function AppLayout({ children }: { children: ReactNode }) {
         </div>
 
         {/* Nav */}
-        <nav className="flex-1 py-4 px-3 overflow-y-auto">
+        <nav className="flex-1 py-3 px-3 overflow-y-auto space-y-1">
           {navGroups
             .filter((g) => !g.roles || g.roles.includes(userRole || ''))
-            .map((group) => {
+            .map((group, gi) => {
               const items = group.items.filter(
                 (it) => !it.roles || it.roles.includes(userRole || '')
               );
               if (items.length === 0) return null;
               return (
-                <div key={group.label} className="mb-2">
+                <div key={group.label}>
+                  {gi > 0 && (
+                    <div className="lg:hidden h-px bg-sidebar-border/60 mx-2 my-2" />
+                  )}
                   <p className="hidden lg:block text-[10px] uppercase tracking-[0.14em] text-sidebar-foreground/40 px-3 pt-4 pb-2 font-semibold">
                     {group.label}
                   </p>
-                  <div className="hidden lg:block h-px bg-sidebar-border/40 mx-3 mb-1 lg:hidden" />
-                  <div className="lg:hidden h-px bg-sidebar-border/40 mx-3 my-2" />
                   <div className="space-y-1">
                     {items.map((item) => {
                       const isActive = item.path === '/app'
@@ -177,7 +178,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
                         <NavLink
                           key={item.path}
                           to={item.path}
-                          className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-150 text-sm font-medium
+                          className={`flex items-center gap-3 px-3 py-3 rounded-lg transition-all duration-150 text-sm font-medium
                             ${isActive
                               ? 'bg-sidebar-accent text-white'
                               : 'text-sidebar-foreground hover:bg-sidebar-accent/50 hover:text-white'
