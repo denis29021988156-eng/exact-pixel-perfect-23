@@ -37,6 +37,14 @@ import BenchmarkBlock from '@/components/BenchmarkBlock';
 import ConfidenceBadge from '@/components/ConfidenceBadge';
 import WeatherWidget from '@/components/WeatherWidget';
 
+const deptLabels: Record<string, string> = {
+  utilities: 'ЖКХ',
+  transport: 'Транспорт',
+  improvement: 'Благоустройство',
+  social: 'Социальная сфера',
+  construction: 'Строительство',
+};
+
 /* ─── Risk Index Gauge ─── */
 function RiskGauge({ value }: { value: number }) {
   const animVal = useCountUp(value);
