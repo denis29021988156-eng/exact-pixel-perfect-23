@@ -7,6 +7,7 @@ import CreateContractDialog from '@/components/forms/CreateContractDialog';
 import { FolderKanban, FileText, AlertCircle, Plus, Shield } from 'lucide-react';
 import { useCanManage } from '@/hooks/useCanManage';
 import PermissionGate from '@/components/PermissionGate';
+import { useAuth } from '@/contexts/AuthContext';
 
 const projStatusLabels: Record<string, string> = {
   on_track: 'В срок', risk: 'Риск', overdue: 'Просрочено', completed: 'Завершено',
@@ -20,6 +21,7 @@ const riskLabels: Record<string, string> = { low: 'Норма', medium: 'Рис�
 
 export default function ProgramPage() {
   const canManage = useCanManage();
+  const { userRole, userDepartment } = useAuth();
   const [tab, setTab] = useState<'projects' | 'contracts'>('projects');
   const [projects, setProjects] = useState<Tables<'projects'>[]>([]);
   const [contracts, setContracts] = useState<Tables<'contracts'>[]>([]);
@@ -28,15 +30,18 @@ export default function ProgramPage() {
   const [contractDialogOpen, setContractDialogOpen] = useState(false);
 
   const loadData = useCallback(() => {
-    Promise.all([
-      supabase.from('projects').select('*').order('created_at', { ascending: false }),
-      supabase.from('contracts').select('*').order('created_at', { ascending: false }),
-    ]).then(([pRes, cRes]) => {
+    let pq = supabase.from('projects').select('*').order('created_at', { ascending: false });
+    let cq = supabase.from('contracts').select('*').order('created_at', { ascending: false });
+    if (userRole === 'deputy' && userDepartment) {
+      pq = pq.eq('department', userDepartment);
+      cq = cq.eq('department', userDepartment);
+    }
+    Promise.all([pq, cq]).then(([pRes, cRes]) => {
       setProjects(pRes.data || []);
       setContracts(cRes.data || []);
       setLoading(false);
     });
-  }, []);
+  }, [userRole, userDepartment]);
 
   useEffect(() => { loadData(); }, [loadData]);
 
