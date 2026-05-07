@@ -1160,6 +1160,7 @@ export type Database = {
       }
     }
     Functions: {
+      get_user_department: { Args: { _user_id: string }; Returns: string }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -1167,6 +1168,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_deputy_of_department: { Args: { _dept: string }; Returns: boolean }
     }
     Enums: {
       app_role: "mayor" | "deputy" | "employee"
