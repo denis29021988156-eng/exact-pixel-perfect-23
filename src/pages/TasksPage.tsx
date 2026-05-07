@@ -41,7 +41,7 @@ function StatPill({ icon: Icon, label, value, variant = 'default' }: { icon: any
 
 export default function TasksPage() {
   const canManage = useCanManage();
-  const { user } = useAuth();
+  const { user, userRole, userDepartment } = useAuth();
   const { toast } = useToast();
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [search, setSearch] = useState('');
@@ -50,11 +50,15 @@ export default function TasksPage() {
   const [createOpen, setCreateOpen] = useState(false);
 
   const loadData = useCallback(() => {
-    supabase.from('tasks').select('*').order('created_at', { ascending: false }).then(({ data }) => {
+    let query = supabase.from('tasks').select('*').order('created_at', { ascending: false });
+    if (userRole === 'deputy' && userDepartment) {
+      query = query.eq('department', userDepartment);
+    }
+    query.then(({ data }) => {
       setTasks(data || []);
       setLoading(false);
     });
-  }, []);
+  }, [userRole, userDepartment]);
 
   useEffect(() => { loadData(); }, [loadData]);
 
