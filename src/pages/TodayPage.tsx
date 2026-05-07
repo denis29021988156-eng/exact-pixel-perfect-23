@@ -123,8 +123,8 @@ export default function TodayPage() {
   const [chartPeriod, setChartPeriod] = useState<'day' | 'week'>('day');
   const navigate = useNavigate();
   const { data: briefing, loading: briefingLoading, generate: generateBriefing } = useBriefing();
-  const { user, userRole } = useAuth();
-  const [deputyDept, setDeputyDept] = useState<string | null>(null);
+  const { user, userRole, userDepartment } = useAuth();
+  const deputyDept = userRole === 'deputy' ? userDepartment : null;
 
   const [stats, setStats] = useState({
     activeIncidents: 0,
@@ -140,14 +140,6 @@ export default function TodayPage() {
   const [todayItems, setTodayItems] = useState<any[]>([]);
   const [riskProjects, setRiskProjects] = useState<any[]>([]);
   const [dataLoading, setDataLoading] = useState(true);
-
-  useEffect(() => {
-    if (userRole === 'deputy' && user?.id) {
-      supabase.from('profiles').select('department').eq('user_id', user.id).maybeSingle().then(({ data }) => {
-        setDeputyDept(data?.department || null);
-      });
-    }
-  }, [userRole, user?.id]);
 
   useEffect(() => { loadData(); }, [deputyDept]);
 
