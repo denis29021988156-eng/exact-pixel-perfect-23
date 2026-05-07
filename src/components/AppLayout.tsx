@@ -47,12 +47,12 @@ const navGroups: NavGroup[] = [
     label: 'Интеллект',
     items: [
       { path: '/app/cheatsheet', label: 'Шпаргалка', icon: BookOpen },
-      { path: '/app/sla-matrix', label: 'Матрица SLA', icon: ShieldAlert, roles: ['deputy', 'employee'] },
+      { path: '/app/sla-matrix', label: 'Матрица SLA', icon: ShieldAlert, roles: ['employee'] },
     ],
   },
   {
     label: 'Источники данных',
-    roles: ['deputy', 'employee'],
+    roles: ['employee'],
     items: [
       { path: '/app/data-quality', label: 'Качество данных', icon: Database },
       { path: '/app/excel-upload', label: 'Excel загрузка', icon: FileSpreadsheet },
