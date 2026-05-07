@@ -7,6 +7,7 @@ interface AuthContextType {
   session: Session | null;
   loading: boolean;
   userRole: string | null;
+  userDepartment: string | null;
   signOut: () => Promise<void>;
 }
 
@@ -15,6 +16,7 @@ const AuthContext = createContext<AuthContextType>({
   session: null,
   loading: true,
   userRole: null,
+  userDepartment: null,
   signOut: async () => {},
 });
 
@@ -23,6 +25,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const [userRole, setUserRole] = useState<string | null>(null);
+  const [userDepartment, setUserDepartment] = useState<string | null>(null);
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
@@ -40,9 +43,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             .then(({ data }) => {
               setUserRole(data?.role ?? 'employee');
             });
+          supabase
+            .from('profiles')
+            .select('department')
+            .eq('user_id', session.user.id)
+            .maybeSingle()
+            .then(({ data }) => {
+              setUserDepartment((data?.department as string | null) ?? null);
+            });
         }, 0);
       } else {
         setUserRole(null);
+        setUserDepartment(null);
       }
       
       setLoading(false);
@@ -62,7 +74,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, session, loading, userRole, signOut }}>
+    <AuthContext.Provider value={{ user, session, loading, userRole, userDepartment, signOut }}>
       {children}
     </AuthContext.Provider>
   );
