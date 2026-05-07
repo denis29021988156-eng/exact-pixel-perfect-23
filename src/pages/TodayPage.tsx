@@ -37,6 +37,14 @@ import BenchmarkBlock from '@/components/BenchmarkBlock';
 import ConfidenceBadge from '@/components/ConfidenceBadge';
 import WeatherWidget from '@/components/WeatherWidget';
 
+const deptLabels: Record<string, string> = {
+  utilities: 'ЖКХ',
+  transport: 'Транспорт',
+  improvement: 'Благоустройство',
+  social: 'Социальная сфера',
+  construction: 'Строительство',
+};
+
 /* ─── Risk Index Gauge ─── */
 function RiskGauge({ value }: { value: number }) {
   const animVal = useCountUp(value);
@@ -123,8 +131,8 @@ export default function TodayPage() {
   const [chartPeriod, setChartPeriod] = useState<'day' | 'week'>('day');
   const navigate = useNavigate();
   const { data: briefing, loading: briefingLoading, generate: generateBriefing } = useBriefing();
-  const { user, userRole } = useAuth();
-  const [deputyDept, setDeputyDept] = useState<string | null>(null);
+  const { user, userRole, userDepartment } = useAuth();
+  const deputyDept = userRole === 'deputy' ? userDepartment : null;
 
   const [stats, setStats] = useState({
     activeIncidents: 0,
@@ -140,14 +148,6 @@ export default function TodayPage() {
   const [todayItems, setTodayItems] = useState<any[]>([]);
   const [riskProjects, setRiskProjects] = useState<any[]>([]);
   const [dataLoading, setDataLoading] = useState(true);
-
-  useEffect(() => {
-    if (userRole === 'deputy' && user?.id) {
-      supabase.from('profiles').select('department').eq('user_id', user.id).maybeSingle().then(({ data }) => {
-        setDeputyDept(data?.department || null);
-      });
-    }
-  }, [userRole, user?.id]);
 
   useEffect(() => { loadData(); }, [deputyDept]);
 
@@ -221,10 +221,14 @@ export default function TodayPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-[28px] font-bold text-foreground tracking-tight">Сегодня</h1>
+          <h1 className="text-[28px] font-bold text-foreground tracking-tight">
+            {deputyDept
+              ? `Командный центр департамента: ${deptLabels[deputyDept] || deputyDept}`
+              : 'Сегодня'}
+          </h1>
           <p className="meta-text mt-1">
             {new Date().toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric', weekday: 'long' })}
-            {deputyDept && <span className="ml-2 px-2 py-0.5 rounded-lg bg-primary/10 text-primary text-[10px] font-semibold">Зона: {deputyDept}</span>}
+            {deputyDept && <span className="ml-2 px-2 py-0.5 rounded-lg bg-primary/10 text-primary text-[10px] font-semibold">Зона: {deptLabels[deputyDept] || deputyDept}</span>}
           </p>
         </div>
         <div className="flex items-center gap-3">

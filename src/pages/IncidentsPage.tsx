@@ -4,6 +4,7 @@ import type { Tables } from '@/integrations/supabase/types';
 import StatusBadge from '@/components/StatusBadge';
 import CreateIncidentDialog from '@/components/forms/CreateIncidentDialog';
 import { Search, Filter, MapPin, User, Clock, Plus, Shield, AlertTriangle, TrendingUp, ShieldAlert } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
 
 const incidentTypeLabels: Record<string, string> = {
   housing: 'ЖКХ', road: 'Дороги', social: 'Соцсфера', ecology: 'Экология', transport: 'Транспорт', other: 'Другое',
@@ -33,6 +34,7 @@ function StatPill({ label, value, variant = 'default' }: { label: string; value:
 }
 
 export default function IncidentsPage() {
+  const { userRole, userDepartment } = useAuth();
   const [search, setSearch] = useState('');
   const [typeFilter, setTypeFilter] = useState<string>('all');
   const [statusFilter, setStatusFilter] = useState<string>('all');
@@ -41,11 +43,15 @@ export default function IncidentsPage() {
   const [createOpen, setCreateOpen] = useState(false);
 
   const loadData = useCallback(() => {
-    supabase.from('incidents').select('*').order('created_at', { ascending: false }).then(({ data }) => {
+    let query = supabase.from('incidents').select('*').order('created_at', { ascending: false });
+    if (userRole === 'deputy' && userDepartment) {
+      query = query.eq('department', userDepartment);
+    }
+    query.then(({ data }) => {
       setIncidents(data || []);
       setLoading(false);
     });
-  }, []);
+  }, [userRole, userDepartment]);
 
   useEffect(() => { loadData(); }, [loadData]);
 
