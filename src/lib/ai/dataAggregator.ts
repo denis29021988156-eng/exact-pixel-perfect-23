@@ -32,14 +32,19 @@ export interface CityAIContext {
   budgetRiskContracts: number;
 }
 
-export async function aggregateCityData(): Promise<CityAIContext> {
+export async function aggregateCityData(opts?: { departmentScope?: string | null }): Promise<CityAIContext> {
+  const dept = opts?.departmentScope || null;
+  const incQ = supabase.from('incidents').select('*').neq('status', 'closed');
+  const taskQ = supabase.from('tasks').select('*').neq('status', 'completed');
+  const projQ = supabase.from('projects').select('*');
+  const budgetQ = supabase.from('contracts').select('id, risk_of_non_execution, department').gt('risk_of_non_execution', 50);
   const [incRes, taskRes, projRes, escRes, compRes, budgetRes] = await Promise.all([
-    supabase.from('incidents').select('*').neq('status', 'closed'),
-    supabase.from('tasks').select('*').neq('status', 'completed'),
-    supabase.from('projects').select('*'),
+    dept ? incQ.eq('department', dept) : incQ,
+    dept ? taskQ.eq('department', dept) : taskQ,
+    dept ? projQ.eq('department', dept) : projQ,
     supabase.from('escalations').select('id').eq('status', 'active' as any),
     supabase.from('public_complaints').select('topic'),
-    supabase.from('contracts').select('id, risk_of_non_execution').gt('risk_of_non_execution', 50),
+    dept ? budgetQ.eq('department', dept) : budgetQ,
   ]);
 
   const incidents = incRes.data || [];
