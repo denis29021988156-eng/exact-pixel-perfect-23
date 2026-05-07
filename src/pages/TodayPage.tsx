@@ -221,10 +221,14 @@ export default function TodayPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-[28px] font-bold text-foreground tracking-tight">Сегодня</h1>
+          <h1 className="text-[28px] font-bold text-foreground tracking-tight">
+            {deputyDept
+              ? `Командный центр департамента: ${deptLabels[deputyDept] || deputyDept}`
+              : 'Сегодня'}
+          </h1>
           <p className="meta-text mt-1">
             {new Date().toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric', weekday: 'long' })}
-            {deputyDept && <span className="ml-2 px-2 py-0.5 rounded-lg bg-primary/10 text-primary text-[10px] font-semibold">Зона: {deputyDept}</span>}
+            {deputyDept && <span className="ml-2 px-2 py-0.5 rounded-lg bg-primary/10 text-primary text-[10px] font-semibold">Зона: {deptLabels[deputyDept] || deputyDept}</span>}
           </p>
         </div>
         <div className="flex items-center gap-3">
