@@ -1169,6 +1169,7 @@ export type Database = {
         Returns: boolean
       }
       is_deputy_of_department: { Args: { _dept: string }; Returns: boolean }
+      normalize_department: { Args: { _raw: string }; Returns: string }
     }
     Enums: {
       app_role: "mayor" | "deputy" | "employee"
