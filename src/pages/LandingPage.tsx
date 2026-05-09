@@ -565,12 +565,9 @@ export default function LandingPage() {
               onClick={() => navigate('/auth')}
               className="inline-flex items-center gap-3 px-10 py-5 rounded-full text-base font-semibold text-white bg-gradient-to-r from-[#3B82F6] to-[#06B6D4] shadow-[0_15px_50px_-10px_rgba(59,130,246,0.6)] hover:shadow-[0_25px_70px_-10px_rgba(6,182,212,0.8)] transition-shadow duration-500"
             >
-              Запросить демо
+              Посмотреть демо
               <ArrowRight className="w-5 h-5" />
             </button>
-            <a href="https://tablet.su/demo" className="text-sm text-[#94A3B8] hover:text-white transition-colors">
-              или просто посмотреть → tablet.su/demo
-            </a>
           </motion.div>
         </div>
       </section>
