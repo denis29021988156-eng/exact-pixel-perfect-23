@@ -156,7 +156,7 @@ export default function ModerationPage() {
             Очередь модерации
           </h1>
           <p className="text-muted-foreground mt-1">
-            Записи с низким confidence — требуют ручной проверки мэра / зама
+            Записи с низкой достоверностью — требуют ручной проверки мэра / зама
           </p>
         </div>
         <div className="flex items-center gap-3">
@@ -196,7 +196,7 @@ export default function ModerationPage() {
             <Check className="w-12 h-12 mx-auto text-success mb-3" />
             <p className="text-lg font-medium">Очередь пуста</p>
             <p className="text-sm text-muted-foreground mt-1">
-              Все записи с confidence ≥ {threshold}% — данные качественные
+              Все записи с достоверностью ≥ {threshold}% — данные качественные
             </p>
           </CardContent>
         </Card>
