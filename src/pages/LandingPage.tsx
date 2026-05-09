@@ -391,6 +391,184 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* ─── Section 4b — How it works ─── */}
+      <section className="relative py-40 lg:py-52 px-6 lg:px-12 border-t border-white/[0.08] overflow-hidden">
+        <div className="max-w-[1200px] mx-auto">
+          <p className="text-[12px] tracking-[0.18em] uppercase text-[#94A3B8] font-mono mb-8">02b — как это работает</p>
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, ease: EASE }}
+            className="font-semibold tracking-[-0.04em] leading-[0.95] text-[#E5E7EB] max-w-3xl"
+            style={{ fontSize: 'clamp(40px, 4.6vw, 72px)' }}
+          >
+            Как это работает
+          </motion.h2>
+          <motion.p
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.15, ease: EASE }}
+            className="mt-8 text-lg text-[#94A3B8] max-w-2xl"
+          >
+            Данные снизу вверх. Решения — сверху вниз. AI работает между ними.
+          </motion.p>
+
+          {/* Flow diagram */}
+          <div className="mt-20 lg:mt-24 space-y-4">
+            {FLOW_LEVELS.map((level, i) => (
+              <div key={i}>
+                <motion.div
+                  initial={{ opacity: 0, y: 24 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.3 }}
+                  transition={{ duration: 0.7, delay: i * 0.08, ease: EASE }}
+                  className="rounded-2xl border border-white/[0.08] bg-[#0F1524]/60 px-7 py-7 lg:px-10 lg:py-8"
+                >
+                  <p className="text-[11px] tracking-[0.18em] uppercase font-mono text-[#64748B]">{level.kicker}</p>
+                  <h3 className="mt-3 text-[22px] lg:text-[28px] font-semibold tracking-[-0.02em] text-[#E5E7EB]">
+                    {level.title}
+                  </h3>
+                  <p className="mt-4 text-[15px] lg:text-[16px] text-[#94A3B8] leading-[1.6] max-w-3xl">
+                    {level.text}
+                  </p>
+
+                  {/* Sources grid only on level 1 */}
+                  {i === 0 && (
+                    <div className="mt-7 grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                      {FLOW_SOURCES.map((s, idx) => (
+                        <div
+                          key={idx}
+                          className="flex items-start gap-3 rounded-xl border border-white/[0.06] bg-[#0A0E1A]/60 px-4 py-3"
+                        >
+                          <s.icon className="w-4 h-4 mt-0.5 text-[#3B82F6] shrink-0" />
+                          <div>
+                            <p className="text-[13px] font-medium text-[#E5E7EB] leading-tight">{s.label}</p>
+                            <p className="text-[11px] text-[#64748B] mt-1">{s.hint}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  <p className="mt-5 text-[12px] text-[#64748B] italic">{level.footnote}</p>
+                </motion.div>
+
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  whileInView={{ opacity: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: 0.2 + i * 0.08, ease: EASE }}
+                  className="flex justify-center py-3"
+                >
+                  <ArrowDown className="w-5 h-5 text-[#3B82F6]/60" />
+                </motion.div>
+              </div>
+            ))}
+
+            {/* Level 4 — Mayor */}
+            <motion.div
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.3 }}
+              transition={{ duration: 0.8, delay: 0.1, ease: EASE }}
+              className="relative rounded-2xl border border-[#3B82F6]/30 px-7 py-9 lg:px-12 lg:py-12 overflow-hidden"
+              style={{ background: 'linear-gradient(135deg, rgba(59,130,246,0.18) 0%, rgba(6,182,212,0.10) 100%)' }}
+            >
+              <div className="flex items-start gap-5">
+                <div className="shrink-0 w-12 h-12 rounded-xl bg-gradient-to-br from-[#3B82F6] to-[#06B6D4] flex items-center justify-center">
+                  <Crown className="w-6 h-6 text-white" />
+                </div>
+                <div className="flex-1">
+                  <p className="text-[11px] tracking-[0.18em] uppercase font-mono text-[#06B6D4]">Уровень 4</p>
+                  <h3 className="mt-3 text-[26px] lg:text-[34px] font-semibold tracking-[-0.02em] text-white">
+                    Мэр во главе
+                  </h3>
+                  <p className="mt-4 text-[15px] lg:text-[17px] text-[#CBD5E1] leading-[1.6] max-w-3xl">
+                    Видит главное за 30 секунд. AI подсказывает, что делать. Решение принимает мэр.
+                    Поручение уходит ответственному — со сроком и автоматическим контролем SLA.
+                  </p>
+                  <div className="mt-5 inline-flex items-center gap-2 text-[12px] text-[#06B6D4]">
+                    <Sparkles className="w-3.5 h-3.5" />
+                    <span className="tracking-[0.04em]">AI рядом, не вместо</span>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+
+          {/* Team contour */}
+          <div className="mt-32 lg:mt-40">
+            <motion.h3
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7, ease: EASE }}
+              className="font-semibold tracking-[-0.03em] text-[#E5E7EB]"
+              style={{ fontSize: 'clamp(28px, 3vw, 44px)' }}
+            >
+              Контур команды
+            </motion.h3>
+            <motion.p
+              initial={{ opacity: 0, y: 12 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7, delay: 0.1, ease: EASE }}
+              className="mt-5 text-[15px] lg:text-[17px] text-[#94A3B8] max-w-2xl"
+            >
+              Каждая роль видит ровно то, что ей нужно для работы. Ничего лишнего.
+            </motion.p>
+
+            <div className="mt-14 grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+              {TEAM_ROLES.map((role, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.2 }}
+                  transition={{ duration: 0.6, delay: i * 0.08, ease: EASE }}
+                  className={`rounded-2xl px-6 py-7 ${
+                    role.accent
+                      ? 'border border-[#3B82F6]/35 bg-gradient-to-br from-[#3B82F6]/[0.08] to-[#06B6D4]/[0.04]'
+                      : 'border border-white/[0.08] bg-[#0F1524]/60'
+                  }`}
+                >
+                  <div className={`w-10 h-10 rounded-lg flex items-center justify-center mb-5 ${
+                    role.accent
+                      ? 'bg-gradient-to-br from-[#3B82F6] to-[#06B6D4]'
+                      : 'bg-white/[0.06]'
+                  }`}>
+                    <role.icon className={`w-5 h-5 ${role.accent ? 'text-white' : 'text-[#94A3B8]'}`} />
+                  </div>
+                  <h4 className="text-[17px] font-semibold tracking-[-0.01em] text-[#E5E7EB] leading-tight">
+                    {role.name}
+                  </h4>
+                  <p className="mt-3 text-[13px] text-[#94A3B8] leading-[1.55] min-h-[3.5em]">
+                    {role.desc}
+                  </p>
+                  <div className="mt-5 pt-5 border-t border-white/[0.06]">
+                    <p className="text-[10px] tracking-[0.18em] uppercase font-mono text-[#64748B] mb-3">
+                      Экраны
+                    </p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {role.screens.map((s, idx) => (
+                        <span
+                          key={idx}
+                          className="text-[11px] px-2 py-1 rounded-md bg-white/[0.04] text-[#CBD5E1] border border-white/[0.04]"
+                        >
+                          {s}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ─── Section 5 — Discipline ─── */}
       <section className="relative py-40 lg:py-52 px-6 lg:px-12 border-t border-white/[0.08]">
         <div className="max-w-[1400px] mx-auto">
