@@ -1172,7 +1172,7 @@ export type Database = {
       normalize_department: { Args: { _raw: string }; Returns: string }
     }
     Enums: {
-      app_role: "mayor" | "deputy" | "employee"
+      app_role: "mayor" | "deputy" | "employee" | "admin"
       data_source_status: "active" | "warning" | "error" | "disabled"
       data_source_type: "email" | "excel" | "telegram" | "manual" | "db" | "api"
       escalation_status: "active" | "acknowledged" | "resolved"
@@ -1328,7 +1328,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["mayor", "deputy", "employee"],
+      app_role: ["mayor", "deputy", "employee", "admin"],
       data_source_status: ["active", "warning", "error", "disabled"],
       data_source_type: ["email", "excel", "telegram", "manual", "db", "api"],
       escalation_status: ["active", "acknowledged", "resolved"],
