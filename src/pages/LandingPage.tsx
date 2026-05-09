@@ -26,7 +26,6 @@ import {
 import GradientMeshBg from '@/components/landing/GradientMeshBg';
 import TabletMockup from '@/components/landing/TabletMockup';
 import CountUp from '@/components/landing/CountUp';
-import ParallaxStack from '@/components/landing/ParallaxStack';
 import AiChatDemo from '@/components/landing/AiChatDemo';
 import ModuleCard from '@/components/landing/ModuleCard';
 
@@ -370,24 +369,6 @@ export default function LandingPage() {
               <span className="text-[#475569]">Это разбор завалов</span>
             </p>
           </motion.div>
-        </div>
-      </section>
-
-      {/* ─── Section 4 — Solution ─── */}
-      <section className="relative py-40 lg:py-52 px-6 lg:px-12 border-t border-white/[0.08] overflow-hidden">
-        <div className="max-w-[1400px] mx-auto grid lg:grid-cols-[0.9fr_1.1fr] gap-16 lg:gap-24 items-center">
-          <div>
-            <p className="text-[12px] tracking-[0.18em] uppercase text-[#94A3B8] font-mono mb-8">02 — решение</p>
-            <h2 className="font-semibold tracking-[-0.04em] leading-[0.95] text-[#E5E7EB]" style={{ fontSize: 'clamp(40px, 4.6vw, 72px)' }}>
-              Один источник правды о городе
-            </h2>
-            <div className="mt-12 space-y-5 text-[15px] lg:text-[17px] text-[#94A3B8] leading-[1.6] max-w-lg">
-              <p>Все департаменты работают в одной системе. Не в десяти Excel.</p>
-              <p>У каждого поручения — срок и ответственный. Без срока — нельзя создать.</p>
-              <p>Опоздание видно сразу. Не на следующей планёрке.</p>
-            </div>
-          </div>
-          <ParallaxStack />
         </div>
       </section>
 
@@ -789,15 +770,6 @@ export default function LandingPage() {
             Вы открываете планшет — и видите{' '}
             <span className="bg-gradient-to-r from-[#3B82F6] to-[#06B6D4] bg-clip-text text-transparent">весь город</span>
           </motion.h2>
-          <motion.p
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 1, delay: 0.3 }}
-            className="mt-12 text-xl lg:text-3xl font-light text-[#94A3B8] tracking-[-0.02em]"
-          >
-            И каждый Ваш зам знает, что Вы это видите.
-          </motion.p>
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
