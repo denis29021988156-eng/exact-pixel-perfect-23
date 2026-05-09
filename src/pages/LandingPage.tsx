@@ -28,6 +28,7 @@ const METRICS = [
   { value: 5, label: 'дней\nобучения команды' },
   { value: 9, label: 'модулей\nв одной системе' },
   { value: 0, label: 'совещаний\nдля контроля статусов' },
+  { value: 100, label: '% действий\nв логе аудита' },
 ];
 
 const PAINS = [
