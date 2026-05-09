@@ -32,16 +32,16 @@ const navGroups: NavGroup[] = [
     label: 'Обзор',
     items: [
       { path: '/app', label: 'Сегодня', icon: LayoutDashboard },
-      { path: '/app/map', label: 'Карта', icon: Map },
+      { path: '/app/map', label: 'Карта', icon: Map, roles: ['mayor', 'deputy'] },
     ],
   },
   {
     label: 'Управление',
     items: [
       { path: '/app/incidents', label: 'Инциденты', icon: AlertTriangle },
-      { path: '/app/program', label: 'Программа', icon: FolderKanban },
+      { path: '/app/program', label: 'Программа', icon: FolderKanban, roles: ['mayor', 'deputy'] },
       { path: '/app/tasks', label: 'Поручения', icon: ClipboardCheck },
-      { path: '/app/reputation', label: 'Репутация', icon: Newspaper },
+      { path: '/app/reputation', label: 'Репутация', icon: Newspaper, roles: ['mayor', 'deputy'] },
     ],
   },
   {
@@ -60,13 +60,13 @@ const navGroups: NavGroup[] = [
   },
   {
     label: 'Источники данных',
-    roles: ['mayor', 'deputy'],
+    roles: ['deputy'],
     items: [
-      { path: '/app/data-quality', label: 'Качество данных', icon: Database },
-      { path: '/app/excel-upload', label: 'Excel загрузка', icon: FileSpreadsheet },
-      { path: '/app/telegram-inbox', label: 'Telegram', icon: Send },
-      { path: '/app/ai-extract', label: 'AI-структурирование', icon: Sparkles },
-      { path: '/app/moderation', label: 'Модерация', icon: Inbox },
+      { path: '/app/data-quality', label: 'Качество данных', icon: Database, roles: ['deputy'] },
+      { path: '/app/excel-upload', label: 'Excel загрузка', icon: FileSpreadsheet, roles: ['deputy'] },
+      { path: '/app/telegram-inbox', label: 'Telegram', icon: Send, roles: ['deputy'] },
+      { path: '/app/ai-extract', label: 'AI-структурирование', icon: Sparkles, roles: ['deputy'] },
+      { path: '/app/moderation', label: 'Модерация', icon: Inbox, roles: ['deputy'] },
     ],
   },
 ];
