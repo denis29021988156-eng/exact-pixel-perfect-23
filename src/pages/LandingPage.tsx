@@ -25,7 +25,6 @@ const HERO_LINES = ['Один экран', 'Весь город'];
 const EASE = [0.65, 0, 0.35, 1] as const;
 
 const METRICS = [
-  { value: 8, label: 'недель\nдо запуска' },
   { value: 5, label: 'дней\nобучения команды' },
   { value: 9, label: 'модулей\nв одной системе' },
   { value: 0, label: 'совещаний\nдля контроля статусов' },
@@ -578,7 +577,7 @@ export default function LandingPage() {
       <footer className="border-t border-white/[0.08] py-14 px-6 bg-[#0A0E1A]">
         <div className="max-w-[1400px] mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-[11px] font-mono tracking-[0.15em] uppercase text-[#94A3B8]">
           <span>Планшет Мэра</span>
-          <span>tablet.su · 2026 · команда@tablet.su</span>
+          <span>tablet.su · 2026</span>
         </div>
       </footer>
     </div>
