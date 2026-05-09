@@ -1,4 +1,4 @@
-import { AlertTriangle, Clock, Eye, ArrowRight, TrendingUp, BrainCircuit, RefreshCw, Activity, ShieldAlert, Users, CheckCircle2 } from 'lucide-react';
+import { AlertTriangle, Clock, Eye, ArrowRight, TrendingUp, BrainCircuit, RefreshCw, Activity, ShieldAlert, Users, CheckCircle2, ChevronDown, BarChart3, MessageSquare } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
@@ -36,6 +36,28 @@ import CityPulseBlock from '@/components/CityPulseBlock';
 import BenchmarkBlock from '@/components/BenchmarkBlock';
 import ConfidenceBadge from '@/components/ConfidenceBadge';
 import WeatherWidget from '@/components/WeatherWidget';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+
+function CollapsibleSection({ title, icon: Icon, children }: { title: string; icon: React.ComponentType<{ className?: string }>; children: React.ReactNode }) {
+  return (
+    <Collapsible className="glass-card overflow-hidden group">
+      <CollapsibleTrigger className="w-full flex items-center justify-between gap-3 p-5 text-left hover:bg-foreground/[0.02] transition-colors">
+        <div className="flex items-center gap-2.5">
+          <div className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center">
+            <Icon className="w-4 h-4 text-primary" />
+          </div>
+          <h2 className="text-sm font-semibold text-foreground">{title}</h2>
+        </div>
+        <ChevronDown className="w-4 h-4 text-muted-foreground transition-transform duration-200 group-data-[state=open]:rotate-180" />
+      </CollapsibleTrigger>
+      <CollapsibleContent>
+        <div className="border-t border-border/50">
+          {children}
+        </div>
+      </CollapsibleContent>
+    </Collapsible>
+  );
+}
 
 const deptLabels: Record<string, string> = {
   utilities: 'ЖКХ',
@@ -297,7 +319,9 @@ export default function TodayPage() {
       </div>
 
       {/* Escalation Panel */}
-      <EscalationPanel />
+      <CollapsibleSection title="Эскалации" icon={ShieldAlert}>
+        <EscalationPanel />
+      </CollapsibleSection>
 
       {/* Weather 72h */}
       <WeatherWidget />
@@ -416,10 +440,14 @@ export default function TodayPage() {
       <BudgetRiskCard />
 
       {/* City Pulse */}
-      <CityPulseBlock />
+      <CollapsibleSection title="Пульс города" icon={MessageSquare}>
+        <CityPulseBlock />
+      </CollapsibleSection>
 
       {/* Benchmarks */}
-      <BenchmarkBlock />
+      <CollapsibleSection title="Бенчмарки" icon={BarChart3}>
+        <BenchmarkBlock />
+      </CollapsibleSection>
 
       {/* Chart */}
       <div className="glass-card p-6">
