@@ -28,41 +28,43 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [userDepartment, setUserDepartment] = useState<string | null>(null);
 
   useEffect(() => {
+    const fetchRoleAndDept = (uid: string) => {
+      supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', uid)
+        .maybeSingle()
+        .then(({ data }) => {
+          setUserRole(data?.role ?? 'employee');
+        });
+      supabase
+        .from('profiles')
+        .select('department')
+        .eq('user_id', uid)
+        .maybeSingle()
+        .then(({ data }) => {
+          setUserDepartment((data?.department as string | null) ?? null);
+        });
+    };
+
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
       setUser(session?.user ?? null);
-      
+
       if (session?.user) {
-        // Fetch role after auth state change
-        setTimeout(() => {
-          supabase
-            .from('user_roles')
-            .select('role')
-            .eq('user_id', session.user.id)
-            .maybeSingle()
-            .then(({ data }) => {
-              setUserRole(data?.role ?? 'employee');
-            });
-          supabase
-            .from('profiles')
-            .select('department')
-            .eq('user_id', session.user.id)
-            .maybeSingle()
-            .then(({ data }) => {
-              setUserDepartment((data?.department as string | null) ?? null);
-            });
-        }, 0);
+        setTimeout(() => fetchRoleAndDept(session.user.id), 0);
       } else {
         setUserRole(null);
         setUserDepartment(null);
       }
-      
+
       setLoading(false);
     });
 
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
+      if (session?.user) fetchRoleAndDept(session.user.id);
       if (!session) setLoading(false);
     });
 
