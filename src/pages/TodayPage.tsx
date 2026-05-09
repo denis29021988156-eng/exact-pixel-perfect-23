@@ -385,53 +385,67 @@ export default function TodayPage() {
       </div>
 
       {/* What to do today */}
-      <div className="glass-card p-6">
-        <h2 className="text-sm font-semibold text-foreground mb-5 flex items-center gap-2.5">
+      <Collapsible className="glass-card overflow-hidden group">
+        <CollapsibleTrigger className="w-full flex items-center gap-2.5 p-5 text-left hover:bg-foreground/[0.02] transition-colors">
           <div className="w-8 h-8 rounded-xl bg-primary/15 flex items-center justify-center">
             <Eye className="w-4.5 h-4.5 text-primary" />
           </div>
-          Что сделать сегодня
+          <h2 className="text-sm font-semibold text-foreground">Что сделать сегодня</h2>
           {urgentItems.length > 0 && (
             <span className="ml-auto px-2.5 py-1 rounded-lg text-[10px] font-bold bg-danger/10 text-danger">
               {urgentItems.length} срочных
             </span>
           )}
-        </h2>
+          <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform duration-200 group-data-[state=open]:rotate-180 ${urgentItems.length > 0 ? '' : 'ml-auto'}`} />
+        </CollapsibleTrigger>
+        <CollapsibleContent>
+          <div className="border-t border-border/50 p-6 space-y-5">
+            {urgentItems.length > 0 && (
+              <Collapsible className="group/sub">
+                <CollapsibleTrigger className="w-full flex items-center gap-2 text-left">
+                  <span className="w-1.5 h-1.5 rounded-full bg-danger animate-pulse" />
+                  <p className="section-heading text-danger">Сделать сейчас</p>
+                  <span className="text-[10px] text-muted-foreground">({urgentItems.length})</span>
+                  <ChevronDown className="w-3.5 h-3.5 text-muted-foreground ml-auto transition-transform duration-200 group-data-[state=open]/sub:rotate-180" />
+                </CollapsibleTrigger>
+                <CollapsibleContent>
+                  <div className="space-y-2 mt-3">
+                    {urgentItems.map((item, i) => <TodoItem key={`u-${i}`} {...item} />)}
+                  </div>
+                </CollapsibleContent>
+              </Collapsible>
+            )}
 
-        {urgentItems.length > 0 && (
-          <div className="mb-5">
-            <p className="section-heading text-danger mb-3 flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-danger animate-pulse" />
-              Сделать сейчас
-            </p>
-            <div className="space-y-2">
-              {urgentItems.map((item, i) => <TodoItem key={`u-${i}`} {...item} />)}
-            </div>
+            {todayItems.length > 0 && (
+              <div>
+                <p className="section-heading text-warning mb-3">До конца дня</p>
+                <div className="space-y-2">
+                  {todayItems.map((item, i) => <TodoItem key={`t-${i}`} {...item} />)}
+                </div>
+              </div>
+            )}
+
+            {riskProjects.length > 0 && (
+              <Collapsible className="group/sub">
+                <CollapsibleTrigger className="w-full flex items-center gap-2 text-left">
+                  <p className="section-heading">На контроле</p>
+                  <span className="text-[10px] text-muted-foreground">({riskProjects.length})</span>
+                  <ChevronDown className="w-3.5 h-3.5 text-muted-foreground ml-auto transition-transform duration-200 group-data-[state=open]/sub:rotate-180" />
+                </CollapsibleTrigger>
+                <CollapsibleContent>
+                  <div className="space-y-2 mt-3">
+                    {riskProjects.map((item, i) => <TodoItem key={`r-${i}`} {...item} />)}
+                  </div>
+                </CollapsibleContent>
+              </Collapsible>
+            )}
+
+            {urgentItems.length === 0 && todayItems.length === 0 && riskProjects.length === 0 && (
+              <p className="text-sm text-muted-foreground/60">Нет срочных задач. Добавьте данные через формы.</p>
+            )}
           </div>
-        )}
-
-        {todayItems.length > 0 && (
-          <div className="mb-5">
-            <p className="section-heading text-warning mb-3">До конца дня</p>
-            <div className="space-y-2">
-              {todayItems.map((item, i) => <TodoItem key={`t-${i}`} {...item} />)}
-            </div>
-          </div>
-        )}
-
-        {riskProjects.length > 0 && (
-          <div>
-            <p className="section-heading mb-3">На контроле</p>
-            <div className="space-y-2">
-              {riskProjects.map((item, i) => <TodoItem key={`r-${i}`} {...item} />)}
-            </div>
-          </div>
-        )}
-
-        {urgentItems.length === 0 && todayItems.length === 0 && riskProjects.length === 0 && (
-          <p className="text-sm text-muted-foreground/60">Нет срочных задач. Добавьте данные через формы.</p>
-        )}
-      </div>
+        </CollapsibleContent>
+      </Collapsible>
 
       {/* What-If Scenarios */}
       <WhatIfCard />
