@@ -21,6 +21,7 @@ import AIExtractPage from "./pages/AIExtractPage";
 import TelegramInboxPage from "./pages/TelegramInboxPage";
 import PublicDashboard from "./pages/PublicDashboard";
 import SlaMatrixPage from "./pages/SlaMatrixPage";
+import UsersPage from "./pages/UsersPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -61,6 +62,7 @@ function AppRoutes() {
           <Route path="/telegram-inbox" element={<TelegramInboxPage />} />
           <Route path="/cheatsheet" element={<CheatsheetPage />} />
           <Route path="/sla-matrix" element={<SlaMatrixPage />} />
+          <Route path="/users" element={<UsersPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </AppLayout>
