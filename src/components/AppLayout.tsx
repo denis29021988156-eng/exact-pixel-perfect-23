@@ -48,7 +48,7 @@ const navGroups: NavGroup[] = [
     label: 'Интеллект',
     items: [
       { path: '/app/cheatsheet', label: 'Шпаргалка', icon: BookOpen },
-      { path: '/app/sla-matrix', label: 'Матрица SLA', icon: ShieldAlert, roles: ['employee'] },
+      { path: '/app/sla-matrix', label: 'Матрица SLA', icon: ShieldAlert, roles: ['mayor', 'deputy'] },
     ],
   },
   {
@@ -60,7 +60,7 @@ const navGroups: NavGroup[] = [
   },
   {
     label: 'Источники данных',
-    roles: ['employee'],
+    roles: ['mayor', 'deputy'],
     items: [
       { path: '/app/data-quality', label: 'Качество данных', icon: Database },
       { path: '/app/excel-upload', label: 'Excel загрузка', icon: FileSpreadsheet },
@@ -143,7 +143,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
   };
 
   const displayName = user?.user_metadata?.full_name || user?.email || '';
-  const roleName = roleLabels[userRole || ''] || 'Сотрудник';
+  const roleName = userRole ? (roleLabels[userRole] || 'Сотрудник') : '…';
 
   return (
     <div className="flex h-screen overflow-hidden bg-background">
