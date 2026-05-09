@@ -12,6 +12,16 @@ import {
   BrainCircuit,
   ShieldAlert,
   CloudRain,
+  Crown,
+  Shield,
+  User,
+  Settings,
+  Sparkles,
+  ArrowDown,
+  Send,
+  FileSpreadsheet,
+  FileText,
+  Plus,
 } from 'lucide-react';
 import GradientMeshBg from '@/components/landing/GradientMeshBg';
 import TabletMockup from '@/components/landing/TabletMockup';
