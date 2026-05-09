@@ -8,7 +8,7 @@ type Row = {
   user_id: string;
   full_name: string;
   department: string | null;
-  role: 'mayor' | 'deputy' | 'employee';
+  role: 'mayor' | 'deputy' | 'employee' | 'admin';
 };
 
 const DEPARTMENTS = [
@@ -21,6 +21,7 @@ const DEPARTMENTS = [
 ];
 
 const ROLES = [
+  { value: 'admin', label: 'Администратор системы' },
   { value: 'mayor', label: 'Мэр' },
   { value: 'deputy', label: 'Заместитель' },
   { value: 'employee', label: 'Сотрудник' },
@@ -51,7 +52,7 @@ export default function UsersPage() {
   };
 
   useEffect(() => {
-    if (userRole === 'mayor') load();
+    if (userRole === 'admin') load();
   }, [userRole]);
 
   const updateRole = async (userId: string, role: Row['role']) => {
@@ -80,10 +81,10 @@ export default function UsersPage() {
     setRows((rs) => rs.map((r) => (r.user_id === userId ? { ...r, department: value } : r)));
   };
 
-  if (userRole !== 'mayor') {
+  if (userRole !== 'admin') {
     return (
       <div className="glass-card p-8 text-center text-muted-foreground">
-        Доступно только Мэру.
+        Доступно только Администратору системы.
       </div>
     );
   }

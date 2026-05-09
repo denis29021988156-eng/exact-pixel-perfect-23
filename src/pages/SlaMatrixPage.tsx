@@ -34,8 +34,8 @@ type Row = {
 export default function SlaMatrixPage() {
   const { userRole, user } = useAuth();
   const { toast } = useToast();
-  const canManage = userRole === 'mayor' || userRole === 'deputy';
-  const isMayor = userRole === 'mayor';
+  const canManage = userRole === 'admin';
+  const isMayor = userRole === 'admin';
   const [rows, setRows] = useState<Row[]>([]);
   const [loading, setLoading] = useState(true);
   const [savingId, setSavingId] = useState<string | null>(null);
@@ -126,7 +126,7 @@ export default function SlaMatrixPage() {
     return (
       <div className="p-8">
         <div className="rounded-xl border border-border p-6 bg-surface-muted">
-          <p className="text-sm text-muted-foreground">Доступ к матрице SLA только для мэра и заместителей.</p>
+          <p className="text-sm text-muted-foreground">Доступ к матрице SLA только для администратора системы.</p>
         </div>
       </div>
     );

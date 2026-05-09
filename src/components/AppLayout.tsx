@@ -21,7 +21,9 @@ import {
   Sparkles,
   Send,
   ShieldAlert,
-  Users
+  Users,
+  History,
+  ToggleLeft
 } from 'lucide-react';
 
 type NavItem = { path: string; label: string; icon: any; roles?: string[] };
@@ -48,25 +50,27 @@ const navGroups: NavGroup[] = [
     label: 'Интеллект',
     items: [
       { path: '/app/cheatsheet', label: 'Шпаргалка', icon: BookOpen },
-      { path: '/app/sla-matrix', label: 'Матрица SLA', icon: ShieldAlert, roles: ['mayor', 'deputy'] },
     ],
   },
   {
-    label: 'Администрирование',
-    roles: ['mayor'],
+    label: 'Системное администрирование',
+    roles: ['admin'],
     items: [
-      { path: '/app/users', label: 'Пользователи', icon: Users, roles: ['mayor'] },
+      { path: '/app/sla-matrix', label: 'Матрица SLA', icon: ShieldAlert, roles: ['admin'] },
+      { path: '/app/users', label: 'Пользователи', icon: Users, roles: ['admin'] },
+      { path: '/app/audit-log', label: 'Аудит-лог', icon: History, roles: ['admin'] },
+      { path: '/app/feature-flags', label: 'Feature flags', icon: ToggleLeft, roles: ['admin'] },
     ],
   },
   {
     label: 'Источники данных',
-    roles: ['deputy'],
+    roles: ['deputy', 'admin'],
     items: [
-      { path: '/app/data-quality', label: 'Качество данных', icon: Database, roles: ['deputy'] },
-      { path: '/app/excel-upload', label: 'Excel загрузка', icon: FileSpreadsheet, roles: ['deputy'] },
-      { path: '/app/telegram-inbox', label: 'Telegram', icon: Send, roles: ['deputy'] },
-      { path: '/app/ai-extract', label: 'AI-структурирование', icon: Sparkles, roles: ['deputy'] },
-      { path: '/app/moderation', label: 'Модерация', icon: Inbox, roles: ['deputy'] },
+      { path: '/app/data-quality', label: 'Качество данных', icon: Database, roles: ['deputy', 'admin'] },
+      { path: '/app/excel-upload', label: 'Excel загрузка', icon: FileSpreadsheet, roles: ['deputy', 'admin'] },
+      { path: '/app/telegram-inbox', label: 'Telegram', icon: Send, roles: ['deputy', 'admin'] },
+      { path: '/app/ai-extract', label: 'AI-структурирование', icon: Sparkles, roles: ['deputy', 'admin'] },
+      { path: '/app/moderation', label: 'Модерация', icon: Inbox, roles: ['deputy', 'admin'] },
     ],
   },
 ];
@@ -75,6 +79,7 @@ const roleLabels: Record<string, string> = {
   mayor: 'Мэр',
   deputy: 'Заместитель',
   employee: 'Сотрудник',
+  admin: 'Администратор системы',
 };
 
 function AIStatusIndicator() {

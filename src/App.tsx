@@ -22,6 +22,8 @@ import TelegramInboxPage from "./pages/TelegramInboxPage";
 import PublicDashboard from "./pages/PublicDashboard";
 import SlaMatrixPage from "./pages/SlaMatrixPage";
 import UsersPage from "./pages/UsersPage";
+import AuditLogPage from "./pages/AuditLogPage";
+import FeatureFlagsPage from "./pages/FeatureFlagsPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -63,6 +65,8 @@ function AppRoutes() {
           <Route path="/cheatsheet" element={<CheatsheetPage />} />
           <Route path="/sla-matrix" element={<SlaMatrixPage />} />
           <Route path="/users" element={<UsersPage />} />
+          <Route path="/audit-log" element={<AuditLogPage />} />
+          <Route path="/feature-flags" element={<FeatureFlagsPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </AppLayout>
