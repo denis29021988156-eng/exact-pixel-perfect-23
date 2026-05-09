@@ -225,9 +225,13 @@
     border: 1px solid hsl(var(--border));
     box-shadow: 0 8px 28px rgba(0, 0, 0, 0.5) !important;
   }
-  .leaflet-popup-content,
-  .leaflet-popup-content * {
+  .leaflet-popup-content {
     color: hsl(var(--foreground));
+  }
+  /* Links inside popup follow primary color */
+  .leaflet-popup-content a {
+    color: hsl(var(--primary));
+    text-decoration: underline;
   }
   .leaflet-popup-close-button {
     color: hsl(var(--muted-foreground)) !important;
