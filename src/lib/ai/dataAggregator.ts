@@ -30,6 +30,11 @@ export interface CityAIContext {
   topComplaintTopics: string[];
   complaintDivergence: number;
   budgetRiskContracts: number;
+  // Phase 3 — reputation
+  mentionsCount: number;
+  negativeMentions: number;
+  positiveMentions: number;
+  topReputationTopics: string[];
 }
 
 export async function aggregateCityData(opts?: { departmentScope?: string | null }): Promise<CityAIContext> {
@@ -38,13 +43,15 @@ export async function aggregateCityData(opts?: { departmentScope?: string | null
   const taskQ = supabase.from('tasks').select('*').neq('status', 'completed');
   const projQ = supabase.from('projects').select('*');
   const budgetQ = supabase.from('contracts').select('id, risk_of_non_execution, department').gt('risk_of_non_execution', 50);
-  const [incRes, taskRes, projRes, escRes, compRes, budgetRes] = await Promise.all([
+  const since = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
+  const [incRes, taskRes, projRes, escRes, compRes, budgetRes, mentionsRes] = await Promise.all([
     dept ? incQ.eq('department', dept) : incQ,
     dept ? taskQ.eq('department', dept) : taskQ,
     dept ? projQ.eq('department', dept) : projQ,
     supabase.from('escalations').select('id').eq('status', 'active' as any),
     supabase.from('public_complaints').select('topic'),
     dept ? budgetQ.eq('department', dept) : budgetQ,
+    supabase.from('media_mentions').select('topic, sentiment').gte('published_at', since),
   ]);
 
   const incidents = incRes.data || [];
@@ -90,6 +97,18 @@ export async function aggregateCityData(opts?: { departmentScope?: string | null
     ? Math.round(Math.abs(complaintsCount - incidents.length) / Math.max(complaintsCount, incidents.length) * 100)
     : 0;
 
+  const mentions = mentionsRes.data || [];
+  const negativeMentions = mentions.filter((m: any) => m.sentiment === 'negative').length;
+  const positiveMentions = mentions.filter((m: any) => m.sentiment === 'positive').length;
+  const reputationTopicCounts: Record<string, number> = {};
+  mentions.forEach((m: any) => {
+    if (m.topic) reputationTopicCounts[m.topic] = (reputationTopicCounts[m.topic] || 0) + 1;
+  });
+  const topReputationTopics = Object.entries(reputationTopicCounts)
+    .sort(([, a], [, b]) => b - a)
+    .slice(0, 3)
+    .map(([t]) => t);
+
   return {
     timestamp: new Date().toISOString(),
     cityRiskIndex: risk.index,
@@ -112,5 +131,9 @@ export async function aggregateCityData(opts?: { departmentScope?: string | null
     topComplaintTopics: topTopics,
     complaintDivergence,
     budgetRiskContracts: budgetRes.data?.length || 0,
+    mentionsCount: mentions.length,
+    negativeMentions,
+    positiveMentions,
+    topReputationTopics,
   };
 }

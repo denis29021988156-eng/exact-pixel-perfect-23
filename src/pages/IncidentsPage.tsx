@@ -50,9 +50,11 @@ export default function IncidentsPage() {
   const socialOnly = searchParams.get('social') === '1';
   const [search, setSearch] = useState('');
   const [typeFilter, setTypeFilter] = useState<string>('all');
-  const [statusFilter, setStatusFilter] = useState<string>('all');
   const [severityFilter, setSeverityFilter] = useState<string>('all');
   const [overdueOnly, setOverdueOnly] = useState(false);
+  const [activeOnly, setActiveOnly] = useState(true);
+  const [resolvedOrClosedOnly, setResolvedOrClosedOnly] = useState(false);
+  const [statusFilter, setStatusFilter] = useState<string>('all');
   const [incidents, setIncidents] = useState<Tables<'incidents'>[]>([]);
   const [loading, setLoading] = useState(true);
   const [createOpen, setCreateOpen] = useState(false);
@@ -77,18 +79,22 @@ export default function IncidentsPage() {
     if (severityFilter !== 'all' && i.severity !== severityFilter) return false;
     if (overdueOnly && !i.sla_overdue) return false;
     if (socialOnly && !i.social_object) return false;
+    if (statusFilter === 'all') {
+      if (activeOnly && (i.status === 'closed' || i.status === 'resolved')) return false;
+      if (resolvedOrClosedOnly && !(i.status === 'resolved' || i.status === 'closed')) return false;
+    }
     return true;
   });
 
-  const activeIncidents = incidents.filter(i => i.status !== 'closed');
+  const activeIncidents = incidents.filter(i => i.status !== 'closed' && i.status !== 'resolved');
   const criticalCount = activeIncidents.filter(i => i.severity === 'high').length;
   const overdueCount = activeIncidents.filter(i => i.sla_overdue).length;
   const resolvedCount = incidents.filter(i => i.status === 'resolved' || i.status === 'closed').length;
 
-  const isActiveFilter = statusFilter === 'all' && severityFilter === 'all' && !overdueOnly;
-  const isCritical = severityFilter === 'high';
-  const isOverdue = overdueOnly;
-  const isResolved = statusFilter === 'resolved';
+  const isActiveFilter = activeOnly && !resolvedOrClosedOnly && statusFilter === 'all' && severityFilter === 'all' && !overdueOnly;
+  const isCritical = severityFilter === 'high' && activeOnly && !resolvedOrClosedOnly;
+  const isOverdue = overdueOnly && activeOnly && !resolvedOrClosedOnly;
+  const isResolved = resolvedOrClosedOnly;
 
   return (
     <div className="space-y-6 animate-fade-in-up">
@@ -112,13 +118,13 @@ export default function IncidentsPage() {
       {/* Stats Row */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         <StatPill label="Активных инцидентов" value={activeIncidents.length} active={isActiveFilter}
-          onClick={() => { setStatusFilter('all'); setSeverityFilter('all'); setOverdueOnly(false); }} />
+          onClick={() => { setActiveOnly(true); setResolvedOrClosedOnly(false); setStatusFilter('all'); setSeverityFilter('all'); setOverdueOnly(false); }} />
         <StatPill label="Критический уровень" value={criticalCount} variant="danger" active={isCritical}
-          onClick={() => { setSeverityFilter(isCritical ? 'all' : 'high'); setOverdueOnly(false); setStatusFilter(s => s === 'resolved' || s === 'closed' ? 'all' : s); }} />
+          onClick={() => { setSeverityFilter(isCritical ? 'all' : 'high'); setOverdueOnly(false); setActiveOnly(true); setResolvedOrClosedOnly(false); setStatusFilter('all'); }} />
         <StatPill label="Просрочено SLA" value={overdueCount} variant={overdueCount > 0 ? 'danger' : 'default'} active={isOverdue}
-          onClick={() => { setOverdueOnly(!isOverdue); setStatusFilter(s => s === 'resolved' || s === 'closed' ? 'all' : s); }} />
+          onClick={() => { setOverdueOnly(!isOverdue); setActiveOnly(true); setResolvedOrClosedOnly(false); setStatusFilter('all'); setSeverityFilter('all'); }} />
         <StatPill label="Решено / Закрыто" value={resolvedCount} variant="success" active={isResolved}
-          onClick={() => { setStatusFilter(isResolved ? 'all' : 'resolved'); setOverdueOnly(false); setSeverityFilter('all'); }} />
+          onClick={() => { setResolvedOrClosedOnly(!isResolved); setActiveOnly(isResolved); setStatusFilter('all'); setOverdueOnly(false); setSeverityFilter('all'); }} />
       </div>
 
       {/* Filters */}

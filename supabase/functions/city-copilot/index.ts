@@ -23,12 +23,14 @@ serve(async (req) => {
     const trimmedMessages = messages?.slice(-6) || [];
 
     // Fetch and aggregate city data
-    const [incidentsRes, tasksRes, projectsRes, contractsRes, escalationsRes] = await Promise.all([
+    const since = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
+    const [incidentsRes, tasksRes, projectsRes, contractsRes, escalationsRes, mentionsRes] = await Promise.all([
       supabase.from("incidents").select("*").in("status", ["new", "in_progress"]).limit(50),
       supabase.from("tasks").select("*").neq("status", "completed").limit(50),
       supabase.from("projects").select("*").limit(30),
       supabase.from("contracts").select("*").limit(30),
       supabase.from("escalations").select("*").eq("status", "active").limit(20),
+      supabase.from("media_mentions").select("topic, sentiment, title, published_at").gte("published_at", since).limit(50),
     ]);
 
     const incidents = incidentsRes.data || [];
@@ -36,6 +38,7 @@ serve(async (req) => {
     const projects = projectsRes.data || [];
     const contracts = contractsRes.data || [];
     const escalations = escalationsRes.data || [];
+    const mentions = mentionsRes.data || [];
 
     // Deterministic Risk Index
     const criticalIncidents = incidents.filter((i: any) => i.severity === "high").length;
@@ -58,6 +61,12 @@ serve(async (req) => {
     const highSensitivityProjects = projects.filter((p: any) => p.political_sensitivity === "high").length;
     const highSensitivityContracts = contracts.filter((c: any) => c.political_sensitivity === "high").length;
 
+    const negativeMentions = mentions.filter((m: any) => m.sentiment === "negative").length;
+    const positiveMentions = mentions.filter((m: any) => m.sentiment === "positive").length;
+    const repTopicCounts: Record<string, number> = {};
+    mentions.forEach((m: any) => { if (m.topic) repTopicCounts[m.topic] = (repTopicCounts[m.topic] || 0) + 1; });
+    const topReputationTopics = Object.entries(repTopicCounts).sort(([, a], [, b]) => (b as number) - (a as number)).slice(0, 3).map(([t]) => t);
+
     const aggregatedData = {
       date: new Date().toLocaleDateString("ru-RU"),
       cityRiskIndex: riskIndex,
@@ -73,6 +82,10 @@ serve(async (req) => {
       departmentsAtRisk: Array.from(deptSet),
       activeEscalations: escalations.length,
       highSensitivityItems: highSensitivityIncidents + highSensitivityProjects + highSensitivityContracts,
+      mentionsCount: mentions.length,
+      negativeMentions,
+      positiveMentions,
+      topReputationTopics,
     };
 
     // Detailed context for copilot (more info than briefing but still structured)
