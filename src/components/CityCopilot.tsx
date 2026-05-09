@@ -150,7 +150,7 @@ export default function CityCopilot() {
           <div className="flex flex-col items-center justify-center h-full text-center py-12">
             <Sparkles className="w-10 h-10 text-primary/40 mb-3" />
             <p className="text-sm font-medium text-foreground mb-1">Здравствуйте!</p>
-            <p className="text-xs text-muted-foreground mb-4">Я ваш AI-ассистент. Спросите о ситуации в городе.</p>
+            <p className="text-xs text-muted-foreground mb-4">Я Ваш AI-ассистент. Спросите о ситуации в городе.</p>
             <div className="flex flex-wrap gap-2 justify-center">
               {quickCommands.map(cmd => (
                 <button
