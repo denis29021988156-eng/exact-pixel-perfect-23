@@ -20,7 +20,8 @@ import {
   Inbox,
   Sparkles,
   Send,
-  ShieldAlert
+  ShieldAlert,
+  Users
 } from 'lucide-react';
 
 type NavItem = { path: string; label: string; icon: any; roles?: string[] };
@@ -48,6 +49,13 @@ const navGroups: NavGroup[] = [
     items: [
       { path: '/app/cheatsheet', label: 'Шпаргалка', icon: BookOpen },
       { path: '/app/sla-matrix', label: 'Матрица SLA', icon: ShieldAlert, roles: ['employee'] },
+    ],
+  },
+  {
+    label: 'Администрирование',
+    roles: ['mayor'],
+    items: [
+      { path: '/app/users', label: 'Пользователи', icon: Users, roles: ['mayor'] },
     ],
   },
   {
