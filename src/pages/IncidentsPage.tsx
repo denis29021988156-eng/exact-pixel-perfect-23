@@ -19,18 +19,28 @@ const statusVariants: Record<string, 'danger' | 'warning' | 'success' | 'info' |
 const severityLabels: Record<string, string> = { low: 'Низкая', medium: 'Средняя', high: 'Высокая' };
 const severityVariants: Record<string, 'danger' | 'warning' | 'muted'> = { low: 'muted', medium: 'warning', high: 'danger' };
 
-function StatPill({ label, value, variant = 'default' }: { label: string; value: number; variant?: 'default' | 'danger' | 'warning' | 'success' }) {
+function StatPill({ label, value, variant = 'default', active = false, onClick }: { label: string; value: number; variant?: 'default' | 'danger' | 'warning' | 'success'; active?: boolean; onClick?: () => void }) {
   const colorMap = {
     default: 'bg-card text-foreground',
     danger: 'bg-danger-soft/50 text-danger border-danger/10',
     warning: 'bg-warning-muted/50 text-warning border-warning/10',
     success: 'bg-success-muted/50 text-success border-success/10',
   };
+  const ringMap = {
+    default: 'ring-primary/40',
+    danger: 'ring-danger/50',
+    warning: 'ring-warning/50',
+    success: 'ring-success/50',
+  };
+  const Comp: any = onClick ? 'button' : 'div';
   return (
-    <div className={`flex items-center gap-3 px-4 py-3 rounded-xl border ${colorMap[variant]}`}>
+    <Comp
+      onClick={onClick}
+      className={`flex items-center gap-3 px-4 py-3 rounded-xl border text-left transition-all ${colorMap[variant]} ${onClick ? 'cursor-pointer hover:shadow-sm hover:-translate-y-px' : ''} ${active ? `ring-2 ${ringMap[variant]} shadow-sm` : ''}`}
+    >
       <span className="text-2xl font-bold">{value}</span>
       <span className="text-xs font-medium text-muted-foreground leading-tight">{label}</span>
-    </div>
+    </Comp>
   );
 }
 
@@ -41,6 +51,8 @@ export default function IncidentsPage() {
   const [search, setSearch] = useState('');
   const [typeFilter, setTypeFilter] = useState<string>('all');
   const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [severityFilter, setSeverityFilter] = useState<string>('all');
+  const [overdueOnly, setOverdueOnly] = useState(false);
   const [incidents, setIncidents] = useState<Tables<'incidents'>[]>([]);
   const [loading, setLoading] = useState(true);
   const [createOpen, setCreateOpen] = useState(false);
@@ -62,6 +74,8 @@ export default function IncidentsPage() {
     if (search && !i.title.toLowerCase().includes(search.toLowerCase()) && !(i.address || '').toLowerCase().includes(search.toLowerCase())) return false;
     if (typeFilter !== 'all' && i.type !== typeFilter) return false;
     if (statusFilter !== 'all' && i.status !== statusFilter) return false;
+    if (severityFilter !== 'all' && i.severity !== severityFilter) return false;
+    if (overdueOnly && !i.sla_overdue) return false;
     if (socialOnly && !i.social_object) return false;
     return true;
   });
@@ -70,6 +84,11 @@ export default function IncidentsPage() {
   const criticalCount = activeIncidents.filter(i => i.severity === 'high').length;
   const overdueCount = activeIncidents.filter(i => i.sla_overdue).length;
   const resolvedCount = incidents.filter(i => i.status === 'resolved' || i.status === 'closed').length;
+
+  const isActiveFilter = statusFilter === 'all' && severityFilter === 'all' && !overdueOnly;
+  const isCritical = severityFilter === 'high';
+  const isOverdue = overdueOnly;
+  const isResolved = statusFilter === 'resolved';
 
   return (
     <div className="space-y-6 animate-fade-in-up">
@@ -92,10 +111,14 @@ export default function IncidentsPage() {
 
       {/* Stats Row */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-        <StatPill label="Активных инцидентов" value={activeIncidents.length} />
-        <StatPill label="Критический уровень" value={criticalCount} variant="danger" />
-        <StatPill label="Просрочено SLA" value={overdueCount} variant={overdueCount > 0 ? 'danger' : 'default'} />
-        <StatPill label="Решено / Закрыто" value={resolvedCount} variant="success" />
+        <StatPill label="Активных инцидентов" value={activeIncidents.length} active={isActiveFilter}
+          onClick={() => { setStatusFilter('all'); setSeverityFilter('all'); setOverdueOnly(false); }} />
+        <StatPill label="Критический уровень" value={criticalCount} variant="danger" active={isCritical}
+          onClick={() => { setSeverityFilter(isCritical ? 'all' : 'high'); setOverdueOnly(false); setStatusFilter(s => s === 'resolved' || s === 'closed' ? 'all' : s); }} />
+        <StatPill label="Просрочено SLA" value={overdueCount} variant={overdueCount > 0 ? 'danger' : 'default'} active={isOverdue}
+          onClick={() => { setOverdueOnly(!isOverdue); setStatusFilter(s => s === 'resolved' || s === 'closed' ? 'all' : s); }} />
+        <StatPill label="Решено / Закрыто" value={resolvedCount} variant="success" active={isResolved}
+          onClick={() => { setStatusFilter(isResolved ? 'all' : 'resolved'); setOverdueOnly(false); setSeverityFilter('all'); }} />
       </div>
 
       {/* Filters */}
