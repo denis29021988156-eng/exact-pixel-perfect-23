@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
-import { DollarSign, AlertTriangle, RefreshCw } from 'lucide-react';
+import { DollarSign, AlertTriangle, RefreshCw, ChevronDown } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import StatusBadge from '@/components/StatusBadge';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 
 interface ContractRisk {
   id: string;
@@ -39,14 +40,16 @@ export default function BudgetRiskCard() {
   if (contracts.length === 0 && !loading) return null;
 
   return (
-    <div className="glass-card p-6">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-sm font-semibold text-foreground flex items-center gap-2.5">
+    <Collapsible className="glass-card overflow-hidden group">
+      <div className="flex items-center justify-between p-5 gap-3">
+        <CollapsibleTrigger className="flex items-center gap-2.5 flex-1 text-left hover:opacity-80 transition-opacity">
           <div className="w-7 h-7 rounded-lg bg-warning/10 flex items-center justify-center">
             <DollarSign className="w-4 h-4 text-warning" />
           </div>
-          Бюджетный прогноз
-        </h2>
+          <h2 className="text-sm font-semibold text-foreground">Бюджетный прогноз</h2>
+          <span className="text-[10px] text-muted-foreground">({contracts.length})</span>
+          <ChevronDown className="w-4 h-4 text-muted-foreground ml-auto transition-transform duration-200 group-data-[state=open]:rotate-180" />
+        </CollapsibleTrigger>
         <button
           onClick={handleRecalculate}
           disabled={loading}
@@ -56,8 +59,8 @@ export default function BudgetRiskCard() {
           Пересчитать
         </button>
       </div>
-
-      <div className="space-y-3">
+      <CollapsibleContent>
+        <div className="border-t border-border/50 p-6 space-y-3">
         {contracts.map(c => (
           <div key={c.id} className="flex items-center gap-4 p-3 rounded-xl bg-surface-muted/50">
             <div className={`w-2 h-2 rounded-full flex-shrink-0 ${c.risk_of_non_execution > 70 ? 'bg-danger animate-pulse' : 'bg-warning'}`} />
@@ -72,7 +75,8 @@ export default function BudgetRiskCard() {
             </StatusBadge>
           </div>
         ))}
-      </div>
-    </div>
+        </div>
+      </CollapsibleContent>
+    </Collapsible>
   );
 }
