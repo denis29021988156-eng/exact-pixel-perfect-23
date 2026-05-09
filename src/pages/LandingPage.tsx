@@ -21,7 +21,7 @@ import AiChatDemo from '@/components/landing/AiChatDemo';
 import ModuleCard from '@/components/landing/ModuleCard';
 
 const META_LINE = 'Управление городом · v1.0 · Реутов · 2026';
-const HERO_LINES = ['Один экран.', 'Весь город.', 'Восемь недель.'];
+const HERO_LINES = ['Один экран', 'Весь город'];
 const EASE = [0.65, 0, 0.35, 1] as const;
 
 const METRICS = [
@@ -96,7 +96,7 @@ export default function LandingPage() {
   const heroOpacity = useTransform(smoothProgress, [0, 0.8], [1, 0]);
 
   useEffect(() => {
-    document.title = 'Планшет Мэра — один экран, весь город, восемь недель';
+    document.title = 'Планшет Мэра — один экран, весь город';
   }, []);
 
   return (
@@ -256,7 +256,7 @@ export default function LandingPage() {
               transition={{ duration: 0.8, delay: 0.15, ease: EASE }}
               className="text-[15px] lg:text-[17px] text-[#94A3B8] leading-[1.6] max-w-md lg:justify-self-end"
             >
-              Если хотя бы три из этих фраз — про вас, дальше есть смысл читать.
+              Если хотя бы три из этих фраз — про Вас, дальше есть смысл читать.
             </motion.p>
           </div>
 
@@ -299,9 +299,9 @@ export default function LandingPage() {
               className="font-semibold tracking-[-0.03em] leading-[1.05] text-[#E5E7EB]"
               style={{ fontSize: 'clamp(32px, 3.6vw, 52px)' }}
             >
-              Это не управление.
+              Это не управление
               <br />
-              <span className="text-[#475569]">Это разбор завалов.</span>
+              <span className="text-[#475569]">Это разбор завалов</span>
             </p>
           </motion.div>
         </div>
@@ -345,7 +345,7 @@ export default function LandingPage() {
             transition={{ duration: 0.8, delay: 0.15, ease: EASE }}
             className="mt-8 text-lg text-[#94A3B8] max-w-2xl"
           >
-            Не потому что вы давите. Потому что система не позволяет иначе.
+            Не потому что Вы давите. Потому что система не позволяет иначе.
           </motion.p>
 
           <div className="mt-20 space-y-5">
@@ -396,7 +396,7 @@ export default function LandingPage() {
         <div className="max-w-[1400px] mx-auto">
           <p className="text-[12px] tracking-[0.18em] uppercase text-[#94A3B8] font-mono mb-8">03 — день мэра</p>
           <h2 className="font-semibold tracking-[-0.04em] leading-[0.95] text-[#E5E7EB] max-w-3xl" style={{ fontSize: 'clamp(40px, 4.6vw, 72px)' }}>
-            Один день. Без совещаний.
+            Один день. Без совещаний
           </h2>
 
           <div className="mt-20 relative">
@@ -451,9 +451,9 @@ export default function LandingPage() {
             <ul className="mt-12 space-y-4">
               {[
                 'Не меняет данные сам',
-                'Не принимает решения за вас',
+                'Не принимает решения за Вас',
                 'Не видит персональные данные граждан',
-                'Не действует без вашего подтверждения',
+                'Не действует без Вашего подтверждения',
               ].map((t) => (
                 <li key={t} className="flex items-start gap-4 text-base text-[#E5E7EB]/80">
                   <span className="mt-2 w-4 h-px bg-[#EF4444]/60 flex-shrink-0" />
@@ -471,7 +471,7 @@ export default function LandingPage() {
         <div className="max-w-[1400px] mx-auto">
           <p className="text-[12px] tracking-[0.18em] uppercase text-[#94A3B8] font-mono mb-8">05 — возможности</p>
           <h2 className="font-semibold tracking-[-0.04em] leading-[0.95] text-[#E5E7EB] max-w-3xl" style={{ fontSize: 'clamp(40px, 4.6vw, 72px)' }}>
-            9 модулей. Один интерфейс.
+            9 модулей. Один интерфейс
           </h2>
           <div className="mt-20 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {MODULES.map((m, i) => (
@@ -486,7 +486,7 @@ export default function LandingPage() {
         <div className="max-w-[1400px] mx-auto">
           <p className="text-[12px] tracking-[0.18em] uppercase text-[#94A3B8] font-mono mb-8">06 — внедрение</p>
           <h2 className="font-semibold tracking-[-0.04em] leading-[0.95] text-[#E5E7EB] max-w-3xl" style={{ fontSize: 'clamp(40px, 4.6vw, 72px)' }}>
-            8 недель. Три этапа.
+            Три этапа
           </h2>
           <div className="mt-20 grid md:grid-cols-3 gap-4">
             {PLAN.map((p, i) => (
@@ -542,8 +542,8 @@ export default function LandingPage() {
             className="font-semibold tracking-[-0.04em] leading-[0.95] text-[#E5E7EB]"
             style={{ fontSize: 'clamp(48px, 6vw, 96px)' }}
           >
-            Через 8 недель вы открываете планшет — и видите{' '}
-            <span className="bg-gradient-to-r from-[#3B82F6] to-[#06B6D4] bg-clip-text text-transparent">весь город</span>.
+            Вы открываете планшет — и видите{' '}
+            <span className="bg-gradient-to-r from-[#3B82F6] to-[#06B6D4] bg-clip-text text-transparent">весь город</span>
           </motion.h2>
           <motion.p
             initial={{ opacity: 0 }}
@@ -552,7 +552,7 @@ export default function LandingPage() {
             transition={{ duration: 1, delay: 0.3 }}
             className="mt-12 text-xl lg:text-3xl font-light text-[#94A3B8] tracking-[-0.02em]"
           >
-            И каждый ваш зам знает, что вы это видите.
+            И каждый Ваш зам знает, что Вы это видите.
           </motion.p>
           <motion.div
             initial={{ opacity: 0, y: 16 }}
