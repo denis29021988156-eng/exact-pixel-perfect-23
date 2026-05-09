@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import type { Tables } from '@/integrations/supabase/types';
 import StatusBadge from '@/components/StatusBadge';
@@ -35,6 +36,8 @@ function StatPill({ label, value, variant = 'default' }: { label: string; value:
 
 export default function IncidentsPage() {
   const { userRole, userDepartment } = useAuth();
+  const [searchParams] = useSearchParams();
+  const socialOnly = searchParams.get('social') === '1';
   const [search, setSearch] = useState('');
   const [typeFilter, setTypeFilter] = useState<string>('all');
   const [statusFilter, setStatusFilter] = useState<string>('all');
@@ -59,6 +62,7 @@ export default function IncidentsPage() {
     if (search && !i.title.toLowerCase().includes(search.toLowerCase()) && !(i.address || '').toLowerCase().includes(search.toLowerCase())) return false;
     if (typeFilter !== 'all' && i.type !== typeFilter) return false;
     if (statusFilter !== 'all' && i.status !== statusFilter) return false;
+    if (socialOnly && !i.social_object) return false;
     return true;
   });
 
