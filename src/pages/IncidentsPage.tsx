@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import type { Tables } from '@/integrations/supabase/types';
 import StatusBadge from '@/components/StatusBadge';
@@ -35,6 +36,8 @@ function StatPill({ label, value, variant = 'default' }: { label: string; value:
 
 export default function IncidentsPage() {
   const { userRole, userDepartment } = useAuth();
+  const [searchParams] = useSearchParams();
+  const socialOnly = searchParams.get('social') === '1';
   const [search, setSearch] = useState('');
   const [typeFilter, setTypeFilter] = useState<string>('all');
   const [statusFilter, setStatusFilter] = useState<string>('all');
@@ -59,6 +62,7 @@ export default function IncidentsPage() {
     if (search && !i.title.toLowerCase().includes(search.toLowerCase()) && !(i.address || '').toLowerCase().includes(search.toLowerCase())) return false;
     if (typeFilter !== 'all' && i.type !== typeFilter) return false;
     if (statusFilter !== 'all' && i.status !== statusFilter) return false;
+    if (socialOnly && !i.social_object) return false;
     return true;
   });
 
@@ -72,8 +76,14 @@ export default function IncidentsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-[28px] font-bold text-foreground tracking-tight">Инциденты</h1>
-          <p className="meta-text mt-1">Городские происшествия и аварии ЖКХ</p>
+          <h1 className="text-[28px] font-bold text-foreground tracking-tight">
+            {socialOnly ? 'Соцобъекты под угрозой' : 'Инциденты'}
+          </h1>
+          <p className="meta-text mt-1">
+            {socialOnly
+              ? 'Инциденты, затрагивающие школы, сады, поликлиники и другие социальные объекты'
+              : 'Городские происшествия и аварии ЖКХ'}
+          </p>
         </div>
         <button onClick={() => setCreateOpen(true)} className="flex items-center gap-2 px-5 py-2.5 bg-primary text-primary-foreground text-sm font-semibold rounded-xl hover:bg-primary/90 transition-all shadow-sm">
           <Plus className="w-4 h-4" /> Новый инцидент

@@ -265,7 +265,7 @@ export default function DataQualityPage() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
-            <Activity className="h-4 w-4" /> Ingestion за 7 дней
+            <Activity className="h-4 w-4" /> Загрузка данных за 7 дней
           </CardTitle>
         </CardHeader>
         <CardContent>

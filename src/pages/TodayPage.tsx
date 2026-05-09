@@ -290,7 +290,7 @@ export default function TodayPage() {
           <StatCard icon={CheckCircle2} label="Выполнено задач" value={stats.completedTasks}
             variant="success" />
           <StatCard icon={Users} label="Соцобъекты" value={stats.socialAtRisk}
-            subtitle="под угрозой" variant={stats.socialAtRisk > 0 ? 'warning' : 'default'} onClick={() => navigate('/app/incidents')} />
+            subtitle="под угрозой" variant={stats.socialAtRisk > 0 ? 'warning' : 'default'} onClick={() => navigate('/app/incidents?social=1')} />
           <StatCard icon={Activity} label="Проекты" value={stats.activeProjects}
             subtitle={`${riskProjects.length} в риске`} variant={riskProjects.length > 0 ? 'warning' : 'default'} onClick={() => navigate('/app/program')} />
           <div className="col-span-2 glass-card p-5 flex items-center gap-4">
