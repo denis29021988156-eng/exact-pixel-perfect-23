@@ -26,7 +26,6 @@ import {
 import GradientMeshBg from '@/components/landing/GradientMeshBg';
 import TabletMockup from '@/components/landing/TabletMockup';
 import CountUp from '@/components/landing/CountUp';
-import ParallaxStack from '@/components/landing/ParallaxStack';
 import AiChatDemo from '@/components/landing/AiChatDemo';
 import ModuleCard from '@/components/landing/ModuleCard';
 
