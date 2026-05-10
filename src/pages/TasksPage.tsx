@@ -7,6 +7,7 @@ import { ClipboardCheck, Search, Filter, User, Calendar, Plus, Clock, AlertTrian
 import { useCanManage } from '@/hooks/useCanManage';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 
 const statusLabels: Record<string, string> = { new: 'Новое', in_progress: 'В работе', completed: 'Выполнено', cancelled: 'Отменено' };
 const statusVariants: Record<string, 'danger' | 'warning' | 'success' | 'info' | 'muted'> = {
@@ -60,6 +61,7 @@ export default function TasksPage() {
   const [tasks, setTasks] = useState<Tables<'tasks'>[]>([]);
   const [loading, setLoading] = useState(true);
   const [createOpen, setCreateOpen] = useState(false);
+  const [selectedTask, setSelectedTask] = useState<Tables<'tasks'> | null>(null);
 
   const loadData = useCallback(() => {
     let query = supabase.from('tasks').select('*').order('created_at', { ascending: false });
@@ -166,7 +168,14 @@ export default function TasksPage() {
       ) : (
         <div className="space-y-3">
           {filtered.map(t => (
-            <div key={t.id} className={`glass-card glass-card-hover p-5 transition-all ${t.overdue ? 'border-l-[3px] border-l-danger bg-danger-soft/20' : ''}`}>
+            <div
+              key={t.id}
+              role="button"
+              tabIndex={0}
+              onClick={() => setSelectedTask(t)}
+              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setSelectedTask(t); } }}
+              className={`glass-card glass-card-hover p-5 cursor-pointer transition-all ${t.overdue ? 'border-l-[3px] border-l-danger bg-danger-soft/20' : ''}`}
+            >
               <div className="flex items-start justify-between gap-4">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-2.5 flex-wrap">
@@ -202,7 +211,7 @@ export default function TasksPage() {
                   )}
                   <span className="text-[10px] text-muted-foreground/60">{new Date(t.created_at).toLocaleDateString('ru-RU')}</span>
                   {t.assigned_to === user?.id && t.status !== 'completed' && t.status !== 'cancelled' && (
-                    <div className="flex gap-1.5 mt-1">
+                    <div className="flex gap-1.5 mt-1" onClick={(e) => e.stopPropagation()}>
                       {t.status === 'new' && (
                         <button onClick={() => updateStatus(t.id, 'in_progress')}
                           className="text-[10px] font-semibold px-2.5 py-1 rounded-md bg-warning/10 text-warning hover:bg-warning/20 transition-colors">
@@ -230,6 +239,79 @@ export default function TasksPage() {
       )}
 
       <CreateTaskDialog open={createOpen} onOpenChange={setCreateOpen} onCreated={loadData} />
+
+      <Dialog open={!!selectedTask} onOpenChange={(open) => !open && setSelectedTask(null)}>
+        <DialogContent className="max-w-xl">
+          {selectedTask && (
+            <>
+              <DialogHeader>
+                <div className="flex items-center gap-2 flex-wrap mb-2">
+                  <StatusBadge variant={statusVariants[selectedTask.status]}>{statusLabels[selectedTask.status]}</StatusBadge>
+                  {selectedTask.overdue && <StatusBadge variant="danger" pulse>Просрочено</StatusBadge>}
+                </div>
+                <DialogTitle className="text-lg leading-snug">{selectedTask.title}</DialogTitle>
+                {selectedTask.description && (
+                  <DialogDescription className="text-sm text-foreground/80 whitespace-pre-line pt-2 leading-relaxed">
+                    {selectedTask.description}
+                  </DialogDescription>
+                )}
+              </DialogHeader>
+
+              <div className="grid grid-cols-2 gap-3 mt-2 text-sm">
+                {selectedTask.responsible && (
+                  <div className="space-y-0.5">
+                    <p className="text-[11px] uppercase tracking-wide text-muted-foreground">Ответственный</p>
+                    <p className="font-medium text-foreground flex items-center gap-1.5"><User className="w-3.5 h-3.5 text-primary/60" />{selectedTask.responsible}</p>
+                  </div>
+                )}
+                {selectedTask.department && (
+                  <div className="space-y-0.5">
+                    <p className="text-[11px] uppercase tracking-wide text-muted-foreground">Отдел</p>
+                    <p className="font-medium text-foreground">{selectedTask.department}</p>
+                  </div>
+                )}
+                {selectedTask.deadline && (
+                  <div className="space-y-0.5">
+                    <p className="text-[11px] uppercase tracking-wide text-muted-foreground">Срок</p>
+                    <p className={`font-medium flex items-center gap-1.5 ${selectedTask.overdue ? 'text-danger' : 'text-foreground'}`}>
+                      <Calendar className="w-3.5 h-3.5" />{selectedTask.deadline}
+                    </p>
+                  </div>
+                )}
+                {selectedTask.created_by_name && (
+                  <div className="space-y-0.5">
+                    <p className="text-[11px] uppercase tracking-wide text-muted-foreground">Поставил</p>
+                    <p className="font-medium text-foreground">{selectedTask.created_by_name}</p>
+                  </div>
+                )}
+                <div className="space-y-0.5">
+                  <p className="text-[11px] uppercase tracking-wide text-muted-foreground">Создано</p>
+                  <p className="font-medium text-foreground">{new Date(selectedTask.created_at).toLocaleString('ru-RU')}</p>
+                </div>
+                <div className="space-y-0.5">
+                  <p className="text-[11px] uppercase tracking-wide text-muted-foreground">Обновлено</p>
+                  <p className="font-medium text-foreground">{new Date(selectedTask.updated_at).toLocaleString('ru-RU')}</p>
+                </div>
+              </div>
+
+              {selectedTask.assigned_to === user?.id && selectedTask.status !== 'completed' && selectedTask.status !== 'cancelled' && (
+                <div className="flex gap-2 pt-3 mt-2 border-t border-border">
+                  {selectedTask.status === 'new' && (
+                    <button onClick={() => { updateStatus(selectedTask.id, 'in_progress'); setSelectedTask(null); }}
+                      className="text-xs font-semibold px-3 py-2 rounded-lg bg-warning/10 text-warning hover:bg-warning/20 transition-colors">
+                      Взять в работу
+                    </button>
+                  )}
+                  <button onClick={() => { updateStatus(selectedTask.id, 'completed'); setSelectedTask(null); }}
+                    className="text-xs font-semibold px-3 py-2 rounded-lg bg-success/10 text-success hover:bg-success/20 transition-colors">
+                    Отметить выполненным
+                  </button>
+                </div>
+              )}
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
