@@ -1,103 +1,84 @@
-## Сводный план — 5 фиксов одной итерацией
+## Цель
+ИИ помнит между сессиями: (а) предыдущие диалоги пользователя, (б) принятые решения/договорённости, (в) пользовательские настройки-предпочтения (формат докладов, фокус-департаменты и т.п.).
 
-Параллельно: миграция RLS + правки в `dataAggregator`/edge-функции + фикс фильтров на странице Инцидентов. Лендинг — без изменений (число «19» в нём не зашито, проверено).
+## Архитектура
 
----
-
-### Фикс 1. RLS контрактов — Сотрудник видит свой департамент
-
-Сейчас `contracts` SELECT доступен только Мэру и Заму своего департамента → Сотрудник видит **0 контрактов**, хотя у `projects` Сотрудник своего департамента читает.
-
-**Миграция:** заменить политику `Contracts read mayor or deputy of dept` на:
-```sql
-USING (
-  has_role(auth.uid(),'mayor')
-  OR (department IS NOT NULL AND is_deputy_of_department(department))
-  OR (department IS NOT NULL AND department = get_user_department(auth.uid()))
-)
+```text
+[user msg] → city-copilot
+              ├─ load: ai_conversations (last 20 msgs текущего user_id)
+              ├─ load: ai_memory (decisions + preferences для user_id)
+              ├─ aggregate city data (как сейчас)
+              ├─ system prompt + memory block + history + new msg
+              ├─ stream answer
+              └─ async: save user msg + assistant msg в ai_conversations
+                       + если ответ содержит "РЕШЕНИЕ:" / явный commit — extract в ai_memory
 ```
 
----
+## Изменения в БД (1 миграция)
 
-### Фикс 2. RLS инцидентов — Сотрудник видит назначенные/свой департамент
+**`ai_conversations`** — полная история чатов
+- `user_id uuid` (FK auth.users, NOT NULL)
+- `session_id uuid` (для группировки одной беседы)
+- `role text` ('user' | 'assistant')
+- `content text`
+- `created_at timestamptz default now()`
+- index: `(user_id, created_at desc)`
+- RLS: пользователь читает/пишет только свои; mayor читает все.
 
-Сейчас Сотрудник видит только инциденты, где `created_by = auth.uid()`. Если Мэр или Зам создал инцидент по департаменту Сотрудника — тот его не увидит, хотя поручение по нему может быть назначено на него.
+**`ai_memory`** — структурированная долгосрочная память
+- `user_id uuid` (NOT NULL — мэр/зам/сотрудник)
+- `kind text` ('decision' | 'preference' | 'context_note')
+- `key text` (короткий идентификатор, напр. "report_format")
+- `value text` (содержимое)
+- `source text` ('manual' | 'extracted' | 'system')
+- `expires_at timestamptz` (nullable — для временных решений)
+- `created_at, updated_at`
+- unique `(user_id, kind, key)` — апсерт
+- RLS: владелец full; mayor read all.
 
-**Миграция:** заменить политику `Incidents read` на:
-```sql
-USING (
-  has_role(auth.uid(),'mayor')
-  OR (department IS NOT NULL AND is_deputy_of_department(department))
-  OR (department IS NOT NULL AND department = get_user_department(auth.uid()))
-  OR created_by = auth.uid()
-)
-```
+## Изменения в коде
 
----
+**`supabase/functions/city-copilot/index.ts`**
+- Из заголовка Authorization получить `user_id` через `supabase.auth.getUser(jwt)`.
+- Загрузить последние 20 сообщений `ai_conversations` для этого user_id (фоллбек: пусто, если нет).
+- Загрузить активные `ai_memory` (где `expires_at > now() OR null`), отформатировать в блок:
+  ```
+  ДОЛГОСРОЧНАЯ ПАМЯТЬ:
+  Решения:
+   - [2026-05-08] не закупать ёлки до сентября
+  Предпочтения:
+   - report_format: краткий, без эмодзи
+  ```
+- Вставить блок в systemPrompt после агрегированных данных.
+- После ответа (после стрима — через `EdgeRuntime.waitUntil`) сохранить user msg + assistant msg в `ai_conversations`.
+- Минимальная авто-экстракция: если в ответе есть строка `РЕШЕНИЕ: <текст>` — записать в `ai_memory` (kind='decision', key=hash, value=текст).
 
-### Фикс 3. AI-контекст: подключить Репутацию
+**Новая edge-функция `ai-memory-manage`** (опционально, без UI пока):
+- POST { action: 'add'|'delete'|'list', kind, key, value, expires_at }
+- Для будущей кнопки «Запомни это» в UI Copilot. Сейчас не подключаем UI — только endpoint, чтобы команды типа "запомни X" из чата работали через ту же экстракцию.
 
-В `src/lib/ai/dataAggregator.ts` и `supabase/functions/city-copilot/index.ts`:
+**`src/components/CityCopilot.tsx`**
+- Передавать в invoke `Authorization` заголовок (уже передаётся через supabase.functions.invoke, проверить).
+- Никаких видимых изменений интерфейса в этой итерации.
 
-- Добавить запрос `media_mentions` за последние 30 дней (`published_at >= now() - 30d`).
-- Считать: `mentionsCount`, `negativeMentions` (sentiment='negative'), `positiveMentions`, `topReputationTopics[3]`.
-- Добавить эти поля в возвращаемый JSON-контекст ИИ. Промпты не трогаем — модель сама подхватит новые поля.
+## Что НЕ делаем сейчас
+- UI для просмотра/удаления памяти (отдельный шаг).
+- Векторный поиск/embeddings (overkill для текущего объёма).
+- Автоматический summary длинных диалогов (добавим, когда история превысит 50 сообщений).
+- Сложный NLP-экстрактор решений — только маркер `РЕШЕНИЕ:` в ответе ИИ.
 
-После фикса Мэр сможет спросить «что про нас в СМИ» — ИИ ответит по реальным данным.
+## Безопасность
+- Память приватна по user_id; мэр видит всё (для аудита).
+- Экспирация через `expires_at` для временных решений.
+- ИИ продолжает не иметь прямого SQL-доступа — только чтение/запись через бэкенд.
 
----
+## Файлы
+- new: миграция (2 таблицы + RLS + индексы)
+- edit: `supabase/functions/city-copilot/index.ts`
+- new: `supabase/functions/ai-memory-manage/index.ts`
+- update: `mem://ai/memory-management/conversation-state` (отразить новую модель)
 
-### Фикс 4. Лендинг — убрать конкретные числа объёмов
-
-Поиск показал: чисел 19/17/17/13 в `LandingPage.tsx` нет. Литерал «87, три критичных инцидента, пять задач» в нарративе «Дня мэра» — это иллюстративный пример, не статистика. Оставляем как есть.
-
-**Действие:** добавить заметку в проектную память — «не вшивать конкретные счётчики в лендинг», если возникнут в будущем. Никаких правок кода.
-
----
-
-### Фикс 5. Фильтры на странице Инцидентов
-
-Файл: `src/pages/IncidentsPage.tsx`. Три бага из-за того, что счётчики плашек считаются по одной логике, а клик переключает фильтры по другой.
-
-**Что меняем:**
-
-1. Ввести два независимых boolean-фильтра:
-   - `activeOnly` (по умолчанию `true`) — отрезает `closed` и `resolved`.
-   - `resolvedOrClosedOnly` — показывает только `resolved`+`closed`.
-
-2. Заменить логику плашек:
-   - **«Активных инцидентов»** — клик включает `activeOnly=true`, выключает `resolvedOrClosedOnly`, сбрасывает severity/overdue.
-   - **«Критический»** — клик включает `severityFilter='high'` + `activeOnly=true`, выключает `resolvedOrClosedOnly`.
-   - **«Просрочено SLA»** — клик включает `overdueOnly=true` + `activeOnly=true`, выключает `resolvedOrClosedOnly`.
-   - **«Решено / Закрыто»** — клик включает `resolvedOrClosedOnly=true`, выключает `activeOnly`, сбрасывает severity/overdue.
-
-3. В `filtered`:
-   ```ts
-   if (activeOnly && (i.status === 'closed' || i.status === 'resolved')) return false;
-   if (resolvedOrClosedOnly && !(i.status === 'resolved' || i.status === 'closed')) return false;
-   ```
-
-4. Убрать `statusFilter='resolved'` из обработчиков плашек — он и был источником рассинхрона.
-   `<select>` со статусом оставить как ручной вспомогательный фильтр (он работает поверх `activeOnly`/`resolvedOrClosedOnly`, переводя их в `false` при выборе конкретного статуса).
-
-**Проверки в DevTools после фикса:** счётчик каждой плашки = `filtered.length` после её клика, на текущих данных — 19 / критичные / 0 просрочено / 6.
-
----
-
-### Технические детали
-
-**Файлы:**
-- Новая миграция: 2 политики (`contracts`, `incidents`).
-- `src/lib/ai/dataAggregator.ts` — расширить интерфейс и запросы.
-- `supabase/functions/city-copilot/index.ts` — добавить запрос `media_mentions` и поля в `aggregatedData`.
-- `src/pages/IncidentsPage.tsx` — переписать логику плашек и `filtered`.
-- `mem://features/landing-content-rules` — короткая заметка-правило.
-
-**НЕ трогаем:**
-- Лендинг, маршруты, схему ролей, роли в `user_roles`.
-- Системные промпты ИИ.
-- `media_mentions` / `public_complaints` RLS — пункт про фильтр «по департаменту» из предыдущего обсуждения сюда **не включён** (нужно отдельное решение по продукту: жалобы и СМИ — общегородские или по зонам?).
-
-**Риски:** минимальные. RLS-расширение только добавляет права чтения, ничего не отбирает. AI получит больше полей в контексте — это безопасно. Фильтры — локальная логика одной страницы.
-
-После всех правок дам короткий отчёт «кто что видит» по каждой роли + поля, появившиеся в AI-контексте.
+## Проверка после внедрения
+1. Залогиниться, в чате сказать «запомни: доклады делай списком из 3 пунктов» → проверить запись в `ai_memory`.
+2. Перезагрузить страницу, открыть Copilot, спросить «как ты обычно делаешь доклады?» — должен ответить про 3 пункта.
+3. Спросить вчерашний контекст (после реального дня) — должен подтянуть из `ai_conversations`.
