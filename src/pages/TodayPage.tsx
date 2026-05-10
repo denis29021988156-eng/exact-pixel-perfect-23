@@ -165,6 +165,7 @@ export default function TodayPage() {
     totalTasks: 0,
     completedTasks: 0,
     activeProjects: 0,
+    inProgressToday: 0,
   });
   const [urgentItems, setUrgentItems] = useState<any[]>([]);
   const [todayItems, setTodayItems] = useState<any[]>([]);
@@ -192,6 +193,8 @@ export default function TodayPage() {
     const projects = deputyDept ? allProjects.filter(p => p.department === deputyDept) : allProjects;
 
     const activeTasks = tasks.filter(t => t.status !== 'completed' && t.status !== 'cancelled');
+    const inProgressIncidents = incidents.filter(i => i.status === 'in_progress').length;
+    const tasksDueToday = activeTasks.filter(t => t.deadline === today).length;
 
     setStats({
       activeIncidents: incidents.length,
@@ -202,6 +205,7 @@ export default function TodayPage() {
       totalTasks: activeTasks.length,
       completedTasks: tasks.filter(t => t.status === 'completed').length,
       activeProjects: projects.filter(p => p.status !== 'completed').length,
+      inProgressToday: inProgressIncidents + tasksDueToday,
     });
 
     const urgent = [
@@ -282,9 +286,9 @@ export default function TodayPage() {
         {/* KPI Cards */}
         <div className="col-span-12 lg:col-span-9 grid grid-cols-2 lg:grid-cols-4 gap-4">
           <StatCard icon={AlertTriangle} label="Инциденты" value={stats.activeIncidents}
-            subtitle={`${stats.criticalIncidents} критических`} variant="danger" onClick={() => navigate('/app/incidents')} />
-          <StatCard icon={ShieldAlert} label="Просрочено SLA" value={stats.overdueIncidents}
-            variant="danger" onClick={() => navigate('/app/incidents')} />
+            subtitle={`${stats.criticalIncidents} критич. · ${stats.overdueIncidents} с нарушением срока`} variant="danger" onClick={() => navigate('/app/incidents')} />
+          <StatCard icon={Activity} label="В работе сегодня" value={stats.inProgressToday}
+            subtitle="инциденты + задачи" variant="default" onClick={() => navigate('/app/tasks?today=1')} />
           <StatCard icon={Clock} label="Задачи просрочены" value={stats.overdueTasks}
             subtitle={`из ${stats.totalTasks} активных`} variant="warning" onClick={() => navigate('/app/tasks')} />
           <StatCard icon={CheckCircle2} label="Выполнено задач" value={stats.completedTasks}
@@ -447,7 +451,7 @@ export default function TodayPage() {
         </CollapsibleContent>
       </Collapsible>
 
-      {/* What-If Scenarios */}
+      {/* Бюджетные сценарии */}
       <WhatIfCard />
 
       {/* Budget Risk */}
