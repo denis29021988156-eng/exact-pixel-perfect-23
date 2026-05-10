@@ -76,7 +76,7 @@ export default function WhatIfCard() {
         <div className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center">
           <Lightbulb className="w-4 h-4 text-primary" />
         </div>
-        What-If сценарии
+        Бюджетные сценарии
       </h2>
 
       <div className="flex flex-wrap gap-3 mb-4">
