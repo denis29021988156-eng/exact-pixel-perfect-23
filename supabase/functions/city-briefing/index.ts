@@ -359,7 +359,7 @@ serve(async (req) => {
       structured,
       riskIndex: stats.riskIndex,
       mode: 'fallback',
-      fallbackReason: errMsg,
+      fallbackReason: 'AI temporarily unavailable',
       stats: {
         activeIncidents: stats.activeIncidents,
         criticalIncidents: stats.criticalIncidents,
