@@ -3,7 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import type { Tables } from '@/integrations/supabase/types';
 import StatusBadge from '@/components/StatusBadge';
 import CreateTaskDialog from '@/components/forms/CreateTaskDialog';
-import { ClipboardCheck, Search, Filter, User, Calendar, Plus, Clock, AlertTriangle, CheckCircle2, ListChecks, BarChart3 } from 'lucide-react';
+import { ClipboardCheck, Search, Filter, User, Calendar, Plus, Clock, AlertTriangle, CheckCircle2, ListChecks, BarChart3, X } from 'lucide-react';
 import { useCanManage } from '@/hooks/useCanManage';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
@@ -15,7 +15,7 @@ const statusVariants: Record<string, 'danger' | 'warning' | 'success' | 'info' |
   new: 'info', in_progress: 'warning', completed: 'success', cancelled: 'muted',
 };
 
-function PerformanceDialog({ open, onOpenChange, tasks }: { open: boolean; onOpenChange: (v: boolean) => void; tasks: Tables<'tasks'>[] }) {
+function PerformanceDialog({ open, onOpenChange, tasks, onPick }: { open: boolean; onOpenChange: (v: boolean) => void; tasks: Tables<'tasks'>[]; onPick: (name: string, mode: 'all' | 'active' | 'overdue' | 'completed') => void }) {
   const rows = (() => {
     const map = new Map<string, { name: string; total: number; completed: number; overdue: number; active: number }>();
     tasks.forEach(t => {
@@ -63,6 +63,7 @@ function PerformanceDialog({ open, onOpenChange, tasks }: { open: boolean; onOpe
               </ResponsiveContainer>
             </div>
 
+            <p className="text-[11px] text-muted-foreground mt-3 px-1">Кликните по строке или по числу — откроется список поручений с нужными фильтрами.</p>
             <div className="overflow-x-auto mt-2 border-t border-border pt-3">
               <table className="w-full text-sm">
                 <thead>
@@ -77,13 +78,23 @@ function PerformanceDialog({ open, onOpenChange, tasks }: { open: boolean; onOpe
                 </thead>
                 <tbody>
                   {rows.map(r => (
-                    <tr key={r.name} className="border-t border-border/50">
-                      <td className="py-2 font-medium text-foreground">{r.name}</td>
-                      <td className="py-2 text-right text-muted-foreground">{r.total}</td>
-                      <td className="py-2 text-right text-muted-foreground">{r.active}</td>
-                      <td className="py-2 text-right text-success font-semibold">{r.completed}</td>
-                      <td className={`py-2 text-right font-semibold ${r.overdue > 0 ? 'text-danger' : 'text-muted-foreground'}`}>{r.overdue}</td>
-                      <td className={`py-2 text-right font-bold ${r.rate >= 70 ? 'text-success' : r.rate >= 40 ? 'text-warning' : 'text-danger'}`}>{r.rate}%</td>
+                    <tr key={r.name} className="border-t border-border/50 hover:bg-surface-muted/40 transition-colors">
+                      <td className="py-2 font-medium text-foreground">
+                        <button onClick={() => onPick(r.name, 'all')} className="text-left hover:text-primary hover:underline">{r.name}</button>
+                      </td>
+                      <td className="py-2 text-right">
+                        <button onClick={() => onPick(r.name, 'all')} className="text-muted-foreground hover:text-primary hover:underline tabular-nums">{r.total}</button>
+                      </td>
+                      <td className="py-2 text-right">
+                        <button onClick={() => onPick(r.name, 'active')} className="text-muted-foreground hover:text-primary hover:underline tabular-nums">{r.active}</button>
+                      </td>
+                      <td className="py-2 text-right">
+                        <button onClick={() => onPick(r.name, 'completed')} className="text-success font-semibold hover:underline tabular-nums">{r.completed}</button>
+                      </td>
+                      <td className="py-2 text-right">
+                        <button onClick={() => onPick(r.name, 'overdue')} disabled={r.overdue === 0} className={`font-semibold tabular-nums ${r.overdue > 0 ? 'text-danger hover:underline' : 'text-muted-foreground cursor-default'}`}>{r.overdue}</button>
+                      </td>
+                      <td className={`py-2 text-right font-bold tabular-nums ${r.rate >= 70 ? 'text-success' : r.rate >= 40 ? 'text-warning' : 'text-danger'}`}>{r.rate}%</td>
                     </tr>
                   ))}
                 </tbody>
@@ -145,6 +156,7 @@ export default function TasksPage() {
   const [createOpen, setCreateOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState<Tables<'tasks'> | null>(null);
   const [perfOpen, setPerfOpen] = useState(false);
+  const [responsibleFilter, setResponsibleFilter] = useState<string | null>(null);
 
   const loadData = useCallback(() => {
     let query = supabase.from('tasks').select('*').order('created_at', { ascending: false });
@@ -178,6 +190,7 @@ export default function TasksPage() {
     if (statusFilter !== 'all' && t.status !== statusFilter) return false;
     if (overdueOnly && !t.overdue) return false;
     if (statusFilter === 'all' && activeOnly && (t.status === 'completed' || t.status === 'cancelled')) return false;
+    if (responsibleFilter && (t.responsible || '— не назначен —') !== responsibleFilter) return false;
     if (search && !t.title.toLowerCase().includes(search.toLowerCase())) return false;
     return true;
   });
@@ -243,6 +256,16 @@ export default function TasksPage() {
           <Filter className="w-3.5 h-3.5" />
           {filtered.length} из {tasks.length}
         </div>
+        {responsibleFilter && (
+          <button
+            onClick={() => setResponsibleFilter(null)}
+            className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-primary/10 text-primary text-xs font-semibold hover:bg-primary/15 transition-colors"
+            title="Снять фильтр по ответственному"
+          >
+            <User className="w-3.5 h-3.5" /> {responsibleFilter}
+            <X className="w-3 h-3 opacity-70" />
+          </button>
+        )}
       </div>
 
       {/* List */}
@@ -328,7 +351,25 @@ export default function TasksPage() {
 
       <CreateTaskDialog open={createOpen} onOpenChange={setCreateOpen} onCreated={loadData} />
 
-      <PerformanceDialog open={perfOpen} onOpenChange={setPerfOpen} tasks={tasks} />
+      <PerformanceDialog
+        open={perfOpen}
+        onOpenChange={setPerfOpen}
+        tasks={tasks}
+        onPick={(name, mode) => {
+          setResponsibleFilter(name);
+          setSearch('');
+          if (mode === 'overdue') {
+            setOverdueOnly(true); setStatusFilter('all'); setActiveOnly(true);
+          } else if (mode === 'completed') {
+            setOverdueOnly(false); setStatusFilter('completed'); setActiveOnly(false);
+          } else if (mode === 'active') {
+            setOverdueOnly(false); setStatusFilter('all'); setActiveOnly(true);
+          } else {
+            setOverdueOnly(false); setStatusFilter('all'); setActiveOnly(false);
+          }
+          setPerfOpen(false);
+        }}
+      />
 
       <Dialog open={!!selectedTask} onOpenChange={(open) => !open && setSelectedTask(null)}>
         <DialogContent className="max-w-xl">
