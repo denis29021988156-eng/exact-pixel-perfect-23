@@ -158,7 +158,7 @@ export default function MapPage() {
           <p className="text-sm text-muted-foreground mt-0.5">Реутов · Инциденты на карте</p>
         </div>
         <div className="flex items-center gap-3">
-          {stats.high > 0 && <span className="red-zone-badge">RED ZONE · {stats.high}</span>}
+          {stats.high > 0 && <span className="red-zone-badge">КРАСНАЯ ЗОНА · {stats.high}</span>}
           <div className="flex items-center gap-3 text-xs px-3 py-1.5 rounded-xl bg-card border border-border">
             <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full" style={{ background: '#EF4444' }} /> {stats.high}</span>
             <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full" style={{ background: '#F59E0B' }} /> {stats.medium}</span>

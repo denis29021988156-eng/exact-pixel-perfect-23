@@ -15,7 +15,7 @@ function SlideDashboard() {
         </div>
         <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#EF4444]/15 border border-[#EF4444]/30">
           <span className="w-1.5 h-1.5 rounded-full bg-[#EF4444] animate-pulse-red" />
-          <span className="text-[10px] font-semibold text-[#EF4444]">RED ZONE</span>
+          <span className="text-[10px] font-semibold text-[#EF4444]">КРАСНАЯ ЗОНА</span>
         </div>
       </div>
       <div className="rounded-lg border border-[#EF4444]/30 bg-[#EF4444]/10 p-3 flex items-start gap-2.5">

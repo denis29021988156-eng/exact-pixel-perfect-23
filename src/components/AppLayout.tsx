@@ -109,16 +109,16 @@ function AIStatusIndicator() {
 
   const minutesAgo = Math.round((Date.now() - lastUpdate.getTime()) / 60000);
   const statusConfig = {
-    active: { color: 'bg-success', label: 'AI Active', textColor: 'text-muted-foreground' },
-    elevated: { color: 'bg-warning', label: 'Elevated Risk', textColor: 'text-warning' },
-    unavailable: { color: 'bg-danger', label: 'AI Unavailable', textColor: 'text-danger' },
+    active: { color: 'bg-success', label: 'ИИ активен', textColor: 'text-muted-foreground' },
+    elevated: { color: 'bg-warning', label: 'Повышенный риск', textColor: 'text-warning' },
+    unavailable: { color: 'bg-danger', label: 'ИИ недоступен', textColor: 'text-danger' },
   };
   const cfg = statusConfig[status];
 
   return (
     <div className="flex items-center gap-3">
       {criticalCount >= 3 && (
-        <span className="red-zone-badge">RED ZONE · {criticalCount}</span>
+        <span className="red-zone-badge">КРАСНАЯ ЗОНА · {criticalCount}</span>
       )}
       {minutesAgo > 0 && (
         <span className="text-xs text-muted-foreground/60">
