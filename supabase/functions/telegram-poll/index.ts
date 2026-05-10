@@ -18,6 +18,32 @@ const MIN_REMAINING_MS = 4_000;
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
+  // --- Auth: CRON_SECRET header OR signed-in user ---
+  {
+    const _cronSecret = Deno.env.get("CRON_SECRET");
+    const _hdrSecret = req.headers.get("x-cron-secret");
+    let _ok = !!(_cronSecret && _hdrSecret && _cronSecret === _hdrSecret);
+    if (!_ok) {
+      const _authHeader = req.headers.get("Authorization");
+      if (_authHeader?.startsWith("Bearer ")) {
+        const _supaAuth = createClient(
+          Deno.env.get("SUPABASE_URL")!,
+          Deno.env.get("SUPABASE_ANON_KEY")!
+        );
+        const { data: _claims, error: _authErr } = await _supaAuth.auth.getClaims(
+          _authHeader.replace("Bearer ", "")
+        );
+        _ok = !_authErr && !!_claims?.claims;
+      }
+    }
+    if (!_ok) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+  }
+
   const startTime = Date.now();
   const startedAt = new Date().toISOString();
 
@@ -244,7 +270,7 @@ Deno.serve(async (req) => {
     } catch (_) { /* ignore */ }
 
     return new Response(
-      JSON.stringify({ error: e instanceof Error ? e.message : "Unknown error" }),
+      JSON.stringify({ error: e instanceof Error ? "Internal server error" : "Unknown error" }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
   }
