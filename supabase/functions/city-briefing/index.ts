@@ -167,6 +167,11 @@ serve(async (req) => {
     // Aggregated context (no raw SQL)
     aggregatedContext = JSON.stringify({
       date: new Date().toISOString().split("T")[0],
+      nowMsk: new Date().toLocaleString("ru-RU", {
+        timeZone: "Europe/Moscow",
+        weekday: "long", day: "numeric", month: "long", year: "numeric",
+        hour: "2-digit", minute: "2-digit",
+      }),
       cityRiskIndex: riskIndex,
       activeIncidents: incidents.length,
       criticalIncidents,
@@ -187,6 +192,8 @@ serve(async (req) => {
     }, null, 2);
 
     const systemPrompt = `Ты — аналитический AI-модуль ситуационного центра города. Ты готовишь сводку для мэра в управленческом тоне.
+
+ТЕКУЩЕЕ ВРЕМЯ (МСК, Europe/Moscow) указано в поле nowMsk входных данных. Все сроки и формулировки времени — по Москве.
 
 ШКАЛА City Risk Index:
 - 0–30 — низкий ("город работает в штатном режиме")

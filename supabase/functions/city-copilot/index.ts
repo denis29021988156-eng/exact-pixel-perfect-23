@@ -225,6 +225,11 @@ serve(async (req) => {
 
     const aggregatedData = {
       date: new Date().toLocaleDateString("ru-RU"),
+      nowMsk: new Date().toLocaleString("ru-RU", {
+        timeZone: "Europe/Moscow",
+        weekday: "long", day: "numeric", month: "long", year: "numeric",
+        hour: "2-digit", minute: "2-digit",
+      }),
       cityRiskIndex: riskIndex,
       activeIncidents: incidents.length,
       criticalIncidents,
@@ -287,6 +292,9 @@ serve(async (req) => {
     }
 
     const systemPrompt = `Ты — City Copilot, AI-ассистент мэра города. Ты работаешь в интерактивном режиме.
+
+ТЕКУЩЕЕ ВРЕМЯ (МСК, Europe/Moscow): ${aggregatedData.nowMsk}
+Все даты, дедлайны, фразы "сегодня", "завтра", "на этой неделе" — рассчитывай ИМЕННО от этого московского времени.
 
 АГРЕГИРОВАННЫЕ ДАННЫЕ:
 ${JSON.stringify(aggregatedData, null, 2)}
