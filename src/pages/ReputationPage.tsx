@@ -124,7 +124,7 @@ export default function ReputationPage() {
       )}
 
       {/* Summary cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
         <div className="glass-card p-5 text-center">
           <p className="text-[11px] text-muted-foreground mb-1">Всего упоминаний</p>
           <p className="text-2xl font-bold text-foreground">{mentions.length}</p>
@@ -134,14 +134,21 @@ export default function ReputationPage() {
           <p className="text-2xl font-bold text-success">{sentimentCounts.positive}</p>
         </div>
         <div className="glass-card p-5 text-center">
+          <p className="text-[11px] text-muted-foreground mb-1">Нейтральных</p>
+          <p className="text-2xl font-bold text-muted-foreground">{sentimentCounts.neutral}</p>
+        </div>
+        <div className="glass-card p-5 text-center">
           <p className="text-[11px] text-muted-foreground mb-1">Негативных</p>
           <p className="text-2xl font-bold text-danger">{sentimentCounts.negative}</p>
         </div>
-        <div className={`glass-card p-5 text-center ${negPct > 40 ? 'border-danger/20 bg-danger-soft/30' : ''}`}>
+        <div className={`glass-card p-5 text-center ${negPct > 40 ? 'border-danger/20 bg-danger-soft/30' : ''}`} title={`Доля негатива = негативные / всего = ${sentimentCounts.negative} / ${mentions.length}`}>
           <p className="text-[11px] text-muted-foreground mb-1">% негатива</p>
           <p className={`text-2xl font-bold ${negPct > 40 ? 'text-danger' : 'text-foreground'}`}>{negPct}%</p>
         </div>
       </div>
+      <p className="text-[11px] text-muted-foreground px-1">
+        Сумма «Позитив + Нейтрал + Негатив» = всего упоминаний. % негатива = негативные ÷ всего × 100.
+      </p>
 
       {/* Charts */}
       {mentions.length > 0 && (
