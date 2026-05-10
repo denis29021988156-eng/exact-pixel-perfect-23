@@ -117,15 +117,18 @@ export default function IncidentsPage() {
 
       {/* Stats Row */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-        <StatPill label="Активных инцидентов" value={activeIncidents.length} active={isActiveFilter}
+        <StatPill label={`Активных (новые + в работе)`} value={activeIncidents.length} active={isActiveFilter}
           onClick={() => { setActiveOnly(true); setResolvedOrClosedOnly(false); setStatusFilter('all'); setSeverityFilter('all'); setOverdueOnly(false); }} />
-        <StatPill label="Критический уровень" value={criticalCount} variant="danger" active={isCritical}
+        <StatPill label={`в т.ч. критический уровень`} value={criticalCount} variant="danger" active={isCritical}
           onClick={() => { setSeverityFilter(isCritical ? 'all' : 'high'); setOverdueOnly(false); setActiveOnly(true); setResolvedOrClosedOnly(false); setStatusFilter('all'); }} />
-        <StatPill label="Просрочено SLA" value={overdueCount} variant={overdueCount > 0 ? 'danger' : 'default'} active={isOverdue}
+        <StatPill label={`в т.ч. с нарушением SLA`} value={overdueCount} variant={overdueCount > 0 ? 'danger' : 'default'} active={isOverdue}
           onClick={() => { setOverdueOnly(!isOverdue); setActiveOnly(true); setResolvedOrClosedOnly(false); setStatusFilter('all'); setSeverityFilter('all'); }} />
-        <StatPill label="Решено / Закрыто" value={resolvedCount} variant="success" active={isResolved}
+        <StatPill label={`Решено / закрыто (всего)`} value={resolvedCount} variant="success" active={isResolved}
           onClick={() => { setResolvedOrClosedOnly(!isResolved); setActiveOnly(isResolved); setStatusFilter('all'); setOverdueOnly(false); setSeverityFilter('all'); }} />
       </div>
+      <p className="text-[11px] text-muted-foreground -mt-3 px-1">
+        Карточки 2 и 3 — подмножества активных (могут пересекаться). Всего инцидентов в системе: {activeIncidents.length + resolvedCount}.
+      </p>
 
       {/* Filters */}
       <div className="glass-card p-4 flex flex-wrap gap-3 items-center">
