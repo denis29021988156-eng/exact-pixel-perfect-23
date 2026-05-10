@@ -383,6 +383,18 @@ export default function TodayPage() {
             <p className="meta-text mt-4 text-xs">
               Сгенерировано: {new Date(briefing.generatedAt).toLocaleTimeString('ru-RU')}
             </p>
+            <div className="mt-4 pt-4 border-t border-border/60 flex flex-wrap items-center gap-3">
+              <button
+                onClick={() => window.dispatchEvent(new CustomEvent('copilot:open-with-briefing', { detail: { briefing: briefing.briefing } }))}
+                className="flex items-center gap-2 px-4 py-2.5 text-xs font-semibold rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 transition-all shadow-sm"
+              >
+                <BrainCircuit className="w-3.5 h-3.5" />
+                Обсудить в чате и выбрать поручения
+              </button>
+              <p className="text-[11px] text-muted-foreground leading-snug max-w-md">
+                AI превратит рекомендации из сводки в конкретные поручения с ответственными и сроками — Вы сможете отправить все, часть или ни одного.
+              </p>
+            </div>
           </div>
         ) : (
           <div className="flex items-center gap-4 py-4">
