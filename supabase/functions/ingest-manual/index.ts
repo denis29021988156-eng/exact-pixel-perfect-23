@@ -196,9 +196,8 @@ Deno.serve(async (req) => {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (err) {
-    const message = err instanceof Error ? err.message : String(err);
-    console.error('ingest-manual error', message);
-    return new Response(JSON.stringify({ ok: false, error: message }), {
+    console.error('ingest-manual error', err);
+    return new Response(JSON.stringify({ ok: false, error: 'Internal server error' }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
