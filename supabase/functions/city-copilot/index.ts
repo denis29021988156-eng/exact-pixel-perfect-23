@@ -274,6 +274,10 @@ ${JSON.stringify(aggregatedData, null, 2)}
 
 ${detailContext.length > 0 ? "ДЕТАЛИ:\n" + detailContext.join("\n") : ""}
 
+ШПАРГАЛКА — отраслевые показатели города (используй для речей, новостей, справок, комментариев по запросу мэра/зама).
+Версия: ${CHEATSHEET.version} · обновлено: ${CHEATSHEET.lastUpdated} · город: ${CHEATSHEET.city}
+${JSON.stringify(CHEATSHEET.sectors, null, 2)}
+
 ${memoryBlock ? memoryBlock + "\n" : ""}
 ПРАВИЛА:
 - Отвечай на русском языке, кратко и по делу.
