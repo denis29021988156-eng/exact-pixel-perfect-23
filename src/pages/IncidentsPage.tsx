@@ -19,7 +19,7 @@ const statusVariants: Record<string, 'danger' | 'warning' | 'success' | 'info' |
 const severityLabels: Record<string, string> = { low: 'Низкая', medium: 'Средняя', high: 'Высокая' };
 const severityVariants: Record<string, 'danger' | 'warning' | 'muted'> = { low: 'muted', medium: 'warning', high: 'danger' };
 
-function StatPill({ label, value, variant = 'default', active = false, onClick }: { label: string; value: number; variant?: 'default' | 'danger' | 'warning' | 'success'; active?: boolean; onClick?: () => void }) {
+function StatPill({ label, value, total, variant = 'default', active = false, onClick }: { label: string; value: number; total?: number; variant?: 'default' | 'danger' | 'warning' | 'success'; active?: boolean; onClick?: () => void }) {
   const colorMap = {
     default: 'bg-card text-foreground',
     danger: 'bg-danger-soft/50 text-danger border-danger/10',
@@ -38,7 +38,10 @@ function StatPill({ label, value, variant = 'default', active = false, onClick }
       onClick={onClick}
       className={`flex items-center gap-3 px-4 py-3 rounded-xl border text-left transition-all ${colorMap[variant]} ${onClick ? 'cursor-pointer hover:shadow-sm hover:-translate-y-px' : ''} ${active ? `ring-2 ${ringMap[variant]} shadow-sm` : ''}`}
     >
-      <span className="text-2xl font-bold">{value}</span>
+      <span className="text-2xl font-bold whitespace-nowrap">
+        {value}
+        {total !== undefined && <span className="text-sm font-medium text-muted-foreground"> / {total}</span>}
+      </span>
       <span className="text-xs font-medium text-muted-foreground leading-tight">{label}</span>
     </Comp>
   );
@@ -117,18 +120,17 @@ export default function IncidentsPage() {
 
       {/* Stats Row */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-        <StatPill label={`Активных (новые + в работе)`} value={activeIncidents.length} active={isActiveFilter}
+        <StatPill label="Активных (новые + в работе)" value={activeIncidents.length} active={isActiveFilter}
           onClick={() => { setActiveOnly(true); setResolvedOrClosedOnly(false); setStatusFilter('all'); setSeverityFilter('all'); setOverdueOnly(false); }} />
-        <StatPill label={`в т.ч. критический уровень`} value={criticalCount} variant="danger" active={isCritical}
+        <StatPill label="критический уровень среди активных" value={criticalCount} total={activeIncidents.length} variant="danger" active={isCritical}
           onClick={() => { setSeverityFilter(isCritical ? 'all' : 'high'); setOverdueOnly(false); setActiveOnly(true); setResolvedOrClosedOnly(false); setStatusFilter('all'); }} />
-        <StatPill label={`в т.ч. с нарушением SLA`} value={overdueCount} variant={overdueCount > 0 ? 'danger' : 'default'} active={isOverdue}
+        <StatPill label="с нарушением SLA среди активных" value={overdueCount} total={activeIncidents.length} variant={overdueCount > 0 ? 'danger' : 'default'} active={isOverdue}
           onClick={() => { setOverdueOnly(!isOverdue); setActiveOnly(true); setResolvedOrClosedOnly(false); setStatusFilter('all'); setSeverityFilter('all'); }} />
-        <StatPill label={`Решено / закрыто (всего)`} value={resolvedCount} variant="success" active={isResolved}
+        <StatPill label="Решено / закрыто (всего)" value={resolvedCount} variant="success" active={isResolved}
           onClick={() => { setResolvedOrClosedOnly(!isResolved); setActiveOnly(isResolved); setStatusFilter('all'); setOverdueOnly(false); setSeverityFilter('all'); }} />
       </div>
       <p className="text-[11px] text-muted-foreground -mt-3 px-1">
-        Всего в системе: <b>{activeIncidents.length + resolvedCount}</b> = активных <b>{activeIncidents.length}</b> + решено/закрыто <b>{resolvedCount}</b>.
-        «Критический уровень» и «с нарушением SLA» — это подмножества активных (показывают, сколько из {activeIncidents.length} требуют особого внимания), они не суммируются.
+        Всего в системе: <b>{activeIncidents.length + resolvedCount}</b> ({activeIncidents.length} активных + {resolvedCount} решено/закрыто).
       </p>
 
       {/* Filters */}
