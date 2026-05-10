@@ -15,12 +15,68 @@ serve(async (req) => {
   const supabase = createClient(supabaseUrl, supabaseKey);
 
   try {
-    const { messages } = await req.json();
+    const { messages, session_id } = await req.json();
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
-    // Trim to last 6 messages (3 pairs) to control context size
+    // Identify user from JWT (if present)
+    let userId: string | null = null;
+    const authHeader = req.headers.get("Authorization") || "";
+    const jwt = authHeader.replace("Bearer ", "");
+    if (jwt) {
+      const { data: userData } = await supabase.auth.getUser(jwt);
+      userId = userData?.user?.id || null;
+    }
+
+    // Trim to last 6 messages (3 pairs) for short-term context
     const trimmedMessages = messages?.slice(-6) || [];
+
+    // Long-term memory + conversation history (only when user identified)
+    let memoryBlock = "";
+    let historyMessages: Array<{ role: string; content: string }> = [];
+    if (userId) {
+      const [memRes, histRes] = await Promise.all([
+        supabase
+          .from("ai_memory")
+          .select("kind, key, value, created_at, expires_at")
+          .eq("user_id", userId)
+          .or(`expires_at.is.null,expires_at.gt.${new Date().toISOString()}`)
+          .order("created_at", { ascending: false })
+          .limit(50),
+        supabase
+          .from("ai_conversations")
+          .select("role, content, created_at")
+          .eq("user_id", userId)
+          .order("created_at", { ascending: false })
+          .limit(20),
+      ]);
+      const mem = memRes.data || [];
+      if (mem.length > 0) {
+        const decisions = mem.filter((m: any) => m.kind === "decision");
+        const prefs = mem.filter((m: any) => m.kind === "preference");
+        const notes = mem.filter((m: any) => m.kind === "context_note");
+        const lines: string[] = ["ДОЛГОСРОЧНАЯ ПАМЯТЬ:"];
+        if (decisions.length) {
+          lines.push("Решения:");
+          decisions.forEach((d: any) => lines.push(`  - [${new Date(d.created_at).toLocaleDateString("ru-RU")}] ${d.key}: ${d.value}`));
+        }
+        if (prefs.length) {
+          lines.push("Предпочтения:");
+          prefs.forEach((p: any) => lines.push(`  - ${p.key}: ${p.value}`));
+        }
+        if (notes.length) {
+          lines.push("Заметки контекста:");
+          notes.forEach((n: any) => lines.push(`  - ${n.key}: ${n.value}`));
+        }
+        memoryBlock = lines.join("\n");
+      }
+      // Older history (excluding the current turn already in messages)
+      const hist = (histRes.data || []).reverse();
+      historyMessages = hist
+        .filter((h: any) => h.role === "user" || h.role === "assistant")
+        .slice(0, 20)
+        .map((h: any) => ({ role: h.role, content: h.content }));
+    }
 
     // Fetch and aggregate city data
     const since = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
@@ -137,6 +193,7 @@ ${JSON.stringify(aggregatedData, null, 2)}
 
 ${detailContext.length > 0 ? "ДЕТАЛИ:\n" + detailContext.join("\n") : ""}
 
+${memoryBlock ? memoryBlock + "\n" : ""}
 ПРАВИЛА:
 - Отвечай на русском языке, кратко и по делу.
 - Используй ТОЛЬКО данные из контекста.
@@ -147,6 +204,13 @@ ${detailContext.length > 0 ? "ДЕТАЛИ:\n" + detailContext.join("\n") : ""}
 - При запросе "доклад" или "сводка" — формируй структурированный отчёт.
 - Поддерживай команды: "что критично", "риски", "просроченные", "статус проекта X", "подготовь доклад".
 - City Risk Index: ${riskIndex}/100 — это детерминированный показатель, интерпретируй его.
+
+ДОЛГОСРОЧНАЯ ПАМЯТЬ — ПРАВИЛА:
+- Учитывай записи из блока "ДОЛГОСРОЧНАЯ ПАМЯТЬ" (решения, предпочтения пользователя).
+- Если пользователь сказал "запомни", "сохрани", "учти на будущее" — в КОНЦЕ ответа добавь строку:
+  MEMORY_SAVE: kind=preference|decision|context_note; key=<короткий_id>; value=<суть>
+  Можно несколько таких строк подряд. Не показывай эти строки как часть основного ответа — это служебный маркер.
+- Если пользователь сказал "забудь X" — добавь строку: MEMORY_DELETE: key=<id>
 
 ПОЛИТИЧЕСКАЯ ЧУВСТВИТЕЛЬНОСТЬ:
 - Для объектов с political_sensitivity=high ЗАПРЕЩЕНО предлагать автоматические действия.
@@ -172,6 +236,7 @@ ${detailContext.length > 0 ? "ДЕТАЛИ:\n" + detailContext.join("\n") : ""}
         max_tokens: 2048,
         messages: [
           { role: "system", content: systemPrompt },
+          ...historyMessages,
           ...trimmedMessages,
         ],
         stream: true,
@@ -194,7 +259,7 @@ ${detailContext.length > 0 ? "ДЕТАЛИ:\n" + detailContext.join("\n") : ""}
       throw new Error("AI gateway error");
     }
 
-    // Log to ai_logs (async, don't block stream)
+    // Log to ai_logs (async)
     const lastUserMsg = trimmedMessages.filter((m: any) => m.role === "user").pop();
     supabase.from("ai_logs").insert({
       module: "copilot",
@@ -205,7 +270,83 @@ ${detailContext.length > 0 ? "ДЕТАЛИ:\n" + detailContext.join("\n") : ""}
       duration_ms: Date.now() - startTime,
     }).then(() => {}).catch(() => {});
 
-    return new Response(response.body, {
+    // Tee the stream: one branch returned to client, one captured for persistence
+    const [clientStream, captureStream] = response.body!.tee();
+
+    // Background: capture full assistant text and persist memory
+    const persist = async () => {
+      try {
+        if (!userId) return;
+        const reader = captureStream.getReader();
+        const decoder = new TextDecoder();
+        let buf = "";
+        let assistantText = "";
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          buf += decoder.decode(value, { stream: true });
+          let nl: number;
+          while ((nl = buf.indexOf("\n")) !== -1) {
+            let line = buf.slice(0, nl);
+            buf = buf.slice(nl + 1);
+            if (line.endsWith("\r")) line = line.slice(0, -1);
+            if (!line.startsWith("data: ")) continue;
+            const j = line.slice(6).trim();
+            if (j === "[DONE]") continue;
+            try {
+              const parsed = JSON.parse(j);
+              const c = parsed.choices?.[0]?.delta?.content;
+              if (c) assistantText += c;
+            } catch { /* partial */ }
+          }
+        }
+
+        // Save user + assistant messages
+        const userMsg = trimmedMessages.filter((m: any) => m.role === "user").pop();
+        const rows: any[] = [];
+        if (userMsg?.content) {
+          rows.push({ user_id: userId, session_id: session_id || null, role: "user", content: String(userMsg.content).slice(0, 4000) });
+        }
+        if (assistantText) {
+          rows.push({ user_id: userId, session_id: session_id || null, role: "assistant", content: assistantText.slice(0, 8000) });
+        }
+        if (rows.length) await supabase.from("ai_conversations").insert(rows);
+
+        // Extract MEMORY_SAVE / MEMORY_DELETE markers
+        const saveRe = /MEMORY_SAVE:\s*kind=(decision|preference|context_note);\s*key=([^;\n]+);\s*value=([^\n]+)/g;
+        const delRe = /MEMORY_DELETE:\s*key=([^\n]+)/g;
+        let m: RegExpExecArray | null;
+        const ups: any[] = [];
+        while ((m = saveRe.exec(assistantText)) !== null) {
+          ups.push({
+            user_id: userId,
+            kind: m[1].trim(),
+            key: m[2].trim().slice(0, 80),
+            value: m[3].trim().slice(0, 1000),
+            source: "extracted",
+          });
+        }
+        if (ups.length) {
+          await supabase.from("ai_memory").upsert(ups, { onConflict: "user_id,kind,key" });
+        }
+        const dels: string[] = [];
+        while ((m = delRe.exec(assistantText)) !== null) dels.push(m[1].trim());
+        if (dels.length) {
+          await supabase.from("ai_memory").delete().eq("user_id", userId).in("key", dels);
+        }
+      } catch (e) {
+        console.error("persist error:", e);
+      }
+    };
+    // @ts-ignore — Deno Deploy
+    if (typeof EdgeRuntime !== "undefined" && (EdgeRuntime as any).waitUntil) {
+      // @ts-ignore
+      EdgeRuntime.waitUntil(persist());
+    } else {
+      persist();
+    }
+
+    return new Response(clientStream, {
       headers: { ...corsHeaders, "Content-Type": "text/event-stream" },
     });
   } catch (e) {

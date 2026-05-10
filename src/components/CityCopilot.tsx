@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { trimMessages } from '@/lib/ai/conversationState';
+import { supabase } from '@/integrations/supabase/client';
 
 type Msg = { role: 'user' | 'assistant'; content: string };
 
@@ -24,6 +25,7 @@ export default function CityCopilot() {
   const [isLoading, setIsLoading] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const sessionIdRef = useRef<string>(crypto.randomUUID());
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -47,13 +49,17 @@ export default function CityCopilot() {
       // Trim messages for context control (last 6)
       const messagesToSend = trimMessages(allMessages);
 
+      const { data: { session } } = await supabase.auth.getSession();
+      const accessToken = session?.access_token || import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+
       const resp = await fetch(CHAT_URL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          Authorization: `Bearer ${accessToken}`,
+          apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
         },
-        body: JSON.stringify({ messages: messagesToSend }),
+        body: JSON.stringify({ messages: messagesToSend, session_id: sessionIdRef.current }),
       });
 
       if (!resp.ok || !resp.body) {
@@ -86,12 +92,17 @@ export default function CityCopilot() {
             const content = parsed.choices?.[0]?.delta?.content as string | undefined;
             if (content) {
               assistantSoFar += content;
+              const visible = assistantSoFar
+                .replace(/MEMORY_SAVE:[^\n]*/g, '')
+                .replace(/MEMORY_DELETE:[^\n]*/g, '')
+                .replace(/\n{3,}/g, '\n\n')
+                .trimEnd();
               setMessages(prev => {
                 const last = prev[prev.length - 1];
                 if (last?.role === 'assistant') {
-                  return prev.map((m, i) => i === prev.length - 1 ? { ...m, content: assistantSoFar } : m);
+                  return prev.map((m, i) => i === prev.length - 1 ? { ...m, content: visible } : m);
                 }
-                return [...prev, { role: 'assistant', content: assistantSoFar }];
+                return [...prev, { role: 'assistant', content: visible }];
               });
             }
           } catch {

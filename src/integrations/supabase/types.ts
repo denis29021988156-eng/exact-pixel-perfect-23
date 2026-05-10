@@ -44,6 +44,33 @@ export type Database = {
         }
         Relationships: []
       }
+      ai_conversations: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          role: string
+          session_id: string
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          role: string
+          session_id?: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          role?: string
+          session_id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       ai_logs: {
         Row: {
           duration_ms: number | null
@@ -74,6 +101,42 @@ export type Database = {
           output_summary?: string | null
           risk_index?: number | null
           timestamp?: string
+        }
+        Relationships: []
+      }
+      ai_memory: {
+        Row: {
+          created_at: string
+          expires_at: string | null
+          id: string
+          key: string
+          kind: string
+          source: string
+          updated_at: string
+          user_id: string
+          value: string
+        }
+        Insert: {
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          key: string
+          kind: string
+          source?: string
+          updated_at?: string
+          user_id: string
+          value: string
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          key?: string
+          kind?: string
+          source?: string
+          updated_at?: string
+          user_id?: string
+          value?: string
         }
         Relationships: []
       }
