@@ -82,6 +82,29 @@ export default function CityCopilot() {
     }
   }, [messages]);
 
+  // External trigger: open copilot with a briefing as context and ask AI to turn recommendations into pickable tasks
+  useEffect(() => {
+    function handler(e: Event) {
+      const detail = (e as CustomEvent).detail || {};
+      const briefingText: string = detail.briefing || '';
+      if (!briefingText.trim()) return;
+      sessionIdRef.current = crypto.randomUUID();
+      const ctxMsg: Msg = {
+        role: 'assistant',
+        content: `**Контекст — последняя AI-сводка для руководства:**\n\n${briefingText}`,
+      };
+      setMessages([ctxMsg]);
+      setOpen(true);
+      // Auto-send a follow-up so AI returns TASK_SUGGEST cards the mayor can pick from
+      setTimeout(() => {
+        send('На основе рекомендаций из сводки выше сформулируй конкретные поручения (по одному TASK_SUGGEST на каждую рекомендацию: реальный ответственный из списка, чёткая формулировка, реалистичный срок). Я выберу, какие отправить — все, часть или ни одного.');
+      }, 50);
+    }
+    window.addEventListener('copilot:open-with-briefing', handler as EventListener);
+    return () => window.removeEventListener('copilot:open-with-briefing', handler as EventListener);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const sendTask = async (msgIdx: number, sugIdx: number) => {
     const msg = messages[msgIdx];
     const s = msg.suggestions?.[sugIdx];
