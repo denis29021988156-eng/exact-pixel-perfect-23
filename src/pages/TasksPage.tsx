@@ -13,7 +13,7 @@ const statusVariants: Record<string, 'danger' | 'warning' | 'success' | 'info' |
   new: 'info', in_progress: 'warning', completed: 'success', cancelled: 'muted',
 };
 
-function StatPill({ icon: Icon, label, value, variant = 'default' }: { icon: any; label: string; value: number; variant?: 'default' | 'danger' | 'warning' | 'success' }) {
+function StatPill({ icon: Icon, label, value, variant = 'default', active = false, onClick }: { icon: any; label: string; value: number; variant?: 'default' | 'danger' | 'warning' | 'success'; active?: boolean; onClick?: () => void }) {
   const colorMap = {
     default: 'bg-card text-foreground border-border',
     danger: 'bg-danger-soft/50 text-danger border-danger/10',
@@ -26,8 +26,18 @@ function StatPill({ icon: Icon, label, value, variant = 'default' }: { icon: any
     warning: 'bg-warning/10 text-warning',
     success: 'bg-success/10 text-success',
   };
+  const ringMap = {
+    default: 'ring-primary/40',
+    danger: 'ring-danger/50',
+    warning: 'ring-warning/50',
+    success: 'ring-success/50',
+  };
+  const Comp: any = onClick ? 'button' : 'div';
   return (
-    <div className={`flex items-center gap-3 px-4 py-3.5 rounded-xl border ${colorMap[variant]}`}>
+    <Comp
+      onClick={onClick}
+      className={`flex items-center gap-3 px-4 py-3.5 rounded-xl border text-left transition-all ${colorMap[variant]} ${onClick ? 'cursor-pointer hover:shadow-sm hover:-translate-y-px' : ''} ${active ? `ring-2 ${ringMap[variant]} shadow-sm` : ''}`}
+    >
       <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${iconColorMap[variant]}`}>
         <Icon className="w-4 h-4" />
       </div>
@@ -35,7 +45,7 @@ function StatPill({ icon: Icon, label, value, variant = 'default' }: { icon: any
         <span className="text-2xl font-bold">{value}</span>
         <p className="text-[10px] font-medium text-muted-foreground leading-tight mt-0.5">{label}</p>
       </div>
-    </div>
+    </Comp>
   );
 }
 
@@ -44,6 +54,8 @@ export default function TasksPage() {
   const { user, userRole, userDepartment } = useAuth();
   const { toast } = useToast();
   const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [overdueOnly, setOverdueOnly] = useState(false);
+  const [activeOnly, setActiveOnly] = useState(true);
   const [search, setSearch] = useState('');
   const [tasks, setTasks] = useState<Tables<'tasks'>[]>([]);
   const [loading, setLoading] = useState(true);
@@ -79,6 +91,8 @@ export default function TasksPage() {
 
   const filtered = tasks.filter(t => {
     if (statusFilter !== 'all' && t.status !== statusFilter) return false;
+    if (overdueOnly && !t.overdue) return false;
+    if (statusFilter === 'all' && activeOnly && (t.status === 'completed' || t.status === 'cancelled')) return false;
     if (search && !t.title.toLowerCase().includes(search.toLowerCase())) return false;
     return true;
   });
@@ -87,6 +101,11 @@ export default function TasksPage() {
   const overdueCount = activeTasks.filter(t => t.overdue).length;
   const completedCount = tasks.filter(t => t.status === 'completed').length;
   const inProgressCount = tasks.filter(t => t.status === 'in_progress').length;
+
+  const isActiveFilter = activeOnly && statusFilter === 'all' && !overdueOnly;
+  const isInProgress = statusFilter === 'in_progress' && !overdueOnly;
+  const isOverdue = overdueOnly;
+  const isCompleted = statusFilter === 'completed';
 
   return (
     <div className="space-y-6 animate-fade-in-up">
@@ -105,10 +124,14 @@ export default function TasksPage() {
 
       {/* Stats Row */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-        <StatPill icon={ListChecks} label="Всего активных" value={activeTasks.length} />
-        <StatPill icon={Clock} label="В работе" value={inProgressCount} variant="warning" />
-        <StatPill icon={AlertTriangle} label="Просрочено" value={overdueCount} variant={overdueCount > 0 ? 'danger' : 'default'} />
-        <StatPill icon={CheckCircle2} label="Выполнено" value={completedCount} variant="success" />
+        <StatPill icon={ListChecks} label="Всего активных" value={activeTasks.length} active={isActiveFilter}
+          onClick={() => { setActiveOnly(true); setStatusFilter('all'); setOverdueOnly(false); }} />
+        <StatPill icon={Clock} label="В работе" value={inProgressCount} variant="warning" active={isInProgress}
+          onClick={() => { setStatusFilter(isInProgress ? 'all' : 'in_progress'); setOverdueOnly(false); setActiveOnly(true); }} />
+        <StatPill icon={AlertTriangle} label="Просрочено" value={overdueCount} variant={overdueCount > 0 ? 'danger' : 'default'} active={isOverdue}
+          onClick={() => { setOverdueOnly(!isOverdue); setStatusFilter('all'); setActiveOnly(true); }} />
+        <StatPill icon={CheckCircle2} label="Выполнено" value={completedCount} variant="success" active={isCompleted}
+          onClick={() => { setStatusFilter(isCompleted ? 'all' : 'completed'); setActiveOnly(false); setOverdueOnly(false); }} />
       </div>
 
       {/* Filters */}
