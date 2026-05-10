@@ -1,9 +1,8 @@
-import { useState, useEffect } from 'react';
-import { supabase } from '@/integrations/supabase/client';
+import { useState } from 'react';
 import {
-  Copy, Check, AlertTriangle, FolderKanban, ClipboardCheck, TrendingUp,
+  Copy, Check,
   ChevronDown, ChevronRight, Building2, Route, School, TreePine, Home,
-  Droplets, Users, Landmark
+  Droplets, Landmark
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -109,101 +108,13 @@ const staticBlocks: SectorBlock[] = [
 
 export default function CheatsheetPage() {
   const [copied, setCopied] = useState(false);
-  const [dbBlocks, setDbBlocks] = useState<SectorBlock[]>([]);
-  const [loading, setLoading] = useState(true);
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({});
-
-  useEffect(() => {
-    loadStats();
-  }, []);
-
-  async function loadStats() {
-    const [incRes, projRes, taskRes, ctrRes] = await Promise.all([
-      supabase.from('incidents').select('*'),
-      supabase.from('projects').select('*'),
-      supabase.from('tasks').select('*'),
-      supabase.from('contracts').select('*'),
-    ]);
-
-    const incidents = incRes.data || [];
-    const projects = projRes.data || [];
-    const tasks = taskRes.data || [];
-    const contracts = ctrRes.data || [];
-
-    const active = incidents.filter(i => i.status !== 'closed');
-    const critical = incidents.filter(i => i.severity === 'high' && i.status !== 'closed');
-    const slaOverdue = incidents.filter(i => i.sla_overdue);
-    const social = incidents.filter(i => i.social_object && i.status !== 'closed');
-
-    const onTrack = projects.filter(p => p.status === 'on_track');
-    const riskProj = projects.filter(p => p.status === 'risk');
-    const overdueProj = projects.filter(p => p.status === 'overdue');
-    const avgProgress = projects.length > 0 ? Math.round(projects.reduce((s, p) => s + (p.progress || 0), 0) / projects.length) : 0;
-
-    const activeTasks = tasks.filter(t => t.status !== 'completed' && t.status !== 'cancelled');
-    const overdueTasks = tasks.filter(t => t.overdue);
-    const completedTasks = tasks.filter(t => t.status === 'completed');
-
-    const totalBudget = contracts.reduce((s, c) => s + (c.amount || 0), 0);
-    const highRisk = contracts.filter(c => c.risk_level === 'high');
-
-    const blocks: SectorBlock[] = [
-      {
-        name: 'Инциденты',
-        icon: <AlertTriangle className="w-5 h-5" />,
-        color: 'bg-danger/10 text-danger',
-        metrics: [
-          { label: 'Активных', value: String(active.length), highlight: active.length > 5 ? 'danger' : undefined },
-          { label: 'Критических', value: String(critical.length), highlight: critical.length > 0 ? 'danger' : undefined },
-          { label: 'Просрочено SLA', value: String(slaOverdue.length), highlight: slaOverdue.length > 0 ? 'danger' : undefined },
-          { label: 'Соцобъекты', value: String(social.length) },
-          { label: 'Всего за всё время', value: String(incidents.length) },
-        ],
-      },
-      {
-        name: 'Проекты',
-        icon: <FolderKanban className="w-5 h-5" />,
-        color: 'bg-primary/10 text-primary',
-        metrics: [
-          { label: 'Всего', value: String(projects.length) },
-          { label: 'В срок', value: String(onTrack.length), highlight: 'success' },
-          { label: 'Под риском', value: String(riskProj.length), highlight: riskProj.length > 0 ? 'warning' : undefined },
-          { label: 'Просрочено', value: String(overdueProj.length), highlight: overdueProj.length > 0 ? 'danger' : undefined },
-          { label: 'Средний прогресс', value: String(avgProgress), unit: '%' },
-        ],
-      },
-      {
-        name: 'Поручения',
-        icon: <ClipboardCheck className="w-5 h-5" />,
-        color: 'bg-warning/10 text-warning',
-        metrics: [
-          { label: 'Активных', value: String(activeTasks.length) },
-          { label: 'Просрочено', value: String(overdueTasks.length), highlight: overdueTasks.length > 0 ? 'danger' : undefined },
-          { label: 'Выполнено', value: String(completedTasks.length), highlight: 'success' },
-          { label: 'Всего', value: String(tasks.length) },
-        ],
-      },
-      {
-        name: 'Контракты и бюджет',
-        icon: <TrendingUp className="w-5 h-5" />,
-        color: 'bg-success/10 text-success',
-        metrics: [
-          { label: 'Всего контрактов', value: String(contracts.length) },
-          { label: 'Высокий риск', value: String(highRisk.length), highlight: highRisk.length > 0 ? 'danger' : undefined },
-          { label: 'Общий бюджет', value: totalBudget >= 1_000_000 ? `${(totalBudget / 1_000_000).toFixed(1)}` : String(totalBudget), unit: totalBudget >= 1_000_000 ? 'млн ₽' : '₽' },
-        ],
-      },
-    ];
-
-    setDbBlocks(blocks);
-    setLoading(false);
-  }
 
   const toggleSection = (name: string) => {
     setOpenSections(prev => ({ ...prev, [name]: !prev[name] }));
   };
 
-  const allBlocks = [...dbBlocks, ...staticBlocks];
+  const allBlocks = staticBlocks;
 
   const handleCopy = () => {
     const text = allBlocks.map(s => {
@@ -270,7 +181,6 @@ export default function CheatsheetPage() {
         </div>
         <button
           onClick={handleCopy}
-          disabled={loading}
           className="flex items-center gap-2 px-4 py-2.5 bg-primary text-primary-foreground text-sm font-medium rounded-lg shadow-btn hover:bg-primary/90 transition-colors disabled:opacity-50"
         >
           {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
@@ -278,33 +188,15 @@ export default function CheatsheetPage() {
         </button>
       </div>
 
-      {loading ? (
-        <div className="glass-card p-12 text-center"><p className="text-muted-foreground">Загрузка статистики...</p></div>
-      ) : (
-        <>
-          {/* Оперативные данные из БД */}
-          <div>
-            <p className="section-heading text-danger mb-3 flex items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-danger animate-pulse" />
-              Оперативная обстановка
-            </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {dbBlocks.map(renderBlock)}
-            </div>
-          </div>
-
-          {/* Статические отраслевые данные */}
-          <div>
-            <p className="section-heading text-primary mb-3 flex items-center gap-2">
-              <Landmark className="w-3.5 h-3.5" />
-              Отраслевые показатели
-            </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {staticBlocks.map(renderBlock)}
-            </div>
-          </div>
-        </>
-      )}
+      <div>
+        <p className="section-heading text-primary mb-3 flex items-center gap-2">
+          <Landmark className="w-3.5 h-3.5" />
+          Отраслевые показатели
+        </p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {staticBlocks.map(renderBlock)}
+        </div>
+      </div>
     </div>
   );
 }
