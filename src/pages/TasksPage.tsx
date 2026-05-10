@@ -34,7 +34,7 @@ function PerformanceDialog({ open, onOpenChange, tasks }: { open: boolean; onOpe
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-3xl">
+      <DialogContent className="max-w-3xl max-h-[85vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2"><BarChart3 className="w-5 h-5 text-primary" /> Исполнительность</DialogTitle>
           <DialogDescription>Процент выполнения и нарушения сроков по каждому ответственному</DialogDescription>
@@ -44,7 +44,7 @@ function PerformanceDialog({ open, onOpenChange, tasks }: { open: boolean; onOpe
           <p className="text-sm text-muted-foreground py-8 text-center">Недостаточно данных для расчёта.</p>
         ) : (
           <>
-            <div className="h-72 mt-2">
+            <div style={{ height: Math.max(200, rows.length * 28 + 40) }} className="mt-2">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={rows} layout="vertical" margin={{ left: 20, right: 20, top: 8, bottom: 8 }}>
                   <CartesianGrid horizontal={false} stroke="hsl(var(--border))" strokeDasharray="3 3" />
