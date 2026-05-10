@@ -367,8 +367,15 @@ export default function TodayPage() {
           </button>
         </div>
         {briefing ? (
-          <div className="text-sm text-foreground/90 whitespace-pre-line leading-relaxed">
-            <div className="prose prose-sm prose-invert max-w-none">
+          <div className="text-sm text-foreground/90 leading-relaxed">
+            <div className="prose prose-sm prose-invert max-w-none
+              prose-p:my-2 prose-p:leading-relaxed
+              prose-headings:mt-4 prose-headings:mb-2 prose-headings:font-semibold prose-headings:text-foreground
+              prose-h1:text-base prose-h2:text-base prose-h3:text-sm
+              prose-strong:text-foreground prose-strong:font-semibold
+              prose-ul:my-2 prose-ul:pl-5 prose-li:my-0.5 prose-li:marker:text-primary
+              prose-ol:my-2 prose-ol:pl-5
+              prose-hr:my-3 prose-hr:border-border">
               <ReactMarkdown>{briefing.briefing}</ReactMarkdown>
             </div>
             <p className="meta-text mt-4 text-xs">

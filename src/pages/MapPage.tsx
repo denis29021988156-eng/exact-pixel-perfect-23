@@ -122,6 +122,7 @@ function HeatmapLayer({ incidents }: { incidents: Incident[] }) {
 
 export default function MapPage() {
   const [incidents, setIncidents] = useState<Incident[]>([]);
+  const [totalIncidents, setTotalIncidents] = useState<number>(0);
   const [loading, setLoading] = useState(true);
   const [severityFilter, setSeverityFilter] = useState<string>('all');
   const [typeFilter, setTypeFilter] = useState<string>('all');
@@ -135,6 +136,8 @@ export default function MapPage() {
         setIncidents((data as Incident[]) || []);
         setLoading(false);
       });
+    supabase.from('incidents').select('*', { count: 'exact', head: true })
+      .then(({ count }) => setTotalIncidents(count || 0));
   }, []);
 
   const filtered = incidents.filter(i => {
@@ -179,7 +182,12 @@ export default function MapPage() {
           <option value="all">Все типы</option>
           {Object.entries(typeLabels).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
         </select>
-        <span className="text-xs text-muted-foreground">{filtered.length} инцидентов</span>
+        <span className="text-xs text-muted-foreground">
+          {filtered.length} на карте · всего в системе: {totalIncidents}
+          {totalIncidents > incidents.length && (
+            <span className="ml-1 text-warning">({totalIncidents - incidents.length} без координат)</span>
+          )}
+        </span>
 
         <div className="ml-auto flex items-center gap-1">
           <Layers className="w-4 h-4 text-muted-foreground mr-1" />
@@ -226,7 +234,7 @@ export default function MapPage() {
               <Marker key={inc.id} position={[inc.lat!, inc.lng!]} icon={createIcon(inc.severity)}>
                 <Popup maxWidth={280}>
                   <div className="text-sm space-y-1.5 py-1">
-                    <div className="font-bold text-foreground">{inc.title}</div>
+                    <div className="font-bold text-base" style={{ color: '#0EA5E9' }}>{inc.title}</div>
                     <div className="flex gap-1.5 flex-wrap">
                       <span className="text-[10px] px-1.5 py-0.5 rounded font-medium" style={{ background: severityColors[inc.severity] + '20', color: severityColors[inc.severity] }}>{severityLabels[inc.severity]}</span>
                       <span className="text-[10px] px-1.5 py-0.5 rounded bg-muted text-muted-foreground">{statusLabels[inc.status]}</span>
