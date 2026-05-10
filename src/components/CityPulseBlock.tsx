@@ -3,6 +3,7 @@ import { MessageSquare, AlertCircle, RefreshCw, Plus } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import PermissionGate from '@/components/PermissionGate';
 import StatusBadge from '@/components/StatusBadge';
+import { useNavigate } from 'react-router-dom';
 
 interface TopicStat {
   topic: string;
@@ -20,6 +21,7 @@ interface PulseData {
 export default function CityPulseBlock() {
   const [data, setData] = useState<PulseData | null>(null);
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     loadPulse();
@@ -72,7 +74,11 @@ export default function CityPulseBlock() {
       {data && data.topTopics.length > 0 ? (
         <div className="space-y-2">
           {data.topTopics.map((t, i) => (
-            <div key={t.topic} className="flex items-center gap-3 p-3 rounded-xl bg-surface-muted/50">
+            <button
+              key={t.topic}
+              onClick={() => navigate(`/app/reputation?topic=${encodeURIComponent(t.topic)}`)}
+              className="w-full flex items-center gap-3 p-3 rounded-xl bg-surface-muted/50 text-left hover:bg-surface-muted hover:-translate-y-px transition-all"
+            >
               <span className="text-xs font-bold text-muted-foreground w-5">{i + 1}</span>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-foreground">{t.topic}</p>
@@ -80,7 +86,7 @@ export default function CityPulseBlock() {
               </div>
               {t.negativePct > 60 && <StatusBadge variant="danger">Негатив</StatusBadge>}
               {t.negativePct > 30 && t.negativePct <= 60 && <StatusBadge variant="warning">Внимание</StatusBadge>}
-            </div>
+            </button>
           ))}
 
           <PermissionGate roles={['mayor', 'deputy']}>

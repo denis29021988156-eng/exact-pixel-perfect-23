@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { BarChart3, TrendingDown, TrendingUp, Minus } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import { useNavigate } from 'react-router-dom';
 
 interface Benchmark {
   id: string;
@@ -12,6 +13,7 @@ interface Benchmark {
 
 export default function BenchmarkBlock() {
   const [benchmarks, setBenchmarks] = useState<Benchmark[]>([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     supabase.from('benchmarks').select('*').order('category').then(({ data }) => {
@@ -37,8 +39,19 @@ export default function BenchmarkBlock() {
           const isAbove = diff > 0;
           const isBelow = diff < 0;
 
+          const targetByCategory: Record<string, string> = {
+            incidents: '/app/incidents',
+            tasks: '/app/tasks',
+            program: '/app/program',
+            reputation: '/app/reputation',
+          };
+          const target = targetByCategory[b.category] || '/app/incidents';
           return (
-            <div key={b.id} className="flex items-center gap-4 p-3 rounded-xl bg-surface-muted/50">
+            <button
+              key={b.id}
+              onClick={() => navigate(target)}
+              className="w-full flex items-center gap-4 p-3 rounded-xl bg-surface-muted/50 text-left hover:bg-surface-muted hover:-translate-y-px transition-all"
+            >
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-foreground">{b.metric_name}</p>
                 <p className="text-[11px] text-muted-foreground">
@@ -49,7 +62,7 @@ export default function BenchmarkBlock() {
                 {isBelow ? <TrendingDown className="w-3 h-3" /> : isAbove ? <TrendingUp className="w-3 h-3" /> : <Minus className="w-3 h-3" />}
                 {pct > 0 ? '+' : ''}{pct}%
               </div>
-            </div>
+            </button>
           );
         })}
       </div>

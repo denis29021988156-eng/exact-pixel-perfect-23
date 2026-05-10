@@ -3,6 +3,7 @@ import { DollarSign, AlertTriangle, RefreshCw, ChevronDown } from 'lucide-react'
 import { supabase } from '@/integrations/supabase/client';
 import StatusBadge from '@/components/StatusBadge';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { useNavigate } from 'react-router-dom';
 
 interface ContractRisk {
   id: string;
@@ -14,6 +15,7 @@ interface ContractRisk {
 export default function BudgetRiskCard() {
   const [contracts, setContracts] = useState<ContractRisk[]>([]);
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     loadRiskContracts();
@@ -62,7 +64,11 @@ export default function BudgetRiskCard() {
       <CollapsibleContent>
         <div className="border-t border-border/50 p-6 space-y-3">
         {contracts.map(c => (
-          <div key={c.id} className="flex items-center gap-4 p-3 rounded-xl bg-surface-muted/50">
+          <button
+            key={c.id}
+            onClick={() => navigate(`/app/program?tab=contracts&id=${c.id}`)}
+            className="w-full flex items-center gap-4 p-3 rounded-xl bg-surface-muted/50 text-left hover:bg-surface-muted hover:-translate-y-px transition-all"
+          >
             <div className={`w-2 h-2 rounded-full flex-shrink-0 ${c.risk_of_non_execution > 70 ? 'bg-danger animate-pulse' : 'bg-warning'}`} />
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium text-foreground truncate">{c.name}</p>
@@ -73,7 +79,7 @@ export default function BudgetRiskCard() {
             <StatusBadge variant={c.risk_of_non_execution > 70 ? 'danger' : 'warning'}>
               {c.risk_of_non_execution > 70 ? 'Критический' : 'Внимание'}
             </StatusBadge>
-          </div>
+          </button>
         ))}
         </div>
       </CollapsibleContent>
