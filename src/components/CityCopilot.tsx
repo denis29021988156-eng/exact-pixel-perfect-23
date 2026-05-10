@@ -86,6 +86,9 @@ export default function CityCopilot() {
     }
   }, [messages]);
 
+  // Keep a stable ref to send so the global event handler can invoke the latest version
+  useEffect(() => { sendRef.current = send; });
+
   // External trigger: open copilot with a briefing as context and ask AI to turn recommendations into pickable tasks
   useEffect(() => {
     function handler(e: Event) {
@@ -98,10 +101,11 @@ export default function CityCopilot() {
         content: `**Контекст — последняя AI-сводка для руководства:**\n\n${briefingText}`,
       };
       setMessages([ctxMsg]);
+      messagesRef.current = [ctxMsg];
       setOpen(true);
       // Auto-send a follow-up so AI returns TASK_SUGGEST cards the mayor can pick from
       setTimeout(() => {
-        send('На основе рекомендаций из сводки выше сформулируй конкретные поручения (по одному TASK_SUGGEST на каждую рекомендацию: реальный ответственный из списка, чёткая формулировка, реалистичный срок). Я выберу, какие отправить — все, часть или ни одного.');
+        sendRef.current?.('На основе рекомендаций из сводки выше сформулируй конкретные поручения (по одному TASK_SUGGEST на каждую рекомендацию: реальный ответственный из списка, чёткая формулировка, реалистичный срок). Я выберу, какие отправить — все, часть или ни одного.');
       }, 50);
     }
     window.addEventListener('copilot:open-with-briefing', handler as EventListener);
