@@ -63,7 +63,11 @@ export default function CityCopilot() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const sessionIdRef = useRef<string>(crypto.randomUUID());
+  const messagesRef = useRef<Msg[]>([]);
+  const sendRef = useRef<(text: string) => Promise<void>>();
   const { toast } = useToast();
+
+  useEffect(() => { messagesRef.current = messages; }, [messages]);
 
   useEffect(() => {
     if (!open) return;
@@ -81,6 +85,33 @@ export default function CityCopilot() {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
   }, [messages]);
+
+  // Keep a stable ref to send so the global event handler can invoke the latest version
+  useEffect(() => { sendRef.current = send; });
+
+  // External trigger: open copilot with a briefing as context and ask AI to turn recommendations into pickable tasks
+  useEffect(() => {
+    function handler(e: Event) {
+      const detail = (e as CustomEvent).detail || {};
+      const briefingText: string = detail.briefing || '';
+      if (!briefingText.trim()) return;
+      sessionIdRef.current = crypto.randomUUID();
+      const ctxMsg: Msg = {
+        role: 'assistant',
+        content: `**Контекст — последняя AI-сводка для руководства:**\n\n${briefingText}`,
+      };
+      setMessages([ctxMsg]);
+      messagesRef.current = [ctxMsg];
+      setOpen(true);
+      // Auto-send a follow-up so AI returns TASK_SUGGEST cards the mayor can pick from
+      setTimeout(() => {
+        sendRef.current?.('На основе рекомендаций из сводки выше сформулируй конкретные поручения (по одному TASK_SUGGEST на каждую рекомендацию: реальный ответственный из списка, чёткая формулировка, реалистичный срок). Я выберу, какие отправить — все, часть или ни одного.');
+      }, 50);
+    }
+    window.addEventListener('copilot:open-with-briefing', handler as EventListener);
+    return () => window.removeEventListener('copilot:open-with-briefing', handler as EventListener);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const sendTask = async (msgIdx: number, sugIdx: number) => {
     const msg = messages[msgIdx];
@@ -116,7 +147,7 @@ export default function CityCopilot() {
     if (!trimmed || isLoading) return;
 
     const userMsg: Msg = { role: 'user', content: trimmed };
-    const allMessages = [...messages, userMsg];
+    const allMessages = [...messagesRef.current, userMsg];
     setMessages(allMessages);
     setInput('');
     setIsLoading(true);
