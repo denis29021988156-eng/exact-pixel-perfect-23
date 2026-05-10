@@ -57,6 +57,30 @@ function calcConfidence(completeness: number, sourceReliability: number, parseCo
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
 
+  // --- Authentication check ---
+  const _authHeader = req.headers.get("Authorization");
+  if (!_authHeader?.startsWith("Bearer ")) {
+    return new Response(JSON.stringify({ error: "Unauthorized" }), {
+      status: 401,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  }
+  {
+    const _supaAuth = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_ANON_KEY")!
+    );
+    const { data: _claims, error: _authErr } = await _supaAuth.auth.getClaims(
+      _authHeader.replace("Bearer ", "")
+    );
+    if (_authErr || !_claims?.claims) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+  }
+
   const startedAt = Date.now();
   const supabase = createClient(
     Deno.env.get('SUPABASE_URL')!,
@@ -172,9 +196,8 @@ Deno.serve(async (req) => {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (err) {
-    const message = err instanceof Error ? err.message : String(err);
-    console.error('ingest-manual error', message);
-    return new Response(JSON.stringify({ ok: false, error: message }), {
+    console.error('ingest-manual error', err);
+    return new Response(JSON.stringify({ ok: false, error: 'Internal server error' }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });

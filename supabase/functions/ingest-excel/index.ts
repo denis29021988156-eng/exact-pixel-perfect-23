@@ -67,6 +67,30 @@ function pickField(row: Record<string, unknown>, key: string | undefined): strin
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
 
+  // --- Authentication check ---
+  const _authHeader = req.headers.get("Authorization");
+  if (!_authHeader?.startsWith("Bearer ")) {
+    return new Response(JSON.stringify({ error: "Unauthorized" }), {
+      status: 401,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  }
+  {
+    const _supaAuth = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_ANON_KEY")!
+    );
+    const { data: _claims, error: _authErr } = await _supaAuth.auth.getClaims(
+      _authHeader.replace("Bearer ", "")
+    );
+    if (_authErr || !_claims?.claims) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+  }
+
   try {
     const payload = (await req.json()) as IngestExcelPayload;
     if (!payload?.target || !Array.isArray(payload.rows)) {
@@ -256,7 +280,7 @@ Deno.serve(async (req) => {
     });
   } catch (err) {
     console.error('ingest-excel fatal', err);
-    return new Response(JSON.stringify({ error: String(err) }), {
+    return new Response(JSON.stringify({ error: 'Internal server error' }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
