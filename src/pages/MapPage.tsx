@@ -146,6 +146,34 @@ export default function MapPage() {
     return true;
   });
 
+  // Jitter overlapping markers so every incident is visible on the map
+  const jittered = (() => {
+    const groups = new Map<string, Incident[]>();
+    filtered.forEach(i => {
+      const key = `${i.lat?.toFixed(5)},${i.lng?.toFixed(5)}`;
+      const arr = groups.get(key) || [];
+      arr.push(i);
+      groups.set(key, arr);
+    });
+    const out: Array<Incident & { _lat: number; _lng: number }> = [];
+    groups.forEach(arr => {
+      if (arr.length === 1) {
+        out.push({ ...arr[0], _lat: arr[0].lat!, _lng: arr[0].lng! });
+      } else {
+        const r = 0.00018; // ~20м
+        arr.forEach((inc, idx) => {
+          const angle = (2 * Math.PI * idx) / arr.length;
+          out.push({
+            ...inc,
+            _lat: inc.lat! + r * Math.cos(angle),
+            _lng: inc.lng! + r * Math.sin(angle),
+          });
+        });
+      }
+    });
+    return out;
+  })();
+
   const stats = {
     total: filtered.length,
     high: filtered.filter(i => i.severity === 'high').length,
@@ -230,8 +258,8 @@ export default function MapPage() {
               }}
             />
             {showHeatmap && <HeatmapLayer incidents={filtered} />}
-            {showMarkers && filtered.map(inc => (
-              <Marker key={inc.id} position={[inc.lat!, inc.lng!]} icon={createIcon(inc.severity)}>
+            {showMarkers && jittered.map(inc => (
+              <Marker key={inc.id} position={[inc._lat, inc._lng]} icon={createIcon(inc.severity)}>
                 <Popup maxWidth={280}>
                   <div className="text-sm space-y-1.5 py-1">
                     <div className="font-bold text-base" style={{ color: '#0EA5E9' }}>{inc.title}</div>

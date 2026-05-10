@@ -127,7 +127,8 @@ export default function IncidentsPage() {
           onClick={() => { setResolvedOrClosedOnly(!isResolved); setActiveOnly(isResolved); setStatusFilter('all'); setOverdueOnly(false); setSeverityFilter('all'); }} />
       </div>
       <p className="text-[11px] text-muted-foreground -mt-3 px-1">
-        Карточки 2 и 3 — подмножества активных (могут пересекаться). Всего инцидентов в системе: {activeIncidents.length + resolvedCount}.
+        Всего в системе: <b>{activeIncidents.length + resolvedCount}</b> = активных <b>{activeIncidents.length}</b> + решено/закрыто <b>{resolvedCount}</b>.
+        «Критический уровень» и «с нарушением SLA» — это подмножества активных (показывают, сколько из {activeIncidents.length} требуют особого внимания), они не суммируются.
       </p>
 
       {/* Filters */}
