@@ -92,12 +92,17 @@ export default function CityCopilot() {
             const content = parsed.choices?.[0]?.delta?.content as string | undefined;
             if (content) {
               assistantSoFar += content;
+              const visible = assistantSoFar
+                .replace(/MEMORY_SAVE:[^\n]*/g, '')
+                .replace(/MEMORY_DELETE:[^\n]*/g, '')
+                .replace(/\n{3,}/g, '\n\n')
+                .trimEnd();
               setMessages(prev => {
                 const last = prev[prev.length - 1];
                 if (last?.role === 'assistant') {
-                  return prev.map((m, i) => i === prev.length - 1 ? { ...m, content: assistantSoFar } : m);
+                  return prev.map((m, i) => i === prev.length - 1 ? { ...m, content: visible } : m);
                 }
-                return [...prev, { role: 'assistant', content: assistantSoFar }];
+                return [...prev, { role: 'assistant', content: visible }];
               });
             }
           } catch {
