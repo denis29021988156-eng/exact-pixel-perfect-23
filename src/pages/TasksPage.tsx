@@ -3,16 +3,98 @@ import { supabase } from '@/integrations/supabase/client';
 import type { Tables } from '@/integrations/supabase/types';
 import StatusBadge from '@/components/StatusBadge';
 import CreateTaskDialog from '@/components/forms/CreateTaskDialog';
-import { ClipboardCheck, Search, Filter, User, Calendar, Plus, Clock, AlertTriangle, CheckCircle2, ListChecks } from 'lucide-react';
+import { ClipboardCheck, Search, Filter, User, Calendar, Plus, Clock, AlertTriangle, CheckCircle2, ListChecks, BarChart3 } from 'lucide-react';
 import { useCanManage } from '@/hooks/useCanManage';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Cell } from 'recharts';
 
 const statusLabels: Record<string, string> = { new: 'Новое', in_progress: 'В работе', completed: 'Выполнено', cancelled: 'Отменено' };
 const statusVariants: Record<string, 'danger' | 'warning' | 'success' | 'info' | 'muted'> = {
   new: 'info', in_progress: 'warning', completed: 'success', cancelled: 'muted',
 };
+
+function PerformanceDialog({ open, onOpenChange, tasks }: { open: boolean; onOpenChange: (v: boolean) => void; tasks: Tables<'tasks'>[] }) {
+  const rows = (() => {
+    const map = new Map<string, { name: string; total: number; completed: number; overdue: number; active: number }>();
+    tasks.forEach(t => {
+      const name = t.responsible || '— не назначен —';
+      const r = map.get(name) || { name, total: 0, completed: 0, overdue: 0, active: 0 };
+      r.total += 1;
+      if (t.status === 'completed') r.completed += 1;
+      if (t.status !== 'completed' && t.status !== 'cancelled') r.active += 1;
+      if (t.overdue && t.status !== 'completed' && t.status !== 'cancelled') r.overdue += 1;
+      map.set(name, r);
+    });
+    return Array.from(map.values())
+      .map(r => ({ ...r, rate: r.total ? Math.round((r.completed / r.total) * 100) : 0 }))
+      .sort((a, b) => b.rate - a.rate || b.total - a.total);
+  })();
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-3xl">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2"><BarChart3 className="w-5 h-5 text-primary" /> Исполнительность</DialogTitle>
+          <DialogDescription>Процент выполнения и нарушения сроков по каждому ответственному</DialogDescription>
+        </DialogHeader>
+
+        {rows.length === 0 ? (
+          <p className="text-sm text-muted-foreground py-8 text-center">Недостаточно данных для расчёта.</p>
+        ) : (
+          <>
+            <div className="h-72 mt-2">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={rows} layout="vertical" margin={{ left: 20, right: 20, top: 8, bottom: 8 }}>
+                  <CartesianGrid horizontal={false} stroke="hsl(var(--border))" strokeDasharray="3 3" />
+                  <XAxis type="number" domain={[0, 100]} tickFormatter={(v) => `${v}%`} stroke="hsl(var(--muted-foreground))" fontSize={11} />
+                  <YAxis type="category" dataKey="name" width={140} stroke="hsl(var(--muted-foreground))" fontSize={11} />
+                  <Tooltip
+                    contentStyle={{ background: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: 8, fontSize: 12 }}
+                    formatter={(v: number) => [`${v}%`, '% выполнения']}
+                  />
+                  <Bar dataKey="rate" radius={[0, 6, 6, 0]}>
+                    {rows.map((r, i) => (
+                      <Cell key={i} fill={r.rate >= 70 ? 'hsl(var(--success))' : r.rate >= 40 ? 'hsl(var(--warning))' : 'hsl(var(--danger))'} />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+
+            <div className="overflow-x-auto mt-2 border-t border-border pt-3">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="text-[11px] uppercase tracking-wide text-muted-foreground">
+                    <th className="text-left font-medium pb-2">Ответственный</th>
+                    <th className="text-right font-medium pb-2">Всего</th>
+                    <th className="text-right font-medium pb-2">Активных</th>
+                    <th className="text-right font-medium pb-2">Выполнено</th>
+                    <th className="text-right font-medium pb-2">Просрочено</th>
+                    <th className="text-right font-medium pb-2">% исполн.</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {rows.map(r => (
+                    <tr key={r.name} className="border-t border-border/50">
+                      <td className="py-2 font-medium text-foreground">{r.name}</td>
+                      <td className="py-2 text-right text-muted-foreground">{r.total}</td>
+                      <td className="py-2 text-right text-muted-foreground">{r.active}</td>
+                      <td className="py-2 text-right text-success font-semibold">{r.completed}</td>
+                      <td className={`py-2 text-right font-semibold ${r.overdue > 0 ? 'text-danger' : 'text-muted-foreground'}`}>{r.overdue}</td>
+                      <td className={`py-2 text-right font-bold ${r.rate >= 70 ? 'text-success' : r.rate >= 40 ? 'text-warning' : 'text-danger'}`}>{r.rate}%</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </>
+        )}
+      </DialogContent>
+    </Dialog>
+  );
+}
 
 function StatPill({ icon: Icon, label, value, variant = 'default', active = false, onClick }: { icon: any; label: string; value: number; variant?: 'default' | 'danger' | 'warning' | 'success'; active?: boolean; onClick?: () => void }) {
   const colorMap = {
@@ -62,6 +144,7 @@ export default function TasksPage() {
   const [loading, setLoading] = useState(true);
   const [createOpen, setCreateOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState<Tables<'tasks'> | null>(null);
+  const [perfOpen, setPerfOpen] = useState(false);
 
   const loadData = useCallback(() => {
     let query = supabase.from('tasks').select('*').order('created_at', { ascending: false });
@@ -118,9 +201,14 @@ export default function TasksPage() {
           <p className="meta-text mt-1">Поручения мэра и контроль исполнения</p>
         </div>
         {canManage && (
-          <button onClick={() => setCreateOpen(true)} className="flex items-center gap-2 px-5 py-2.5 bg-primary text-primary-foreground text-sm font-semibold rounded-xl hover:bg-primary/90 transition-all shadow-sm">
-            <Plus className="w-4 h-4" /> Новое поручение
-          </button>
+          <div className="flex items-center gap-2">
+            <button onClick={() => setPerfOpen(true)} className="flex items-center gap-2 px-4 py-2.5 bg-surface border border-border text-sm font-semibold rounded-xl hover:bg-surface-muted transition-all">
+              <BarChart3 className="w-4 h-4 text-primary" /> Исполнительность
+            </button>
+            <button onClick={() => setCreateOpen(true)} className="flex items-center gap-2 px-5 py-2.5 bg-primary text-primary-foreground text-sm font-semibold rounded-xl hover:bg-primary/90 transition-all shadow-sm">
+              <Plus className="w-4 h-4" /> Новое поручение
+            </button>
+          </div>
         )}
       </div>
 
@@ -239,6 +327,8 @@ export default function TasksPage() {
       )}
 
       <CreateTaskDialog open={createOpen} onOpenChange={setCreateOpen} onCreated={loadData} />
+
+      <PerformanceDialog open={perfOpen} onOpenChange={setPerfOpen} tasks={tasks} />
 
       <Dialog open={!!selectedTask} onOpenChange={(open) => !open && setSelectedTask(null)}>
         <DialogContent className="max-w-xl">
