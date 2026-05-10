@@ -124,15 +124,18 @@ export default function TasksPage() {
 
       {/* Stats Row */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-        <StatPill icon={ListChecks} label="Всего активных" value={activeTasks.length} active={isActiveFilter}
+        <StatPill icon={ListChecks} label="Активных (новые + в работе)" value={activeTasks.length} active={isActiveFilter}
           onClick={() => { setActiveOnly(true); setStatusFilter('all'); setOverdueOnly(false); }} />
-        <StatPill icon={Clock} label="В работе" value={inProgressCount} variant="warning" active={isInProgress}
+        <StatPill icon={Clock} label="в т.ч. в работе" value={inProgressCount} variant="warning" active={isInProgress}
           onClick={() => { setStatusFilter(isInProgress ? 'all' : 'in_progress'); setOverdueOnly(false); setActiveOnly(true); }} />
-        <StatPill icon={AlertTriangle} label="Просрочено" value={overdueCount} variant={overdueCount > 0 ? 'danger' : 'default'} active={isOverdue}
+        <StatPill icon={AlertTriangle} label="в т.ч. просрочено" value={overdueCount} variant={overdueCount > 0 ? 'danger' : 'default'} active={isOverdue}
           onClick={() => { setOverdueOnly(!isOverdue); setStatusFilter('all'); setActiveOnly(true); }} />
-        <StatPill icon={CheckCircle2} label="Выполнено" value={completedCount} variant="success" active={isCompleted}
+        <StatPill icon={CheckCircle2} label="Выполнено (всего)" value={completedCount} variant="success" active={isCompleted}
           onClick={() => { setStatusFilter(isCompleted ? 'all' : 'completed'); setActiveOnly(false); setOverdueOnly(false); }} />
       </div>
+      <p className="text-[11px] text-muted-foreground -mt-3 px-1">
+        «В работе» и «Просрочено» — подмножества активных и могут пересекаться (просроченные часто остаются в работе). Всего поручений в системе: {activeTasks.length + completedCount + tasks.filter(t => t.status === 'cancelled').length}.
+      </p>
 
       {/* Filters */}
       <div className="glass-card p-4 flex flex-wrap gap-3 items-center">
