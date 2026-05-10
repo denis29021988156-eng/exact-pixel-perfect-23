@@ -63,7 +63,11 @@ export default function CityCopilot() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const sessionIdRef = useRef<string>(crypto.randomUUID());
+  const messagesRef = useRef<Msg[]>([]);
+  const sendRef = useRef<(text: string) => Promise<void>>();
   const { toast } = useToast();
+
+  useEffect(() => { messagesRef.current = messages; }, [messages]);
 
   useEffect(() => {
     if (!open) return;
@@ -139,7 +143,7 @@ export default function CityCopilot() {
     if (!trimmed || isLoading) return;
 
     const userMsg: Msg = { role: 'user', content: trimmed };
-    const allMessages = [...messages, userMsg];
+    const allMessages = [...messagesRef.current, userMsg];
     setMessages(allMessages);
     setInput('');
     setIsLoading(true);
