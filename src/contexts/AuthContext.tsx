@@ -33,9 +33,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         .from('user_roles')
         .select('role')
         .eq('user_id', uid)
-        .maybeSingle()
-        .then(({ data }) => {
-          setUserRole(data?.role ?? 'employee');
+        .then(({ data, error }) => {
+          if (error) {
+            console.error('[Auth] failed to load user_roles:', error);
+            setUserRole('employee');
+            return;
+          }
+          const roles = (data ?? []).map((r: any) => r.role as string);
+          const priority = ['admin', 'mayor', 'deputy', 'employee'];
+          const best = priority.find((p) => roles.includes(p)) ?? 'employee';
+          setUserRole(best);
         });
       supabase
         .from('profiles')
