@@ -39,6 +39,7 @@ const SYSTEM_PROMPT = `Ты — система структурирования 
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS")
+    return new Response(null, { headers: corsHeaders });
 
   // --- Authentication check ---
   const _authHeader = req.headers.get("Authorization");
@@ -63,7 +64,6 @@ Deno.serve(async (req) => {
       });
     }
   }
-    return new Response(null, { headers: corsHeaders });
 
   try {
     const { raw_text, source_id } = await req.json();
