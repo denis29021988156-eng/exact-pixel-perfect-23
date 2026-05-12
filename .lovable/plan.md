@@ -1,75 +1,110 @@
-## 1. Сократить объекты и контракты до 5
+# Аудит RLS: incidents и связанные таблицы
 
-Сейчас в БД 17 проектов и 17 контрактов (включая дубли и оставшиеся `[DEMO]`). Оставляем по 5 «эталонных» записей в каждой таблице — по одной на каждый из 5 департаментов (utilities, transport, improvement, social, construction).
+## 1. Актуальное состояние политики INSERT на `public.incidents`
 
-**Действия (через миграцию/insert):**
-- `DELETE FROM contracts WHERE id NOT IN (...5 выбранных id)` — предварительно почистить связанный `budget_forecast` по `contract_id`.
-- `DELETE FROM projects WHERE id NOT IN (...5 выбранных id)`.
-- Выбор 5 проектов: «Модернизация водоснабжения» (utilities), «Ремонт дорог 2026» (transport), «Реконструкция набережной Пехорки» (improvement), «Капремонт школы №12» (social), плюс новый проект «Строительство ФОК "Реутов-Арена"» (construction).
-- Выбор 5 контрактов: «Замена труб водоснабжения» (utilities), «Ямочный ремонт дорог — лот 1» (transport), «Реконструкция набережной — СМР» (improvement), «Капремонт школы №12 — подряд» (social), «Строительство ФОК — генподряд» (construction).
+**Заявление аудита неактуально.** Политика `"Authenticated insert incidents" WITH CHECK (true)` была заменена ещё в миграции `20260222160517` (через 81 секунду после исходной):
 
-**«Обновить везде, чтобы не было ошибок»:**
-- Счётчики `Объекты ({projects.length})` / `Контракты ({contracts.length})` на `ProgramPage` и `BudgetRiskCard` — динамические, сами пересчитаются.
-- Проверить `Шпаргалку` (`CheatsheetPage.tsx`) на хардкод чисел про объекты — оставить как есть (это отдельные отраслевые показатели, не привязаны к таблицам).
-- Проверить `dataAggregator`, `risk-snapshot`, `budget-forecast` edge-функции — все читают БД динамически, изменений в коде не нужно.
-
-## 2. Раскрывающаяся карточка объекта/контракта
-
-В `src/pages/ProgramPage.tsx` сделать каждую карточку кликабельной: при клике плавно (через `Collapsible`) разворачивается блок с ключевой информацией.
-
-**Поля для проекта (`projects`):** description, planned_start → planned_end, прогресс с цветной полосой, бюджет (`budget_total` / `budget_spent` + остаток в %), `responsible`, `blocker`, статус политической чувствительности.
-
-**Поля для контракта (`contracts`):** contractor, amount, deadline, execution_rate, risk_of_non_execution, status, department, признак политической чувствительности; плюс таблица последних 3 платежей из `budget_forecast` (план/факт).
-
-**Дозаполнение БД (придумать «близко к реальности»):** для оставленных 5 проектов/контрактов через `UPDATE` дописать `description`, `planned_start`, `budget_total`, `budget_spent`, `execution_rate`, `risk_of_non_execution` — чтобы при раскрытии карточки было что показать. Для контрактов добавить 2–3 строки в `budget_forecast` (план/факт платежей).
-
-UI:
-- В свёрнутом виде карточка как сейчас (название, статус, прогресс/срок).
-- При клике — анимированное раскрытие, серая разделительная линия, сетка `grid-cols-2` с подписями полей.
-- Иконка ChevronDown справа, поворот при открытии.
-- Ничего не ломаем по фильтрам (deputy department) — просто оборачиваем существующий рендер.
-
-## 3. AI знает реальное московское время
-
-В `supabase/functions/city-copilot/index.ts` и `city-briefing/index.ts` посчитать московское время и подставить в system prompt:
-
-```ts
-const mskNow = new Date().toLocaleString('ru-RU', {
-  timeZone: 'Europe/Moscow',
-  weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
-  hour: '2-digit', minute: '2-digit'
-});
+```sql
+DROP POLICY "Authenticated insert incidents" ON public.incidents;
+CREATE POLICY "Authenticated insert incidents" ON public.incidents 
+  FOR INSERT TO authenticated 
+  WITH CHECK (created_by = auth.uid());
 ```
 
-В начало промта добавить блок:
+Текущая политика в БД (проверено через `pg_policies`):
+
 ```
-ТЕКУЩЕЕ ВРЕМЯ (МСК, Europe/Moscow): {mskNow}
-Все даты, дедлайны и сроки в ответах — по московскому времени.
+Incidents insert own | INSERT | WITH CHECK: (created_by = auth.uid())
 ```
 
-Также в `aggregatedData` добавить поле `nowMsk`. Это позволит AI корректно рассчитывать «сегодня», «завтра», «через 3 дня», избегая UTC-смещения.
+То есть `WITH CHECK (true)` **уже нет**. Но проблема, на которую указывает аудит, **частично остаётся**: employee может вставить инцидент с произвольным `severity='high'`, `political_sensitivity='high'`, `department=<любой>`, `responsible=<кто угодно>` — лишь бы `created_by = auth.uid()`.
 
-## 4. Перевод RED ZONE / AI-статуса на русский
+## 2. Колонки `political_sensitivity` и `created_by`
 
-Файл `src/components/AppLayout.tsx`:
-- `RED ZONE · {n}` → `КРАСНАЯ ЗОНА · {n}` (тот же стиль `red-zone-badge`).
-- `statusConfig.active.label`: `AI Active` → `ИИ активен`.
-- `statusConfig.elevated.label`: `Elevated Risk` → `Повышенный риск`.
-- `statusConfig.unavailable.label`: `AI Unavailable` → `ИИ недоступен`.
+- `created_by uuid REFERENCES auth.users(id)` — добавлена при создании таблицы в `20260222160436` (строка 50).
+- `political_sensitivity text NOT NULL DEFAULT 'low'` — добавлена в `20260330150413` (для incidents, projects, contracts одной миграцией).
 
-Файл `src/pages/MapPage.tsx`:
-- `RED ZONE · {stats.high}` → `КРАСНАЯ ЗОНА · {stats.high}`.
+Обе колонки присутствуют в текущей схеме (подтверждено `<supabase-tables>`).
 
-Файл `src/components/landing/TabletMockup.tsx`:
-- `RED ZONE` → `КРАСНАЯ ЗОНА` (декоративный элемент лендинга).
+## 3. INSERT-политики `WITH CHECK (true)` на ключевых таблицах
 
-Подпись «обновлено N мин назад» уже на русском — не трогаем.
+Проверка `pg_policies` (cmd='INSERT'):
+
+| Таблица | Политика | WITH CHECK |
+|---|---|---|
+| incidents | Incidents insert own | `created_by = auth.uid()` |
+| public_complaints | Mayor/Deputy insert complaints | `mayor OR deputy` |
+| tasks | Tasks insert mayor or deputy of dept | `mayor OR deputy_of(department)` |
+| projects | Projects insert mayor or deputy of dept | `mayor OR deputy_of(department)` |
+| contracts | Contracts insert mayor or deputy of dept | `mayor OR deputy_of(department)` |
+| staging_raw | Admin/Mayor/Deputy manage (ALL) | `admin OR mayor OR deputy` |
+
+**Ни одной политики `WITH CHECK (true)` не осталось.** Самая «слабая» — `incidents` (любой залогиненный + `created_by=self`).
+
+## 4. Как создаются инциденты
+
+- **`CreateIncidentDialog.tsx`** — клиентский `supabase.from('incidents').insert(...)`, проходит через RLS. Передаёт `created_by: user?.id`. **Это и есть единственный путь, где employee может злоупотребить.**
+- **`ingest-excel/index.ts`** — использует `SUPABASE_SERVICE_ROLE_KEY` → **обходит RLS**. Не пострадает.
+- **`ai-extract-incident/index.ts`** — использует `SERVICE_ROLE_KEY` → **обходит RLS**. Пишет извлечённые инциденты в `incidents`/`staging_raw`.
+- **`telegram-poll/index.ts`** — `SERVICE_ROLE_KEY` → пишет в `staging_raw`/`telegram_messages`, обходит RLS.
+- **`ingest-manual/index.ts`** — `SERVICE_ROLE_KEY`, обходит RLS.
+
+Вывод: ужесточение RLS на `incidents` затронет **только клиентский диалог** — все edge-функции работают сервисной ролью.
+
+## 5. План миграции (НЕ применять до подтверждения)
+
+```sql
+-- === incidents ===
+DROP POLICY IF EXISTS "Incidents insert own" ON public.incidents;
+
+-- Mayor/Deputy/Admin — без ограничений по severity/sensitivity
+CREATE POLICY "Incidents insert privileged"
+ON public.incidents
+FOR INSERT TO authenticated
+WITH CHECK (
+  created_by = auth.uid()
+  AND (
+    has_role(auth.uid(), 'mayor'::app_role)
+    OR has_role(auth.uid(), 'admin'::app_role)
+    OR (department IS NOT NULL AND is_deputy_of_department(department))
+  )
+);
+
+-- Employee — только свой департамент, severity != 'high', political_sensitivity != 'high'
+CREATE POLICY "Incidents insert employee limited"
+ON public.incidents
+FOR INSERT TO authenticated
+WITH CHECK (
+  created_by = auth.uid()
+  AND department IS NOT NULL
+  AND department = get_user_department(auth.uid())
+  AND severity <> 'high'::incident_severity
+  AND political_sensitivity <> 'high'
+);
+```
+
+Для `public_complaints / tasks / staging_raw / projects / contracts` правки **не требуются** — INSERT уже ограничен ролями mayor/deputy/admin.
+
+Опционально (если хочется усилить): добавить `created_by = auth.uid()` к INSERT-политикам `tasks/projects/contracts` — но там нет такой колонки, поэтому пропускаем.
+
+## 6. Риски и rollback
+
+**Что сломается:**
+- `CreateIncidentDialog` для employee — если выбран чужой департамент или severity=high → INSERT упадёт с RLS-ошибкой. Нужно либо UI-ограничение (disable severity=high для employee), либо обработка ошибки toast'ом. Это можно сделать отдельной задачей после миграции.
+- Мock-сидинг в `20260419090921` уже выполнен — не задет.
+
+**Что НЕ сломается:**
+- Excel-импорт, AI-извлечение, Telegram-poll, ingest-manual — все на service role, RLS обходят.
+- Чтение/обновление инцидентов — политики `SELECT`/`UPDATE` не трогаем.
+- Триггеры (`log_audit`, `log_incident_severity`, `check_and_create_escalation`) — security definer, не зависят от INSERT-политики.
+
+**Rollback-план:** одна обратная миграция — `DROP` двух новых политик, `CREATE` старой `Incidents insert own WITH CHECK (created_by = auth.uid())`. Простой и безопасный.
+
+## 7. Дополнительные замечания (не правим без отдельного запроса)
+
+- **«`Authenticated read roles USING (true)`» — неактуально.** Текущие политики на `user_roles`: `Users read own role` (только своя), `Admin reads all user_roles`, `Admin manages roles`. Утечки ролей нет.
+- **Дубли «Mayor/Deputy reads all profiles»** — формально это три отдельные политики (`Mayor`, `Deputy`, `Admin reads all profiles`), а не дубли. Можно было бы объединить в одну `WHERE has_role(auth.uid(),'mayor') OR has_role(auth.uid(),'deputy') OR has_role(auth.uid(),'admin')`, но функционально это эквивалентно и не критично. Отложим.
 
 ---
 
-### Порядок исполнения
-
-1. Insert/миграция: очистка контрактов и проектов до 5; дозаполнение деталей; добавление записей `budget_forecast`.
-2. UI: ProgramPage — раскрывающиеся карточки с расширенным блоком.
-3. Edge: city-copilot и city-briefing — блок «Текущее время (МСК)».
-4. UI: AppLayout, MapPage, TabletMockup — перевод RED ZONE и AI-статусов.
+**Итог:** критическая дыра из аудита уже закрыта (`created_by = auth.uid()`). Остаётся менее острая проблема — employee может ставить high/чужой департамент. Миграция выше её закрывает, риск минимален. Жду подтверждения, чтобы применить.
