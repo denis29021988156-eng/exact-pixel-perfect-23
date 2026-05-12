@@ -16,37 +16,54 @@ interface Props {
 }
 
 export default function CreateIncidentDialog({ open, onOpenChange, onCreated }: Props) {
-  const { user } = useAuth();
+  const { user, userRole, userDepartment } = useAuth();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
+  const isEmployee = userRole === 'employee';
   const [form, setForm] = useState({
     title: '', description: '', type: 'other' as string, severity: 'medium' as string,
-    address: '', department: '', responsible: '', political_sensitivity: 'low' as string,
+    address: '', department: isEmployee ? (userDepartment ?? '') : '',
+    responsible: '', political_sensitivity: 'low' as string,
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.title.trim()) return;
     setLoading(true);
-    const { error } = await supabase.from('incidents').insert({
-      title: form.title.trim(),
-      description: form.description.trim() || null,
-      type: form.type as any,
-      severity: form.severity as any,
-      address: form.address.trim() || null,
-      department: form.department.trim() || null,
-      responsible: form.responsible.trim() || null,
-      created_by: user?.id,
-      political_sensitivity: form.political_sensitivity,
-    });
-    setLoading(false);
-    if (error) {
-      toast({ title: 'Ошибка', description: error.message, variant: 'destructive' });
-    } else {
+    const effectiveSeverity = isEmployee && form.severity === 'high' ? 'medium' : form.severity;
+    const effectiveDepartment = isEmployee ? (userDepartment ?? null) : (form.department.trim() || null);
+    const effectiveSensitivity = isEmployee ? 'low' : form.political_sensitivity;
+    try {
+      const { error } = await supabase.from('incidents').insert({
+        title: form.title.trim(),
+        description: form.description.trim() || null,
+        type: form.type as any,
+        severity: effectiveSeverity as any,
+        address: form.address.trim() || null,
+        department: effectiveDepartment,
+        responsible: form.responsible.trim() || null,
+        created_by: user?.id,
+        political_sensitivity: effectiveSensitivity,
+      });
+      if (error) throw error;
       toast({ title: 'Инцидент создан' });
-      setForm({ title: '', description: '', type: 'other', severity: 'medium', address: '', department: '', responsible: '', political_sensitivity: 'low' });
+      setForm({ title: '', description: '', type: 'other', severity: 'medium', address: isEmployee ? (userDepartment ?? '') : '', responsible: '', political_sensitivity: 'low' });
       onOpenChange(false);
       onCreated();
+    } catch (err: any) {
+      const msg = String(err?.message ?? '');
+      const code = String(err?.code ?? '');
+      if (msg.toLowerCase().includes('row-level security') || code === '42501') {
+        toast({
+          title: 'Недостаточно прав',
+          description: 'Недостаточно прав для создания инцидента с такими параметрами. Обратитесь к руководителю.',
+          variant: 'destructive',
+        });
+      } else {
+        toast({ title: 'Не удалось создать инцидент', description: msg || undefined, variant: 'destructive' });
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -83,7 +100,13 @@ export default function CreateIncidentDialog({ open, onOpenChange, onCreated }: 
                 <SelectContent>
                   <SelectItem value="low">Низкая</SelectItem>
                   <SelectItem value="medium">Средняя</SelectItem>
-                  <SelectItem value="high">Высокая</SelectItem>
+                  <SelectItem
+                    value="high"
+                    disabled={isEmployee}
+                    title={isEmployee ? 'Только mayor/deputy могут создавать инциденты высокой критичности' : undefined}
+                  >
+                    Высокая{isEmployee ? ' (только mayor/deputy)' : ''}
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -95,7 +118,13 @@ export default function CreateIncidentDialog({ open, onOpenChange, onCreated }: 
           <div className="grid grid-cols-2 gap-3">
             <div>
               <Label>Департамент</Label>
-              <Input value={form.department} onChange={e => setForm(p => ({ ...p, department: e.target.value }))} maxLength={100} />
+              <Input
+                value={isEmployee ? (userDepartment ?? '') : form.department}
+                onChange={e => setForm(p => ({ ...p, department: e.target.value }))}
+                maxLength={100}
+                readOnly={isEmployee}
+                disabled={isEmployee}
+              />
             </div>
             <div>
               <Label>Ответственный</Label>
@@ -106,17 +135,19 @@ export default function CreateIncidentDialog({ open, onOpenChange, onCreated }: 
             <Label>Описание</Label>
             <Textarea value={form.description} onChange={e => setForm(p => ({ ...p, description: e.target.value }))} maxLength={2000} rows={3} />
           </div>
-          <div>
-            <Label>Политическая чувствительность</Label>
-            <Select value={form.political_sensitivity} onValueChange={v => setForm(p => ({ ...p, political_sensitivity: v }))}>
-              <SelectTrigger><SelectValue /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="low">Низкая</SelectItem>
-                <SelectItem value="medium">Средняя</SelectItem>
-                <SelectItem value="high">Высокая</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+          {!isEmployee && (
+            <div>
+              <Label>Политическая чувствительность</Label>
+              <Select value={form.political_sensitivity} onValueChange={v => setForm(p => ({ ...p, political_sensitivity: v }))}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="low">Низкая</SelectItem>
+                  <SelectItem value="medium">Средняя</SelectItem>
+                  <SelectItem value="high">Высокая</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          )}
           <div className="flex justify-end gap-2 pt-2">
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>Отмена</Button>
             <Button type="submit" disabled={loading || !form.title.trim()}>{loading ? 'Создание...' : 'Создать'}</Button>
