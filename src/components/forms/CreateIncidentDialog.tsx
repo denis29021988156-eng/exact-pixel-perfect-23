@@ -47,7 +47,7 @@ export default function CreateIncidentDialog({ open, onOpenChange, onCreated }: 
       });
       if (error) throw error;
       toast({ title: 'Инцидент создан' });
-      setForm({ title: '', description: '', type: 'other', severity: 'medium', address: isEmployee ? (userDepartment ?? '') : '', responsible: '', political_sensitivity: 'low' });
+      setForm({ title: '', description: '', type: 'other', severity: 'medium', address: '', department: isEmployee ? (userDepartment ?? '') : '', responsible: '', political_sensitivity: 'low' });
       onOpenChange(false);
       onCreated();
     } catch (err: any) {
