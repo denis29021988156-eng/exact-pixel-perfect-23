@@ -825,6 +825,42 @@ export type Database = {
           },
         ]
       }
+      public_metrics_snapshot: {
+        Row: {
+          active_incidents: number
+          active_projects: number
+          active_tasks: number
+          critical_incidents: number
+          id: number
+          risk_projects: number
+          spent_budget: number
+          total_budget: number
+          updated_at: string
+        }
+        Insert: {
+          active_incidents?: number
+          active_projects?: number
+          active_tasks?: number
+          critical_incidents?: number
+          id?: number
+          risk_projects?: number
+          spent_budget?: number
+          total_budget?: number
+          updated_at?: string
+        }
+        Update: {
+          active_incidents?: number
+          active_projects?: number
+          active_tasks?: number
+          critical_incidents?: number
+          id?: number
+          risk_projects?: number
+          spent_budget?: number
+          total_budget?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       risk_index_snapshots: {
         Row: {
           components: Json
@@ -1219,6 +1255,24 @@ export type Database = {
           spent_budget: number | null
           total_budget: number | null
         }
+        Insert: {
+          active_incidents?: number | null
+          active_projects?: number | null
+          active_tasks?: number | null
+          critical_incidents?: number | null
+          risk_projects?: number | null
+          spent_budget?: number | null
+          total_budget?: number | null
+        }
+        Update: {
+          active_incidents?: number | null
+          active_projects?: number | null
+          active_tasks?: number | null
+          critical_incidents?: number | null
+          risk_projects?: number | null
+          spent_budget?: number | null
+          total_budget?: number | null
+        }
         Relationships: []
       }
     }
@@ -1233,6 +1287,7 @@ export type Database = {
       }
       is_deputy_of_department: { Args: { _dept: string }; Returns: boolean }
       normalize_department: { Args: { _raw: string }; Returns: string }
+      refresh_public_metrics: { Args: never; Returns: undefined }
     }
     Enums: {
       app_role: "mayor" | "deputy" | "employee" | "admin"
