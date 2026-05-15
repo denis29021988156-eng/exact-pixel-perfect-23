@@ -15,11 +15,11 @@ export const SceneOutro: React.FC = () => {
     }}>
       <div style={{ textAlign: "center", transform: `translateY(${y}px)`, opacity: sp }}>
         <div style={{ display: "inline-flex", alignItems: "center", gap: 14, marginBottom: 24 }}>
-          <div style={{ width: 56, height: 56, borderRadius: 14, background: `linear-gradient(135deg, ${colors.primary}, ${colors.primaryGlow})`, display: "grid", placeItems: "center", fontWeight: 800, fontSize: 28, color: "#fff", boxShadow: `0 0 40px ${colors.primary}80` }}>Б</div>
+          <div style={{ width: 64, height: 64, borderRadius: 16, background: `linear-gradient(135deg, ${colors.primary}, ${colors.primaryGlow})`, display: "grid", placeItems: "center", fontWeight: 800, fontSize: 32, color: "#fff", boxShadow: `0 0 50px ${colors.primary}80` }}>⛨</div>
         </div>
-        <div style={{ fontSize: 56, fontWeight: 800, color: colors.text, letterSpacing: -1.5 }}>Балашиха</div>
-        <div style={{ fontSize: 18, color: colors.primaryGlow, marginTop: 8, letterSpacing: 4, textTransform: "uppercase", fontWeight: 500 }}>Цифровая платформа</div>
-        <div style={{ fontSize: 15, color: colors.textMuted, marginTop: 28, maxWidth: 640 }}>
+        <div style={{ fontSize: 64, fontWeight: 800, color: colors.text, letterSpacing: -2 }}>City OS</div>
+        <div style={{ fontSize: 16, color: colors.primaryGlow, marginTop: 10, letterSpacing: 5, textTransform: "uppercase", fontWeight: 500 }}>Реутов · Цифровая платформа</div>
+        <div style={{ fontSize: 15, color: colors.textMuted, marginTop: 28, maxWidth: 680, marginLeft: "auto", marginRight: "auto" }}>
           Один экран — весь город. Решение принимает Глава города, поддерживает ИИ.
         </div>
       </div>

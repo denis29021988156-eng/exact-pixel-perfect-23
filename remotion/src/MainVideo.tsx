@@ -1,5 +1,6 @@
 import React from "react";
 import { AbsoluteFill, Series } from "remotion";
+import { SubtitleBar } from "./components/SubtitleBar";
 import { SceneLogin } from "./scenes/SceneLogin";
 import { SceneDashboard } from "./scenes/SceneDashboard";
 import { SceneBriefingLoading } from "./scenes/SceneBriefingLoading";
@@ -14,6 +15,15 @@ import { colors } from "./theme";
 // 540-810 briefing result stream (9s)
 // 810-900 outro (3s)
 
+const cues = [
+  { from: 8, to: 150, step: "Шаг 1", label: "Вход в систему" },
+  { from: 150, to: 240, step: "Шаг 2", label: "Командный центр" },
+  { from: 240, to: 330, step: "Шаг 3", label: "Сформировать брифинг" },
+  { from: 330, to: 540, step: "Шаг 4", label: "Загрузка по департаментам" },
+  { from: 540, to: 810, step: "Шаг 5", label: "Утренний брифинг" },
+  { from: 810, to: 895, step: "Финал", label: "Реутов · Цифровая платформа" },
+];
+
 export const MainVideo: React.FC = () => {
   return (
     <AbsoluteFill style={{ background: colors.bg }}>
@@ -24,6 +34,7 @@ export const MainVideo: React.FC = () => {
         <Series.Sequence durationInFrames={270}><SceneBriefingResult /></Series.Sequence>
         <Series.Sequence durationInFrames={90}><SceneOutro /></Series.Sequence>
       </Series>
+      <SubtitleBar cues={cues} />
     </AbsoluteFill>
   );
 };
