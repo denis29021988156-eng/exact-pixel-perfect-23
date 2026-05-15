@@ -111,8 +111,8 @@ function AIStatusIndicator() {
   const statusConfig = {
     active: { color: 'bg-success', label: 'ИИ активен', textColor: 'text-muted-foreground' },
     elevated: { color: 'bg-warning', label: 'Повышенный риск', textColor: 'text-warning' },
-    unavailable: { color: 'bg-danger', label: 'ИИ недоступен', textColor: 'text-danger' },
-  };
+    unavailable: null,
+  } as const;
   const cfg = statusConfig[status];
 
   return (
@@ -125,14 +125,16 @@ function AIStatusIndicator() {
           обновлено {minutesAgo} мин назад
         </span>
       )}
-      <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-surface-muted border border-border">
-        <div className="relative">
-          <div className={`w-2 h-2 rounded-full ${cfg.color} ai-pulse`} />
+      {cfg && (
+        <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-surface-muted border border-border">
+          <div className="relative">
+            <div className={`w-2 h-2 rounded-full ${cfg.color} ai-pulse`} />
+          </div>
+          <span className={`text-xs font-semibold tracking-wide ${cfg.textColor}`}>
+            {cfg.label}
+          </span>
         </div>
-        <span className={`text-xs font-semibold tracking-wide ${cfg.textColor}`}>
-          {cfg.label}
-        </span>
-      </div>
+      )}
     </div>
   );
 }
