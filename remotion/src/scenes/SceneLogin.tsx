@@ -11,7 +11,7 @@ export const SceneLogin: React.FC = () => {
   const cardYOff = interpolate(cardY, [0, 1], [40, 0]);
 
   // typing email
-  const email = "mayor@balashikha.ru";
+  const email = "mayor@reutov.gov";
   const password = "••••••••••";
   const emailLen = Math.max(0, Math.min(email.length, Math.floor((frame - 25) / 1.6)));
   const pwdLen = Math.max(0, Math.min(password.length, Math.floor((frame - 70) / 1.4)));
@@ -32,12 +32,12 @@ export const SceneLogin: React.FC = () => {
       fontFamily,
       background: `radial-gradient(900px 600px at 70% 30%, rgba(59,130,246,0.10), transparent 60%), radial-gradient(700px 500px at 20% 80%, rgba(96,165,250,0.06), transparent 60%), ${colors.bg}`,
     }}>
-      {/* Brand top-left */}
-      <div style={{ position: "absolute", top: 56, left: 64, display: "flex", alignItems: "center", gap: 14, opacity: fadeIn }}>
-        <div style={{ width: 44, height: 44, borderRadius: 12, background: `linear-gradient(135deg, ${colors.primary}, ${colors.primaryGlow})`, display: "grid", placeItems: "center", fontWeight: 800, fontSize: 22, color: "#fff" }}>Б</div>
+      {/* Brand center-top (matches AuthPage: City OS / Ситуационный центр) */}
+      <div style={{ position: "absolute", top: 110, left: 0, right: 0, display: "flex", justifyContent: "center", alignItems: "center", gap: 14, opacity: fadeIn }}>
+        <div style={{ width: 52, height: 52, borderRadius: 14, background: `linear-gradient(135deg, ${colors.primary}, ${colors.primaryGlow})`, display: "grid", placeItems: "center", fontWeight: 800, fontSize: 26, color: "#fff", boxShadow: `0 0 30px ${colors.primary}60` }}>⛨</div>
         <div>
-          <div style={{ fontSize: 18, fontWeight: 700, color: colors.text }}>Балашиха</div>
-          <div style={{ fontSize: 12, color: colors.textMuted, letterSpacing: 0.4, textTransform: "uppercase" }}>Цифровая платформа</div>
+          <div style={{ fontSize: 26, fontWeight: 800, color: colors.text, letterSpacing: -0.5 }}>City OS</div>
+          <div style={{ fontSize: 12, color: colors.textMuted, letterSpacing: 0.4 }}>Ситуационный центр · Реутов</div>
         </div>
       </div>
 
