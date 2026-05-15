@@ -106,7 +106,7 @@ const FLOW_LEVELS = [
 const TEAM_ROLES = [
   {
     icon: Crown,
-    name: 'Мэр',
+    name: 'Глава города',
     desc: 'Видит весь город. Принимает решения.',
     screens: ['Сегодня', 'Карта', 'Инциденты', 'Программа', 'Поручения', 'Репутация', 'AI-шпаргалка'],
     accent: true,
@@ -161,7 +161,7 @@ export default function LandingPage() {
   const heroOpacity = useTransform(smoothProgress, [0, 0.8], [1, 0]);
 
   useEffect(() => {
-    document.title = 'Планшет Мэра — один экран, весь город';
+    document.title = 'Планшет Главы города — один экран, весь город';
   }, []);
 
   return (
@@ -464,10 +464,10 @@ export default function LandingPage() {
                 <div className="flex-1">
                   <p className="text-[11px] tracking-[0.18em] uppercase font-mono text-[#06B6D4]">Уровень 4</p>
                   <h3 className="mt-3 text-[26px] lg:text-[34px] font-semibold tracking-[-0.02em] text-white">
-                    Мэр во главе
+                    Глава города во главе
                   </h3>
                   <p className="mt-4 text-[15px] lg:text-[17px] text-[#CBD5E1] leading-[1.6] max-w-3xl">
-                    Видит главное за 30 секунд. AI подсказывает, что делать. Решение принимает мэр.
+                    Видит главное за 30 секунд. AI подсказывает, что делать. Решение принимает Глава города.
                     Поручение уходит ответственному — со сроком и автоматическим контролем SLA.
                   </p>
                   <div className="mt-5 inline-flex items-center gap-2 text-[12px] text-[#06B6D4]">
@@ -790,7 +790,7 @@ export default function LandingPage() {
 
       <footer className="border-t border-white/[0.08] py-14 px-6 bg-[#0A0E1A]">
         <div className="max-w-[1400px] mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-[11px] font-mono tracking-[0.15em] uppercase text-[#94A3B8]">
-          <span>Планшет Мэра</span>
+          <span>Планшет Главы города</span>
           <span>tablet.su · 2026</span>
         </div>
       </footer>
