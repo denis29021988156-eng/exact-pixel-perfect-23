@@ -49,8 +49,8 @@ const PAINS = [
 ];
 
 const COMPARE = [
-  { before: 'Зам обещал «к пятнице» — забыл.', after: 'Срок в системе. За день — напоминание. После — автоэскалация мэру.' },
-  { before: '«У меня всё в порядке» на планёрке.', after: 'На экране мэра: 8 задач просрочено, 3 в красной зоне.' },
+  { before: 'Зам обещал «к пятнице» — забыл.', after: 'Срок в системе. За день — напоминание. После — автоэскалация Главе города.' },
+  { before: '«У меня всё в порядке» на планёрке.', after: 'На экране Главы города: 8 задач просрочено, 3 в красной зоне.' },
   { before: 'Отчёт раз в месяц на 20 страниц.', after: 'Отчёт обновляется сам, в реальном времени.' },
   { before: 'Нельзя проверить, кто что делал.', after: 'Каждое действие записано. Видно кто и когда.' },
   { before: 'Поручение через мессенджер — потерялось.', after: 'Поручение в системе. У исполнителя в списке. Со сроком.' },
@@ -148,7 +148,7 @@ const PLAN = [
     weeks: 'Неделя 7—8',
     label: 'Обучение',
     bg: 'linear-gradient(135deg, #0891B2 0%, #06B6D4 100%)',
-    items: ['Тренинг операторов', 'Передача мэру и замам', 'Сопровождение первой недели работы'],
+    items: ['Тренинг операторов', 'Передача Главе города и замам', 'Сопровождение первой недели работы'],
   },
 ];
 
@@ -610,7 +610,7 @@ export default function LandingPage() {
             className="mt-24 text-center font-medium text-[#E5E7EB] tracking-[-0.03em] leading-tight max-w-4xl mx-auto"
             style={{ fontSize: 'clamp(28px, 3.5vw, 52px)' }}
           >
-            Подчинённый знает: мэр видит всё.<br />
+            Подчинённый знает: Глава города видит всё.<br />
             <span className="text-[#94A3B8]">Это работает лучше любого совещания.</span>
           </motion.p>
         </div>
@@ -619,7 +619,7 @@ export default function LandingPage() {
       {/* ─── Section 6 — Day ─── */}
       <section className="relative py-40 lg:py-52 px-6 lg:px-12 border-t border-white/[0.08]">
         <div className="max-w-[1400px] mx-auto">
-          <p className="text-[12px] tracking-[0.18em] uppercase text-[#94A3B8] font-mono mb-8">03 — день мэра</p>
+          <p className="text-[12px] tracking-[0.18em] uppercase text-[#94A3B8] font-mono mb-8">03 — день Главы города</p>
           <h2 className="font-semibold tracking-[-0.04em] leading-[0.95] text-[#E5E7EB] max-w-3xl" style={{ fontSize: 'clamp(40px, 4.6vw, 72px)' }}>
             Один день. Без совещаний
           </h2>
