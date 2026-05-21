@@ -165,7 +165,7 @@ export default function LandingPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#0A0E1A] text-[#E5E7EB] font-sans antialiased overflow-x-hidden selection:bg-[#3B82F6]/30">
+    <div translate="no" className="notranslate min-h-screen bg-[#0A0E1A] text-[#E5E7EB] font-sans antialiased overflow-x-hidden selection:bg-[#3B82F6]/30">
       {/* ─── Section 1 — Hero ─── */}
       <section ref={heroRef} className="relative min-h-screen w-full overflow-hidden">
         <GradientMeshBg />
