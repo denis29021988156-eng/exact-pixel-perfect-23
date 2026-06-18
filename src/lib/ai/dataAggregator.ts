@@ -72,6 +72,9 @@ export async function aggregateCityData(opts?: { departmentScope?: string | null
     overdueTasks,
     highRiskProjects,
     trendFactor,
+    totalIncidents: incidents.length,
+    totalTasks: tasks.length,
+    totalProjects: projects.length,
   });
 
   // Departments with critical/overdue incidents
