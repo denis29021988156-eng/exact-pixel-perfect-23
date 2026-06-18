@@ -52,7 +52,7 @@ export function normalizeAddress(raw: string): { normalized: string; district: s
     .replace(/просп\.?/gi, 'пр-т')
     .replace(/д\.?\s*(\d)/gi, 'д. $1')
     .trim();
-  const district = /реутов/i.test(cleaned) ? 'Реутов' : null;
+  const district = null;
   return {
     normalized: cleaned,
     district,
