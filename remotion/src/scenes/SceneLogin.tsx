@@ -11,7 +11,7 @@ export const SceneLogin: React.FC = () => {
   const cardYOff = interpolate(cardY, [0, 1], [40, 0]);
 
   // typing email
-  const email = "mayor@reutov.gov";
+  const email = "mayor@city.gov";
   const password = "••••••••••";
   const emailLen = Math.max(0, Math.min(email.length, Math.floor((frame - 25) / 1.6)));
   const pwdLen = Math.max(0, Math.min(password.length, Math.floor((frame - 70) / 1.4)));
@@ -37,7 +37,7 @@ export const SceneLogin: React.FC = () => {
         <div style={{ width: 52, height: 52, borderRadius: 14, background: `linear-gradient(135deg, ${colors.primary}, ${colors.primaryGlow})`, display: "grid", placeItems: "center", fontWeight: 800, fontSize: 26, color: "#fff", boxShadow: `0 0 30px ${colors.primary}60` }}>⛨</div>
         <div>
           <div style={{ fontSize: 26, fontWeight: 800, color: colors.text, letterSpacing: -0.5 }}>City OS</div>
-          <div style={{ fontSize: 12, color: colors.textMuted, letterSpacing: 0.4 }}>Ситуационный центр · Реутов</div>
+          <div style={{ fontSize: 12, color: colors.textMuted, letterSpacing: 0.4 }}>Ситуационный центр</div>
         </div>
       </div>
 

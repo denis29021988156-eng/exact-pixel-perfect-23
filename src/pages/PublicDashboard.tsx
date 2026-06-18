@@ -71,7 +71,7 @@ export default function PublicDashboard() {
           </div>
           <div className="text-left">
             <p className="text-sm font-bold text-foreground tracking-tight leading-none">Планшет Мэра</p>
-            <p className="text-[10px] text-muted-foreground tracking-widest uppercase mt-0.5">Открытые данные · Реутов</p>
+            <p className="text-[10px] text-muted-foreground tracking-widest uppercase mt-0.5">Открытые данные города</p>
           </div>
         </button>
         <div className="flex items-center gap-2 text-[11px] text-muted-foreground">

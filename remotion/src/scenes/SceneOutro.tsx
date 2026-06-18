@@ -18,7 +18,7 @@ export const SceneOutro: React.FC = () => {
           <div style={{ width: 64, height: 64, borderRadius: 16, background: `linear-gradient(135deg, ${colors.primary}, ${colors.primaryGlow})`, display: "grid", placeItems: "center", fontWeight: 800, fontSize: 32, color: "#fff", boxShadow: `0 0 50px ${colors.primary}80` }}>⛨</div>
         </div>
         <div style={{ fontSize: 64, fontWeight: 800, color: colors.text, letterSpacing: -2 }}>City OS</div>
-        <div style={{ fontSize: 16, color: colors.primaryGlow, marginTop: 10, letterSpacing: 5, textTransform: "uppercase", fontWeight: 500 }}>Реутов · Цифровая платформа</div>
+        <div style={{ fontSize: 16, color: colors.primaryGlow, marginTop: 10, letterSpacing: 5, textTransform: "uppercase", fontWeight: 500 }}>Цифровая платформа управления городом</div>
         <div style={{ fontSize: 15, color: colors.textMuted, marginTop: 28, maxWidth: 680, marginLeft: "auto", marginRight: "auto" }}>
           Один экран — весь город. Решение принимает Глава города, поддерживает ИИ.
         </div>

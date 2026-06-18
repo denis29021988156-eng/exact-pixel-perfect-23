@@ -21,9 +21,9 @@ export const AppShell: React.FC<{ children: React.ReactNode; aiActive?: boolean 
       {/* Sidebar */}
       <div style={{ width: 260, background: "rgba(10,12,18,0.6)", borderRight: `1px solid ${colors.border}`, padding: "32px 18px", display: "flex", flexDirection: "column", gap: 6 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "0 10px 28px" }}>
-          <div style={{ width: 36, height: 36, borderRadius: 10, background: `linear-gradient(135deg, ${colors.primary}, ${colors.primaryGlow})`, display: "grid", placeItems: "center", fontWeight: 800, fontSize: 18 }}>Р</div>
+          <div style={{ width: 36, height: 36, borderRadius: 10, background: `linear-gradient(135deg, ${colors.primary}, ${colors.primaryGlow})`, display: "grid", placeItems: "center", fontWeight: 800, fontSize: 18 }}>C</div>
           <div>
-            <div style={{ fontSize: 14, fontWeight: 700, letterSpacing: -0.2 }}>Реутов</div>
+            <div style={{ fontSize: 14, fontWeight: 700, letterSpacing: -0.2 }}>City OS</div>
             <div style={{ fontSize: 10, color: colors.textMuted, letterSpacing: 1.2, textTransform: "uppercase" }}>Цифровая платформа</div>
           </div>
         </div>
@@ -44,7 +44,7 @@ export const AppShell: React.FC<{ children: React.ReactNode; aiActive?: boolean 
             <div style={{ width: 32, height: 32, borderRadius: 999, background: "linear-gradient(135deg,#475569,#1E293B)", display: "grid", placeItems: "center", fontWeight: 700, fontSize: 13 }}>ГГ</div>
             <div>
               <div style={{ fontSize: 12.5, fontWeight: 600 }}>Глава города</div>
-              <div style={{ fontSize: 10.5, color: colors.textMuted }}>mayor@reutov.gov</div>
+              <div style={{ fontSize: 10.5, color: colors.textMuted }}>mayor@city.gov</div>
             </div>
           </div>
         </div>
