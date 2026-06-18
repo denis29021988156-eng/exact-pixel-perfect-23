@@ -22,7 +22,7 @@ const typeLabels: Record<string, string> = { housing: 'ЖКХ', road: 'Доро�
 const severityWeight: Record<string, number> = { low: 0.3, medium: 0.6, high: 1.0 };
 
 // City boundary (OSM data, simplified)
-const REUTOV_BOUNDARY: [number, number][] = [
+const CITY_BOUNDARY: [number, number][] = [
   [55.74718, 37.84254], [55.74633, 37.84315], [55.74531, 37.8448], [55.74459, 37.8468],
   [55.7445, 37.848], [55.74462, 37.84971], [55.74478, 37.8517], [55.74495, 37.85392],
   [55.74512, 37.85807], [55.74524, 37.86054], [55.74557, 37.86323], [55.7458, 37.86456],
@@ -67,7 +67,7 @@ function createIcon(severity: string) {
 // Центр города и оптимальный зум, чтобы границы занимали экран
 const CITY_CENTER: [number, number] = [55.7613, 37.8617];
 const CITY_ZOOM = 14;
-const REUTOV_BOUNDS: L.LatLngBoundsExpression = [
+const CITY_BOUNDS: L.LatLngBoundsExpression = [
   [55.7445, 37.8420],
   [55.7825, 37.8910],
 ];
@@ -75,13 +75,13 @@ const REUTOV_BOUNDS: L.LatLngBoundsExpression = [
 type Incident = Tables<'incidents'> & { lat?: number | null; lng?: number | null };
 
 // Автоподгон под границы города при загрузке
-function FitToReutov() {
+function FitToCity() {
   const map = useMap();
   const didFitRef = useRef(false);
   useEffect(() => {
     if (didFitRef.current) return;
     didFitRef.current = true;
-    map.fitBounds(REUTOV_BOUNDS, { padding: [24, 24] });
+    map.fitBounds(CITY_BOUNDS, { padding: [24, 24] });
   }, [map]);
   return null;
 }
@@ -240,15 +240,15 @@ export default function MapPage() {
             <p className="text-muted-foreground">Загрузка карты...</p>
           </div>
         ) : (
-          <MapContainer center={CITY_CENTER} zoom={CITY_ZOOM} minZoom={12} maxZoom={19} maxBounds={REUTOV_BOUNDS} maxBoundsViscosity={0.6} style={{ height: '100%', width: '100%', background: '#0F1524' }} zoomControl={true} attributionControl={false}>
-            <FitToReutov />
+          <MapContainer center={CITY_CENTER} zoom={CITY_ZOOM} minZoom={12} maxZoom={19} maxBounds={CITY_BOUNDS} maxBoundsViscosity={0.6} style={{ height: '100%', width: '100%', background: '#0F1524' }} zoomControl={true} attributionControl={false}>
+            <FitToCity />
             <TileLayer
               url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
               subdomains="abcd"
               maxZoom={20}
             />
             <Polygon
-              positions={REUTOV_BOUNDARY}
+              positions={CITY_BOUNDARY}
               pathOptions={{
                 color: '#3B82F6',
                 weight: 1.5,
