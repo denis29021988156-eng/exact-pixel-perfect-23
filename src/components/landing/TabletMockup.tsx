@@ -67,7 +67,7 @@ function SlideMap() {
         </div>
       ))}
       <div className="absolute bottom-3 left-3 flex items-center gap-2 text-[10px] text-[#94A3B8]">
-        <MapPin className="w-3 h-3" /> Реутов · 6 активных меток
+        <MapPin className="w-3 h-3" /> Город · 6 активных меток
       </div>
     </div>
   );

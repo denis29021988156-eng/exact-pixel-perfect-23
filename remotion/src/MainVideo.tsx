@@ -21,7 +21,7 @@ const cues = [
   { from: 240, to: 330, step: "Шаг 3", label: "Сформировать брифинг" },
   { from: 330, to: 540, step: "Шаг 4", label: "Загрузка по департаментам" },
   { from: 540, to: 810, step: "Шаг 5", label: "Утренний брифинг" },
-  { from: 810, to: 895, step: "Финал", label: "Реутов · Цифровая платформа" },
+  { from: 810, to: 895, step: "Финал", label: "City OS · Цифровая платформа" },
 ];
 
 export const MainVideo: React.FC = () => {

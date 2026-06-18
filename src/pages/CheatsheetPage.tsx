@@ -20,7 +20,7 @@ interface SectorBlock {
   metrics: MetricItem[];
 }
 
-// ─── Тестовые данные по отраслям Реутова ───
+// ─── Тестовые данные по отраслям города ───
 const staticBlocks: SectorBlock[] = [
   {
     name: 'Строительство объектов',
@@ -122,7 +122,7 @@ export default function CheatsheetPage() {
       return `📊 ${s.name}\n${metricsText}`;
     }).join('\n\n');
 
-    navigator.clipboard.writeText(`Шпаргалка · г. Реутов\n${new Date().toLocaleDateString('ru-RU')}\n\n${text}`);
+    navigator.clipboard.writeText(`Шпаргалка по городу\n${new Date().toLocaleDateString('ru-RU')}\n\n${text}`);
     setCopied(true);
     toast.success('Шпаргалка скопирована в буфер обмена');
     setTimeout(() => setCopied(false), 2000);
@@ -177,7 +177,7 @@ export default function CheatsheetPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-extrabold text-foreground">Шпаргалка</h1>
-          <p className="text-sm text-muted-foreground mt-0.5">г. Реутов · Ключевые цифры для доклада</p>
+          <p className="text-sm text-muted-foreground mt-0.5">Ключевые цифры для доклада</p>
         </div>
         <button
           onClick={handleCopy}

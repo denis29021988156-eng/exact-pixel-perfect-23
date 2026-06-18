@@ -21,7 +21,7 @@ const statusLabels: Record<string, string> = { new: 'Новый', in_progress: '
 const typeLabels: Record<string, string> = { housing: 'ЖКХ', road: 'Дороги', social: 'Соцсфера', ecology: 'Экология', transport: 'Транспорт', other: 'Другое' };
 const severityWeight: Record<string, number> = { low: 0.3, medium: 0.6, high: 1.0 };
 
-// Реутов city boundary (real OSM data, simplified)
+// City boundary (OSM data, simplified)
 const REUTOV_BOUNDARY: [number, number][] = [
   [55.74718, 37.84254], [55.74633, 37.84315], [55.74531, 37.8448], [55.74459, 37.8468],
   [55.7445, 37.848], [55.74462, 37.84971], [55.74478, 37.8517], [55.74495, 37.85392],
@@ -64,7 +64,7 @@ function createIcon(severity: string) {
   });
 }
 
-// Реутов — центр города и оптимальный зум, чтобы границы Реутова занимали экран
+// Центр города и оптимальный зум, чтобы границы занимали экран
 const CITY_CENTER: [number, number] = [55.7613, 37.8617];
 const CITY_ZOOM = 14;
 const REUTOV_BOUNDS: L.LatLngBoundsExpression = [
@@ -74,7 +74,7 @@ const REUTOV_BOUNDS: L.LatLngBoundsExpression = [
 
 type Incident = Tables<'incidents'> & { lat?: number | null; lng?: number | null };
 
-// Автоподгон под границы Реутова при загрузке
+// Автоподгон под границы города при загрузке
 function FitToReutov() {
   const map = useMap();
   const didFitRef = useRef(false);
@@ -186,7 +186,7 @@ export default function MapPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-[28px] font-bold text-foreground tracking-tight">Карта города</h1>
-          <p className="text-sm text-muted-foreground mt-0.5">Реутов · Инциденты на карте</p>
+          <p className="text-sm text-muted-foreground mt-0.5">Инциденты на карте</p>
         </div>
         <div className="flex items-center gap-3">
           {stats.high > 0 && <span className="red-zone-badge">КРАСНАЯ ЗОНА · {stats.high}</span>}

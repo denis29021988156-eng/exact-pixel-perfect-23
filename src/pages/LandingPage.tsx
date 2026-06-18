@@ -29,7 +29,7 @@ import CountUp from '@/components/landing/CountUp';
 import AiChatDemo from '@/components/landing/AiChatDemo';
 import ModuleCard from '@/components/landing/ModuleCard';
 
-const META_LINE = 'Управление городом · v1.0 · Реутов · 2026';
+const META_LINE = 'Управление городом · v1.0 · 2026';
 const HERO_LINES = ['Один экран', 'Весь город'];
 const EASE = [0.65, 0, 0.35, 1] as const;
 
