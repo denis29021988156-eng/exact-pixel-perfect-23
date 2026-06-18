@@ -240,15 +240,15 @@ export default function MapPage() {
             <p className="text-muted-foreground">Загрузка карты...</p>
           </div>
         ) : (
-          <MapContainer center={CITY_CENTER} zoom={CITY_ZOOM} minZoom={12} maxZoom={19} maxBounds={REUTOV_BOUNDS} maxBoundsViscosity={0.6} style={{ height: '100%', width: '100%', background: '#0F1524' }} zoomControl={true} attributionControl={false}>
-            <FitToReutov />
+          <MapContainer center={CITY_CENTER} zoom={CITY_ZOOM} minZoom={12} maxZoom={19} maxBounds={CITY_BOUNDS} maxBoundsViscosity={0.6} style={{ height: '100%', width: '100%', background: '#0F1524' }} zoomControl={true} attributionControl={false}>
+            <FitToCity />
             <TileLayer
               url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
               subdomains="abcd"
               maxZoom={20}
             />
             <Polygon
-              positions={REUTOV_BOUNDARY}
+              positions={CITY_BOUNDARY}
               pathOptions={{
                 color: '#3B82F6',
                 weight: 1.5,
