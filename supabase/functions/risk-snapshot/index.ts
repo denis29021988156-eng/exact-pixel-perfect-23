@@ -1,26 +1,12 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.0';
+import { calculateCityRiskIndex } from '../_shared/riskEngine.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// Replicates the v1 deterministic Risk Engine on the server.
-// Keep formula in sync with src/lib/risk/cityRiskEngine.ts (v1).
-function calc(criticalIncidents: number, overdueTasks: number, highRiskProjects: number, trendFactor: number) {
-  const raw =
-    criticalIncidents * 0.4 +
-    overdueTasks * 0.3 +
-    highRiskProjects * 0.2 +
-    trendFactor * 10 * 0.1;
-  const index = Math.min(Math.round(Math.max(raw, 0)), 100);
-  let level: 'low' | 'moderate' | 'elevated' | 'critical';
-  if (index <= 15) level = 'low';
-  else if (index <= 40) level = 'moderate';
-  else if (index <= 70) level = 'elevated';
-  else level = 'critical';
-  return { index, level };
-}
+// Risk engine lives in _shared/riskEngine.ts (single source of truth, v2).
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
@@ -74,7 +60,15 @@ Deno.serve(async (req) => {
     const overdueRatio = incidents.length > 0 ? overdueIncidents / incidents.length : 0;
     const trendFactor = overdueRatio > 0.3 ? 1 : overdueRatio > 0.1 ? 0.5 : 0;
 
-    const { index, level } = calc(criticalIncidents, overdueTasks, highRiskProjects, trendFactor);
+    const { index, level } = calculateCityRiskIndex({
+      criticalIncidents,
+      overdueTasks,
+      highRiskProjects,
+      trendFactor,
+      totalIncidents: incidents.length,
+      totalTasks: tasks.length,
+      totalProjects: projects.length,
+    });
     const today = new Date().toISOString().slice(0, 10);
 
     const { error } = await supabase
@@ -94,7 +88,7 @@ Deno.serve(async (req) => {
             activeTasks: tasks.length,
             totalProjects: projects.length,
           },
-          formula_version: 'v1',
+          formula_version: 'v2',
         },
         { onConflict: 'snapshot_date' }
       );
