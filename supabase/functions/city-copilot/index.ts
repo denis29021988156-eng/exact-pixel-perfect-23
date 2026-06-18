@@ -6,13 +6,13 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-// ШПАРГАЛКА — отраслевые показатели г. Реутов.
+// ШПАРГАЛКА — отраслевые показатели города.
 // Эти цифры синхронизированы со страницей /app/cheatsheet (staticBlocks).
 // При обновлении цифр обнови version и lastUpdated, а также src/pages/CheatsheetPage.tsx.
 const CHEATSHEET = {
   version: "2026-05-10",
   lastUpdated: "2026-05-10",
-  city: "Реутов",
+  city: "Город",
   sectors: [
     {
       name: "Строительство объектов",
