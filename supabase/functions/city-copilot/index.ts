@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { calculateCityRiskIndex } from "../_shared/riskEngine.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -227,9 +228,15 @@ serve(async (req) => {
     const highRiskProjects = projects.filter((p: any) => p.status === "risk" || p.status === "overdue").length;
     const overdueRatio = incidents.length > 0 ? overdueIncidents / incidents.length : 0;
     const trendFactor = overdueRatio > 0.3 ? 1 : overdueRatio > 0.1 ? 0.5 : 0;
-    const riskIndex = Math.min(Math.round(
-      (criticalIncidents * 0.4) + (overdueTasks * 0.3) + (highRiskProjects * 0.2) + (trendFactor * 10 * 0.1)
-    ), 100);
+    const riskIndex = calculateCityRiskIndex({
+      criticalIncidents,
+      overdueTasks,
+      highRiskProjects,
+      trendFactor,
+      totalIncidents: incidents.length,
+      totalTasks: tasks.length,
+      totalProjects: projects.length,
+    }).index;
 
     const deptSet = new Set<string>();
     incidents.forEach((i: any) => {
@@ -334,10 +341,10 @@ ${JSON.stringify(staff, null, 2)}
 
 ${memoryBlock ? memoryBlock + "\n" : ""}
 ШКАЛА Risk Index:
-- 0–30 низкий: "Город работает в штатном режиме"
-- 31–60 умеренный: "Точечные риски, контроль на месте"
-- 61–80 повышенный: "Требуется усиление контроля"
-- 81–100 критический: "Необходимо личное вмешательство руководства"
+- 0–15 низкий: "Город работает в штатном режиме"
+- 16–40 умеренный: "Точечные риски, контроль на месте"
+- 41–70 повышенный: "Требуется усиление контроля"
+- 71–100 критический: "Необходимо личное вмешательство руководства"
 Текущий City Risk Index: ${riskIndex}/100. Интерпретируй ИМЕННО по этой шкале — не нагнетать.
 
 ТОН И ПРАВИЛА:
