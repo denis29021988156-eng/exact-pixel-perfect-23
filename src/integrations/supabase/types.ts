@@ -1227,7 +1227,7 @@ export type Database = {
         }
         Insert: {
           active_alerts?: number
-          city_name: string
+          city_name?: string
           current?: Json
           fetched_at?: string
           forecast_72h?: Json
