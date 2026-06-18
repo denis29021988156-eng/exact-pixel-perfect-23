@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { calculateCityRiskIndex } from "../_shared/riskEngine.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -167,12 +168,15 @@ serve(async (req) => {
 
     const overdueRatio = incidents.length > 0 ? overdueIncidents / incidents.length : 0;
     const trendFactor = overdueRatio > 0.3 ? 1 : overdueRatio > 0.1 ? 0.5 : 0;
-    riskIndex = Math.min(Math.round(
-      (criticalIncidents * 0.4) +
-      (overdueTasks * 0.3) +
-      (highRiskProjects * 0.2) +
-      (trendFactor * 10 * 0.1)
-    ), 100);
+    riskIndex = calculateCityRiskIndex({
+      criticalIncidents,
+      overdueTasks,
+      highRiskProjects,
+      trendFactor,
+      totalIncidents: incidents.length,
+      totalTasks: tasks.length,
+      totalProjects: projects.length,
+    }).index;
 
     const deptSet = new Set<string>();
     incidents.forEach((i: any) => {
@@ -220,10 +224,10 @@ serve(async (req) => {
 ТЕКУЩЕЕ ВРЕМЯ (МСК, Europe/Moscow) указано в поле nowMsk входных данных. Все сроки и формулировки времени — по Москве.
 
 ШКАЛА City Risk Index:
-- 0–30 — низкий ("город работает в штатном режиме")
-- 31–60 — умеренный ("точечные риски, контроль на месте")
-- 61–80 — повышенный ("требуется усиление контроля")
-- 81–100 — критический ("необходимо личное вмешательство руководства")
+- 0–15 — низкий ("город работает в штатном режиме")
+- 16–40 — умеренный ("точечные риски, контроль на месте")
+- 41–70 — повышенный ("требуется усиление контроля")
+- 71–100 — критический ("необходимо личное вмешательство руководства")
 
 ПРАВИЛА ТОНА:
 - Деловой, спокойный, управленческий.
