@@ -1277,6 +1277,7 @@ export type Database = {
       }
     }
     Functions: {
+      detect_complaint_surge: { Args: never; Returns: undefined }
       get_user_department: { Args: { _user_id: string }; Returns: string }
       has_role: {
         Args: {
