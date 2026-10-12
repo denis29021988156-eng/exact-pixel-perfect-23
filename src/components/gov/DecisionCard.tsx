@@ -1,11 +1,23 @@
 import { ChevronRight, Sparkles } from "lucide-react";
 import { Button } from "@/components/ios/Button";
 import { channelLabel, fmtDueShort, fmtRelDay, fmtWeekdayShort, mskToday, severityLabel } from "@/lib/format";
-import type { Decision } from "@/lib/types";
+import type { Decision, Severity } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { useAgendaFlow, useAssignFlow } from "./actions";
 import { ChannelIcon } from "./meta";
-import { severityBar } from "./tones";
+
+const sevDot: Record<Severity, string> = { critical: "bg-critical", high: "bg-warning", medium: "bg-tint" };
+const sevInk: Record<Severity, string> = {
+  critical: "text-critical-ink",
+  high: "text-warning-ink",
+  medium: "text-tint",
+};
+// Цветное свечение в углу карточки — насколько острый вопрос, видно издалека.
+const sevGlow: Record<Severity, string> = {
+  critical: "hsl(var(--critical) / 0.24)",
+  high: "hsl(var(--warning) / 0.24)",
+  medium: "hsl(var(--primary) / 0.18)",
+};
 
 /** Вопрос, который ждёт решения: сигнал с готовым поручением или пункт повестки. */
 export function DecisionCard({
@@ -24,23 +36,17 @@ export function DecisionCard({
   if (d.type === "signal") {
     const due = d.due && d.due >= today ? d.due : null;
     return (
-      <article className="surface relative flex min-w-0 flex-col overflow-hidden p-5 pl-6">
-        <span className={cn("absolute inset-y-0 left-0 w-1.5", severityBar[d.severity])} aria-hidden />
-        <div className="flex items-start justify-between gap-3">
-          <p className="min-w-0 text-footnote text-ink-2">
-            <span
-              className={cn(
-                "font-semibold",
-                d.severity === "critical"
-                  ? "text-critical-ink"
-                  : d.severity === "high"
-                    ? "text-warning-ink"
-                    : "text-tint",
-              )}
-            >
-              {severityLabel[d.severity]}
-            </span>
-            {d.subtitle ? ` · ${d.subtitle}` : ""}
+      <article className="surface relative flex min-w-0 flex-col overflow-hidden p-5">
+        <span
+          className="pointer-events-none absolute -right-20 -top-24 h-64 w-64 rounded-full"
+          style={{ background: `radial-gradient(closest-side, ${sevGlow[d.severity]}, transparent)` }}
+          aria-hidden
+        />
+        <div className="relative flex items-start justify-between gap-3">
+          <p className="flex min-w-0 items-center gap-2 pt-0.5 text-footnote">
+            <span className={cn("h-2 w-2 shrink-0 rounded-full", sevDot[d.severity])} aria-hidden />
+            <span className={cn("shrink-0 font-semibold", sevInk[d.severity])}>{severityLabel[d.severity]}</span>
+            {d.subtitle && <span className="truncate text-ink-2">{d.subtitle}</span>}
           </p>
           <button
             type="button"
@@ -51,27 +57,27 @@ export function DecisionCard({
             <ChevronRight className="h-4 w-4" aria-hidden />
           </button>
         </div>
-        <h3 className="mt-1 text-headline">
+        <h3 className="relative mt-1.5 text-[18px] font-semibold leading-[23px] tracking-[-0.01em]">
           <button type="button" onClick={() => onOpenSignal(d.id)} className="text-left">
             {d.title}
           </button>
         </h3>
         {d.recommendation && (
-          <p className="mt-2 flex gap-2 text-subhead text-ink-2">
+          <p className="relative mt-2 flex gap-2 text-subhead text-ink-2">
             <Sparkles className="mt-0.5 h-4 w-4 shrink-0 text-ai" aria-hidden />
             <span>{d.recommendation}</span>
           </p>
         )}
-        <div className="mt-auto pt-4">
+        <div className="relative mt-auto pt-4">
           {d.executor ? (
             <Button
               block
-              className="flex-col gap-0 py-1.5"
+              className="min-h-[48px] flex-wrap gap-x-2 gap-y-0 py-2"
               loading={assign.pending}
               onClick={() => assign.run({ signalId: d.id })}
             >
               <span>Поручить: {d.executor.short_name}</span>
-              <span className="text-[12px] font-medium opacity-85">
+              <span className="text-[13px] font-medium opacity-80">
                 {due ? `срок ${fmtDueShort(due, today)}` : "срок через 3 дня"}
               </span>
             </Button>
@@ -91,7 +97,7 @@ export function DecisionCard({
       <div className="flex items-center gap-3">
         <ChannelIcon channel={d.channel} />
         <p className="text-footnote text-ink-2">
-          <span className="font-semibold text-foreground">Повестка · {channelLabel[d.channel]}</span>
+          <span className="font-semibold text-foreground">Пункт повестки: {channelLabel[d.channel]}</span>
           <br />
           {when === "сегодня" || when === "завтра" || when === "послезавтра"
             ? when
@@ -99,7 +105,7 @@ export function DecisionCard({
           {d.subtitle ? ` · ${d.subtitle}` : ""}
         </p>
       </div>
-      <h3 className="mt-3 text-headline">
+      <h3 className="mt-3 text-[18px] font-semibold leading-[23px] tracking-[-0.01em]">
         <button type="button" onClick={onOpenAgenda} className="text-left hover:underline">
           {d.title}
         </button>

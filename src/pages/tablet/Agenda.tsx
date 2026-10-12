@@ -111,9 +111,7 @@ export default function Agenda() {
           <section className="surface p-4" aria-label="Индекс доверия">
             <div className="flex items-start justify-between gap-3">
               <button type="button" className="text-left" onClick={() => sheets.open("trust")}>
-                <span className="block text-footnote font-semibold uppercase tracking-wide text-ink-2">
-                  Индекс доверия
-                </span>
+                <span className="block text-[15px] font-semibold text-ink-2">Индекс доверия</span>
                 {a.trust_summary && (
                   <span className="mt-1 flex items-baseline gap-2">
                     <span className="text-title1 tabular-nums">{fmtNum(Number(a.trust_summary.value))}</span>
@@ -157,7 +155,7 @@ export default function Agenda() {
               </ul>
               {a.tone.avoid.length > 0 && (
                 <>
-                  <h3 className="mt-4 text-footnote font-semibold uppercase tracking-wide text-ink-2">Чего избегаем</h3>
+                  <h3 className="mt-4 text-[15px] font-semibold text-ink-2">Чего избегаем</h3>
                   <ul className="mt-2 space-y-2">
                     {a.tone.avoid.map((t) => (
                       <li key={t} className="flex gap-2.5 text-callout">

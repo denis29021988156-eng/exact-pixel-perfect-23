@@ -3,7 +3,7 @@ import { Compass } from "lucide-react";
 
 export default function NotFound() {
   return (
-    <div className="flex min-h-dvh items-center justify-center bg-background px-4">
+    <div className="flex min-h-dvh items-center justify-center px-4">
       <div className="surface w-full max-w-md px-6 py-10 text-center">
         <Compass className="mx-auto h-8 w-8 text-ink-3" aria-hidden />
         <h1 className="mt-3 text-title2">Страница не найдена</h1>

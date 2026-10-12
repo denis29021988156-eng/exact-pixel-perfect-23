@@ -93,8 +93,15 @@ export default function Instructions() {
         title="Поручения"
         subtitle="Кто, что и к какому сроку"
         right={
-          <Button size="sm" variant="tinted" icon={<Plus className="h-4 w-4" />} onClick={() => sheets.open("new")}>
-            Поручить
+          <Button
+            size="sm"
+            variant="tinted"
+            icon={<Plus className="h-4 w-4" />}
+            onClick={() => sheets.open("new")}
+            aria-label="Поручить"
+            className="max-sm:h-11 max-sm:w-11 max-sm:px-0"
+          >
+            <span className="hidden sm:inline">Поручить</span>
           </Button>
         }
       />
@@ -136,7 +143,7 @@ export default function Instructions() {
           </div>
           {wide && (
             <div className="min-w-0 lg:col-span-7">
-              <div className="sticky top-[64px] max-h-[calc(100dvh-64px-var(--tabbar-height)-48px)] overflow-y-auto overscroll-contain rounded-[18px] p-5 ring-1 ring-line/80">
+              <div className="glass flat-surfaces sticky top-[64px] max-h-[calc(100dvh-64px-var(--tabbar-space))] overflow-y-auto overscroll-contain rounded-card p-5 md:p-6">
                 {selected ? (
                   <InstructionDetail item={selected} onOpenSignal={(id) => sheets.open("signal", id)} />
                 ) : (

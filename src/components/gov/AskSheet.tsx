@@ -21,6 +21,7 @@ import { useDictation, useSpeaker } from "@/lib/speech";
 import type { AskAnswer, AskRef } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { useCreateFlow } from "./actions";
+import { OrbLayers } from "./Orb";
 
 const SUGGESTIONS = [
   "Что горит сегодня?",
@@ -190,13 +191,15 @@ export function AskSheet({ open, onClose }: { open: boolean; onClose: () => void
               <button
                 type="button"
                 onClick={dictation.listening ? dictation.stop : dictation.start}
-                className={cn(
-                  "press flex h-20 w-20 items-center justify-center rounded-full text-white shadow-float",
-                  dictation.listening ? "animate-listen-ring bg-critical" : "bg-tint",
-                )}
+                className="press relative flex h-20 w-20 items-center justify-center rounded-full text-white"
                 aria-label={dictation.listening ? "Остановить запись" : "Сказать голосом"}
               >
-                {dictation.listening ? <Square className="h-7 w-7" fill="currentColor" /> : <Mic className="h-9 w-9" />}
+                <OrbLayers active={dictation.listening} />
+                {dictation.listening ? (
+                  <Square className="relative h-7 w-7" fill="currentColor" />
+                ) : (
+                  <Mic className="relative h-9 w-9" />
+                )}
               </button>
             ) : (
               <span className="flex h-16 w-16 items-center justify-center rounded-full bg-ai/12 text-ai-ink">

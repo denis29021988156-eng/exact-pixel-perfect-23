@@ -3,89 +3,123 @@
 @tailwind utilities;
 
 /*
-  Планшет губернатора — системные цвета в духе iOS.
-  Светлая тема по умолчанию, тёмная — по настройке устройства (или класс .dark).
+  Планшет губернатора — «жидкое стекло» в духе iPadOS 26.
+  Под интерфейсом — небо из мягких градиентов, сверху — полупрозрачные стеклянные карточки.
+  Светлая тема по умолчанию, тёмная — по настройке устройства (класс .dark ставит main.tsx).
+
+  Цвета в формате «H S% L%» для Tailwind. У полупрозрачных (card, elevated, border, fill)
+  есть своя прозрачность --*-a: так они ложатся на стекло, а не закрашивают его.
 */
 @layer base {
   :root {
     color-scheme: light;
 
-    --background: 240 24% 96%;
+    --background: 221 70% 95%;
+    --foreground: 221 57% 13%;
+    --ink-2: 223 21% 39%;
+    --ink-3: 224 17% 56%;
+
     --card: 0 0% 100%;
+    --card-a: 0.62;
     --elevated: 0 0% 100%;
-    --foreground: 240 6% 10%;
-    --ink-2: 240 3% 42%;
-    --ink-3: 240 2% 58%;
-    --border: 240 6% 88%;
-    --fill: 240 6% 93%;
+    --elevated-a: 0.86;
+    --border: 222 45% 22%;
+    --border-a: 0.11;
+    --fill: 222 55% 32%;
+    --fill-a: 0.07;
 
-    --primary: 211 100% 46%;
+    --primary: 220 100% 56%;
     --primary-foreground: 0 0% 100%;
-    --critical: 3 100% 58%;
+    --critical: 3 100% 59%;
     --warning: 35 100% 50%;
-    --good: 135 59% 45%;
-    --ai: 241 61% 59%;
+    --good: 145 70% 40%;
+    --ai: 250 100% 65%;
 
-    /* Те же цвета для текста: темнее, чтобы читались на белом. */
-    --critical-ink: 3 76% 45%;
-    --warning-ink: 27 95% 35%;
-    --good-ink: 135 62% 29%;
-    --ai-ink: 241 50% 50%;
+    /* Те же цвета для текста: темнее, чтобы читались на светлом стекле. */
+    --critical-ink: 354 100% 42%;
+    --warning-ink: 27 100% 35%;
+    --good-ink: 146 79% 27%;
+    --ai-ink: 250 73% 55%;
 
-    --radius: 12px;
-    --tabbar-height: 56px;
+    --glass: rgba(255, 255, 255, 0.56);
+    --glass-strong: rgba(247, 249, 255, 0.86);
+    --glass-edge: rgba(255, 255, 255, 0.8);
+    --glass-hi: rgba(255, 255, 255, 0.75);
+    --glass-shadow: 0 18px 48px -14px rgba(32, 45, 90, 0.2), 0 2px 6px rgba(32, 45, 90, 0.05);
+    --inner: rgba(255, 255, 255, 0.84);
+    --inner-edge: rgba(14, 26, 51, 0.06);
+    --scrim: rgba(14, 26, 51, 0.26);
+    --glass-bar: rgba(250, 252, 255, 0.8);
+    --edge-tint: rgba(228, 236, 253, 0.78);
+
+    --sky:
+      radial-gradient(900px 620px at 8% -12%, #b9d3ff 0%, transparent 60%),
+      radial-gradient(720px 540px at 96% 6%, #ffd3c2 0%, transparent 62%),
+      radial-gradient(860px 720px at 72% 112%, #cdbdff 0%, transparent 60%),
+      linear-gradient(160deg, #e4eeff 0%, #ede8ff 55%, #fbefea 100%);
+
+    --map-dot: rgba(46, 70, 130, 0.2);
+    --map-land: rgba(255, 255, 255, 0.4);
+    --map-edge: rgba(30, 60, 140, 0.14);
+    --map-ring: #ffffff;
+    --map-halo: rgba(255, 255, 255, 0.78);
+
+    --radius: 14px;
+    /* Место под плавающую панель вкладок. */
+    --tabbar-space: calc(env(safe-area-inset-bottom) + 112px);
   }
 
   .dark {
     color-scheme: dark;
 
-    --background: 0 0% 0%;
-    --card: 240 3% 11%;
-    --elevated: 240 2% 17%;
-    --foreground: 0 0% 100%;
-    --ink-2: 240 4% 64%;
-    --ink-3: 240 3% 46%;
-    --border: 240 2% 22%;
-    --fill: 240 3% 18%;
+    --background: 226 66% 9%;
+    --foreground: 222 100% 97%;
+    --ink-2: 222 34% 73%;
+    --ink-3: 223 24% 56%;
 
-    --primary: 210 100% 55%;
+    --card: 223 60% 18%;
+    --card-a: 0.5;
+    --elevated: 224 50% 16%;
+    --elevated-a: 0.92;
+    --border: 220 90% 85%;
+    --border-a: 0.13;
+    --fill: 220 90% 85%;
+    --fill-a: 0.09;
+
+    --primary: 216 100% 60%;
     --primary-foreground: 0 0% 100%;
-    --critical: 3 100% 61%;
-    --warning: 36 100% 52%;
-    --good: 135 64% 50%;
-    --ai: 241 74% 66%;
+    --critical: 4 100% 65%;
+    --warning: 36 100% 62%;
+    --good: 151 69% 55%;
+    --ai: 251 100% 82%;
 
-    --critical-ink: 3 100% 70%;
-    --warning-ink: 36 100% 62%;
-    --good-ink: 135 60% 60%;
-    --ai-ink: 241 90% 78%;
-  }
+    --critical-ink: 4 100% 72%;
+    --warning-ink: 36 100% 70%;
+    --good-ink: 150 71% 62%;
+    --ai-ink: 252 100% 86%;
 
-  @media (prefers-color-scheme: dark) {
-    :root:not(.light) {
-      color-scheme: dark;
+    --glass: rgba(18, 30, 62, 0.55);
+    --glass-strong: rgba(15, 25, 54, 0.88);
+    --glass-edge: rgba(170, 195, 255, 0.16);
+    --glass-hi: rgba(255, 255, 255, 0.07);
+    --glass-shadow: 0 24px 60px -18px rgba(0, 0, 0, 0.65);
+    --inner: rgba(255, 255, 255, 0.05);
+    --inner-edge: rgba(170, 195, 255, 0.1);
+    --scrim: rgba(2, 6, 20, 0.6);
+    --glass-bar: rgba(16, 26, 56, 0.82);
+    --edge-tint: rgba(8, 14, 34, 0.8);
 
-      --background: 0 0% 0%;
-      --card: 240 3% 11%;
-      --elevated: 240 2% 17%;
-      --foreground: 0 0% 100%;
-      --ink-2: 240 4% 64%;
-      --ink-3: 240 3% 46%;
-      --border: 240 2% 22%;
-      --fill: 240 3% 18%;
+    --sky:
+      radial-gradient(900px 620px at 8% -12%, #1c3a7a 0%, transparent 60%),
+      radial-gradient(720px 540px at 97% 4%, #5a1e3e 0%, transparent 60%),
+      radial-gradient(900px 720px at 72% 116%, #2a1f6e 0%, transparent 62%),
+      linear-gradient(160deg, #070f24 0%, #0b1431 60%, #120e2a 100%);
 
-      --primary: 210 100% 55%;
-      --primary-foreground: 0 0% 100%;
-      --critical: 3 100% 61%;
-      --warning: 36 100% 52%;
-      --good: 135 64% 50%;
-      --ai: 241 74% 66%;
-
-      --critical-ink: 3 100% 70%;
-      --warning-ink: 36 100% 62%;
-      --good-ink: 135 60% 60%;
-      --ai-ink: 241 90% 78%;
-    }
+    --map-dot: rgba(120, 160, 255, 0.2);
+    --map-land: rgba(60, 90, 170, 0.1);
+    --map-edge: rgba(140, 170, 255, 0.2);
+    --map-ring: #0b1431;
+    --map-halo: rgba(10, 18, 44, 0.8);
   }
 
   * {
@@ -96,15 +130,28 @@
     -webkit-text-size-adjust: 100%;
     text-size-adjust: 100%;
     -webkit-tap-highlight-color: transparent;
+    background-color: hsl(var(--background));
   }
 
   body {
-    @apply bg-background text-foreground font-sans antialiased;
+    @apply text-foreground font-sans antialiased;
     font-size: 17px;
     line-height: 22px;
     min-height: 100dvh;
     font-synthesis-weight: none;
+    font-optical-sizing: auto;
     text-rendering: optimizeLegibility;
+    background: transparent;
+  }
+
+  /* Небо под стеклом: неподвижно при прокрутке, как обои на iPad. */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background: var(--sky);
   }
 
   ::selection {
@@ -152,9 +199,76 @@
 }
 
 @layer components {
-  /* Карточка: белая на сером фоне, как сгруппированные списки в iOS. */
+  /* Стекло: полупрозрачная панель с размытием, светлой кромкой и мягкой тенью. */
+  .glass {
+    background: var(--glass);
+    -webkit-backdrop-filter: blur(30px) saturate(170%);
+    backdrop-filter: blur(30px) saturate(170%);
+    border: 1px solid var(--glass-edge);
+    box-shadow:
+      var(--glass-shadow),
+      inset 0 1px 0 var(--glass-hi);
+  }
+
+  /* Плотное стекло: листы, меню, уведомления — текст на них должен читаться без усилий. */
+  .glass-strong {
+    background: var(--glass-strong);
+    -webkit-backdrop-filter: blur(40px) saturate(180%);
+    backdrop-filter: blur(40px) saturate(180%);
+    border: 1px solid var(--glass-edge);
+    box-shadow:
+      0 30px 80px -20px rgba(10, 20, 50, 0.35),
+      inset 0 1px 0 var(--glass-hi);
+  }
+
+  /* Панели поверх прокручиваемого содержимого (вкладки, заголовок): плотнее, чтобы текст под ними не мешал. */
+  .glass-bar {
+    background: var(--glass-bar);
+    -webkit-backdrop-filter: blur(40px) saturate(180%);
+    backdrop-filter: blur(40px) saturate(180%);
+    border: 1px solid var(--glass-edge);
+    box-shadow:
+      0 20px 50px -18px rgba(10, 20, 50, 0.38),
+      inset 0 1px 0 var(--glass-hi);
+  }
+
+  /* Мягкое размытие у краёв экрана: содержимое растворяется под панелями, как в iOS 26. */
+  .scroll-edge {
+    position: fixed;
+    left: 0;
+    right: 0;
+    pointer-events: none;
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+  }
+  .scroll-edge-bottom {
+    bottom: 0;
+    z-index: 35;
+    height: calc(env(safe-area-inset-bottom) + 112px);
+    background: linear-gradient(to bottom, transparent, var(--edge-tint));
+    -webkit-mask-image: linear-gradient(to bottom, transparent, #000 62%);
+    mask-image: linear-gradient(to bottom, transparent, #000 62%);
+  }
+  .scroll-edge-top {
+    top: 0;
+    z-index: 25;
+    height: calc(env(safe-area-inset-top) + 64px);
+    background: linear-gradient(to top, transparent, var(--edge-tint));
+    -webkit-mask-image: linear-gradient(to top, transparent, #000 62%);
+    mask-image: linear-gradient(to top, transparent, #000 62%);
+  }
+
+  /* Карточка. Внутри листа — без тени и размытия, чтобы стекло не наслаивалось. */
   .surface {
-    @apply rounded-card bg-card;
+    @apply glass rounded-card;
+  }
+  .sheet-body .surface,
+  .flat-surfaces .surface {
+    background: var(--inner);
+    border-color: var(--inner-edge);
+    box-shadow: none;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
   }
 
   /* Строки внутри карточки разделены тонкой линией с отступом слева. */
@@ -170,34 +284,47 @@
     height: 1px;
     transform: scaleY(0.5);
     transform-origin: top;
-    background: hsl(var(--border));
+    background: hsl(var(--border) / calc(var(--border-a) * 1.4));
   }
 
   .section-title {
-    @apply px-4 pb-2 text-footnote uppercase tracking-wide text-ink-2;
+    @apply px-1 pb-2 text-[15px] font-semibold text-ink-2;
   }
 
   .press {
     transition:
-      transform 0.12s ease,
-      opacity 0.12s ease,
+      transform 0.14s cubic-bezier(0.32, 0.72, 0, 1),
+      opacity 0.14s ease,
       background-color 0.15s ease;
   }
   .press:active {
-    transform: scale(0.98);
-    opacity: 0.85;
+    transform: scale(0.97);
+    opacity: 0.88;
   }
 
   .tap-row {
     transition: background-color 0.15s ease;
   }
   .tap-row:active {
-    background-color: hsl(var(--fill));
+    background-color: hsl(var(--fill) / calc(var(--fill-a) * 1.4));
   }
   @media (hover: hover) {
     .tap-row:hover {
-      background-color: hsl(var(--fill) / 0.6);
+      background-color: hsl(var(--fill) / var(--fill-a));
     }
+  }
+
+  /* Крупные цифры виджетов — скруглённым начертанием, как на экране «Домой». */
+  .num-rounded {
+    font-family:
+      ui-rounded,
+      "SF Pro Rounded",
+      -apple-system,
+      BlinkMacSystemFont,
+      Inter,
+      sans-serif;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.03em;
   }
 }
 
@@ -219,5 +346,17 @@
   }
   .text-pretty {
     text-wrap: pretty;
+  }
+}
+
+/* Без размытия (старые браузеры) стекло делаем плотнее, чтобы текст оставался читаемым. */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  :root {
+    --glass: rgba(255, 255, 255, 0.9);
+    --glass-strong: rgba(250, 251, 255, 0.98);
+  }
+  .dark {
+    --glass: rgba(18, 30, 62, 0.94);
+    --glass-strong: rgba(15, 25, 54, 0.98);
   }
 }

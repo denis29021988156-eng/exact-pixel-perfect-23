@@ -28,61 +28,60 @@ export default function TeamLayout() {
   ];
 
   return (
-    <div className="min-h-dvh bg-background">
-      <header className="sticky top-0 z-30 bg-background/85 pt-safe backdrop-blur-xl">
-        <div className="mx-auto flex h-14 max-w-[1200px] items-center justify-between gap-3 px-4 md:px-6">
-          <Link to="/team" className="flex min-w-0 items-center gap-2">
-            <AppMark size={28} />
-            <span className="truncate text-headline">Кабинет команды</span>
-            {today.data?.demo && <Badge tone="warning">Демо</Badge>}
-          </Link>
-          <div className="flex items-center gap-1">
-            <Link
-              to="/app"
-              className="press inline-flex min-h-[36px] items-center gap-1.5 rounded-full px-3 text-[15px] font-semibold text-tint"
-            >
-              <Tablet className="h-4 w-4" aria-hidden />
-              <span className="hidden sm:inline">Планшет</span>
+    <div className="min-h-dvh">
+      <header className="sticky top-0 z-30 px-3 pt-[max(8px,env(safe-area-inset-top))] md:px-6">
+        <div className="glass-bar mx-auto max-w-[1200px] rounded-[26px] px-3 pb-2.5 pt-1.5 md:px-4">
+          <div className="flex h-12 items-center justify-between gap-3">
+            <Link to="/team" className="flex min-w-0 items-center gap-2.5">
+              <AppMark size={30} />
+              <span className="truncate text-headline">Кабинет команды</span>
+              {today.data?.demo && <Badge tone="warning">Демо</Badge>}
             </Link>
-            <button
-              type="button"
-              onClick={async () => {
-                await signOut();
-                navigate("/", { replace: true });
-              }}
-              className="press inline-flex min-h-[36px] items-center gap-1.5 rounded-full px-3 text-[15px] text-ink-2"
-              aria-label="Выйти"
-            >
-              <LogOut className="h-4 w-4" aria-hidden />
-              <span className="hidden sm:inline">Выйти</span>
-            </button>
-          </div>
-        </div>
-        <nav
-          className="mx-auto max-w-[1200px] overflow-x-auto px-4 pb-2 scrollbar-none md:px-6"
-          aria-label="Разделы кабинета"
-        >
-          <div className="flex w-max gap-1 rounded-[10px] bg-fill p-[2px]">
-            {tabs.map((t) => (
-              <NavLink
-                key={t.to}
-                to={t.to}
-                className={({ isActive }) =>
-                  cn(
-                    "whitespace-nowrap rounded-[8px] px-3.5 py-1.5 text-[14px] transition-colors",
-                    isActive
-                      ? "bg-card font-semibold shadow-[0_1px_3px_rgb(0_0_0/0.12)] dark:bg-elevated"
-                      : "text-foreground/80",
-                  )
-                }
+            <div className="flex items-center gap-1">
+              <Link
+                to="/app"
+                className="press inline-flex min-h-[38px] items-center gap-1.5 rounded-full bg-tint/12 px-3.5 text-[15px] font-semibold text-tint dark:bg-tint/20"
               >
-                {t.label}
-              </NavLink>
-            ))}
+                <Tablet className="h-4 w-4" aria-hidden />
+                <span className="hidden sm:inline">Планшет</span>
+              </Link>
+              <button
+                type="button"
+                onClick={async () => {
+                  await signOut();
+                  navigate("/", { replace: true });
+                }}
+                className="press inline-flex min-h-[38px] items-center gap-1.5 rounded-full px-3 text-[15px] text-ink-2"
+                aria-label="Выйти"
+              >
+                <LogOut className="h-4 w-4" aria-hidden />
+                <span className="hidden sm:inline">Выйти</span>
+              </button>
+            </div>
           </div>
-        </nav>
+          <nav className="overflow-x-auto scrollbar-none" aria-label="Разделы кабинета">
+            <div className="flex w-max gap-1 rounded-full bg-fill p-[3px]">
+              {tabs.map((t) => (
+                <NavLink
+                  key={t.to}
+                  to={t.to}
+                  className={({ isActive }) =>
+                    cn(
+                      "whitespace-nowrap rounded-full px-4 py-1.5 text-[14.5px] transition-colors",
+                      isActive
+                        ? "bg-white font-semibold text-foreground shadow-[0_2px_10px_rgb(14_26_51/0.14)] dark:bg-white/15 dark:shadow-none"
+                        : "text-foreground/75 hover:text-foreground",
+                    )
+                  }
+                >
+                  {t.label}
+                </NavLink>
+              ))}
+            </div>
+          </nav>
+        </div>
       </header>
-      <main className="mx-auto w-full max-w-[1200px] px-4 pb-16 pt-4 md:px-6">
+      <main className="mx-auto w-full max-w-[1200px] px-4 pb-16 pt-2 md:px-6">
         <Outlet />
       </main>
       <TabletSheets />

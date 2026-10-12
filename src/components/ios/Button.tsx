@@ -5,9 +5,10 @@ import { cn } from "@/lib/utils";
 type Variant = "filled" | "tinted" | "gray" | "plain" | "destructive" | "destructive-tinted" | "good";
 type Size = "lg" | "md" | "sm";
 
+// Кнопки-капсулы, как в iPadOS 26: главная — залитая с мягким свечением, остальные — тонированные.
 const variants: Record<Variant, string> = {
-  filled: "bg-tint text-white",
-  tinted: "bg-tint/12 text-tint",
+  filled: "bg-tint text-white shadow-glow",
+  tinted: "bg-tint/12 text-tint dark:bg-tint/20",
   gray: "bg-fill text-foreground",
   plain: "bg-transparent text-tint",
   destructive: "bg-critical text-white",
@@ -16,9 +17,9 @@ const variants: Record<Variant, string> = {
 };
 
 const sizes: Record<Size, string> = {
-  lg: "min-h-[50px] px-5 text-[17px] rounded-[14px]",
-  md: "min-h-[44px] px-4 text-[16px] rounded-[12px]",
-  sm: "min-h-[32px] px-3 text-[15px] rounded-full",
+  lg: "min-h-[52px] px-6 text-[17px] rounded-full",
+  md: "min-h-[44px] px-5 text-[16px] rounded-full",
+  sm: "min-h-[34px] px-3.5 text-[15px] rounded-full",
 };
 
 export interface IosButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {

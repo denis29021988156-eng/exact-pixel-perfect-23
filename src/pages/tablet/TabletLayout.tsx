@@ -1,16 +1,24 @@
 import { useEffect, useState } from "react";
-import { Link, NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
+import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import * as Popover from "@radix-ui/react-popover";
 import { Bell, CalendarDays, ClipboardCheck, LogOut, Mic, Sun, UsersRound } from "lucide-react";
-import { AppMark } from "@/components/gov/AppMark";
+import { OrbLayers } from "@/components/gov/Orb";
 import { TabletSheets } from "@/components/gov/TabletSheets";
-import { Badge, CountBadge } from "@/components/ios/Badge";
+import { CountBadge } from "@/components/ios/Badge";
 import { useAuth } from "@/contexts/auth";
+import { HeaderAccessoryContext } from "@/contexts/headerAccessory";
 import { useSheets } from "@/hooks/useSheetParam";
 import { useToday } from "@/lib/queries";
 import { cn } from "@/lib/utils";
 
 const roleLabel = { governor: "Губернатор", team: "Команда", admin: "Администратор" } as const;
+
+const screenTitles: [string, string][] = [
+  ["/app/signals", "Сигналы"],
+  ["/app/instructions", "Поручения"],
+  ["/app/agenda", "Повестка"],
+  ["/app", "Сегодня"],
+];
 
 export default function TabletLayout() {
   const { pathname } = useLocation();
@@ -21,18 +29,61 @@ export default function TabletLayout() {
   }, [pathname]);
 
   return (
-    <div className="min-h-dvh bg-background">
-      <TopBar />
-      <main className="mx-auto w-full max-w-[1200px] px-4 pb-[calc(var(--tabbar-height)+env(safe-area-inset-bottom)+32px)] md:px-6">
-        <Outlet />
-      </main>
-      <TabBar />
-      <TabletSheets />
-    </div>
+    <HeaderAccessoryContext.Provider value={<ProfileButton />}>
+      <div className="min-h-dvh">
+        <CompactTitle pathname={pathname} />
+        <main className="mx-auto w-full max-w-[1240px] px-4 pb-[var(--tabbar-space)] pt-safe md:px-8">
+          <Outlet />
+        </main>
+        <TabBar />
+        <TabletSheets />
+      </div>
+    </HeaderAccessoryContext.Provider>
   );
 }
 
-function TopBar() {
+/** Когда крупный заголовок уехал вверх, название экрана остаётся в стеклянной капсуле. */
+function CompactTitle({ pathname }: { pathname: string }) {
+  const [shown, setShown] = useState(false);
+  const title = screenTitles.find(([p]) => pathname.startsWith(p))?.[1] ?? "";
+
+  useEffect(() => {
+    let frame = 0;
+    const onScroll = () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => setShown(window.scrollY > 72));
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", onScroll);
+    };
+  }, [pathname]);
+
+  return (
+    <>
+      <div
+        aria-hidden
+        className={cn(
+          "scroll-edge scroll-edge-top transition-opacity duration-300",
+          shown ? "opacity-100" : "opacity-0",
+        )}
+      />
+      <div
+        aria-hidden
+        className={cn(
+          "pointer-events-none fixed inset-x-0 top-0 z-30 flex justify-center pt-safe transition-all duration-300",
+          shown ? "translate-y-0 opacity-100" : "-translate-y-2 opacity-0",
+        )}
+      >
+        <div className="glass-bar mt-2 flex h-10 items-center rounded-full px-5 text-[15px] font-semibold">{title}</div>
+      </div>
+    </>
+  );
+}
+
+function ProfileButton() {
   const { user, role, signOut } = useAuth();
   const today = useToday();
   const navigate = useNavigate();
@@ -48,66 +99,70 @@ function TopBar() {
       .join("") || "Г";
 
   return (
-    <header className="sticky top-0 z-30 border-b border-transparent bg-background/80 pt-safe backdrop-blur-xl supports-[backdrop-filter]:bg-background/70">
-      <div className="mx-auto flex h-12 max-w-[1200px] items-center justify-between gap-3 px-4 md:px-6">
-        <Link to="/app" className="flex min-w-0 items-center gap-2">
-          <AppMark size={26} />
-          <span className="truncate text-[15px] font-semibold">{today.data?.region ?? "Планшет губернатора"}</span>
-          {today.data?.demo && <Badge tone="warning">Демо</Badge>}
-        </Link>
-
-        <Popover.Root open={open} onOpenChange={setOpen}>
-          <Popover.Trigger
-            className="press flex h-9 w-9 items-center justify-center rounded-full bg-fill text-[13px] font-semibold"
-            aria-label="Профиль"
+    <div className="flex items-center gap-2">
+      {today.data?.demo && (
+        <span
+          className="glass inline-flex h-9 items-center rounded-full px-3.5 text-[13px] font-semibold text-warning-ink"
+          title="Учебные события на реальной карте области"
+        >
+          Демо
+        </span>
+      )}
+      <Popover.Root open={open} onOpenChange={setOpen}>
+        <Popover.Trigger
+          className="glass press flex h-11 w-11 items-center justify-center rounded-full text-[15px] font-bold"
+          aria-label="Профиль"
+        >
+          {initials}
+        </Popover.Trigger>
+        <Popover.Portal>
+          <Popover.Content
+            align="end"
+            sideOffset={10}
+            className="glass-strong z-50 w-72 overflow-hidden rounded-[24px] data-[state=open]:animate-fade-in"
           >
-            {initials}
-          </Popover.Trigger>
-          <Popover.Portal>
-            <Popover.Content
-              align="end"
-              sideOffset={8}
-              className="z-50 w-64 overflow-hidden rounded-[14px] bg-elevated shadow-float ring-1 ring-black/5 data-[state=open]:animate-fade-in dark:ring-white/10"
-            >
-              <div className="px-4 py-3">
-                <p className="truncate text-[15px] font-semibold">{name}</p>
-                {role && <p className="text-footnote text-ink-2">{roleLabel[role]}</p>}
-              </div>
-              <div className="border-t border-line/70">
-                {(role === "team" || role === "admin") && (
-                  <button
-                    type="button"
-                    className="tap-row flex w-full items-center gap-3 px-4 py-3 text-left text-[16px]"
-                    onClick={() => {
-                      setOpen(false);
-                      navigate("/team");
-                    }}
-                  >
-                    <UsersRound className="h-5 w-5 text-ink-2" aria-hidden />
-                    Кабинет команды
-                  </button>
-                )}
+            <div className="px-5 pb-3 pt-4">
+              <p className="truncate text-[16px] font-semibold">{name}</p>
+              <p className="text-footnote text-ink-2">
+                {role ? roleLabel[role] : ""}
+                {today.data?.region ? `, ${today.data.region}` : ""}
+              </p>
+            </div>
+            <div className="border-t border-line px-2 py-2">
+              {(role === "team" || role === "admin") && (
                 <button
                   type="button"
-                  className="tap-row flex w-full items-center gap-3 px-4 py-3 text-left text-[16px] text-critical-ink"
-                  onClick={async () => {
+                  className="tap-row flex w-full items-center gap-3 rounded-[14px] px-3 py-3 text-left text-[16px]"
+                  onClick={() => {
                     setOpen(false);
-                    await signOut();
-                    navigate("/", { replace: true });
+                    navigate("/team");
                   }}
                 >
-                  <LogOut className="h-5 w-5" aria-hidden />
-                  Выйти
+                  <UsersRound className="h-5 w-5 text-ink-2" aria-hidden />
+                  Кабинет команды
                 </button>
-              </div>
-            </Popover.Content>
-          </Popover.Portal>
-        </Popover.Root>
-      </div>
-    </header>
+              )}
+              <button
+                type="button"
+                className="tap-row flex w-full items-center gap-3 rounded-[14px] px-3 py-3 text-left text-[16px] text-critical-ink"
+                onClick={async () => {
+                  setOpen(false);
+                  await signOut();
+                  navigate("/", { replace: true });
+                }}
+              >
+                <LogOut className="h-5 w-5" aria-hidden />
+                Выйти
+              </button>
+            </div>
+          </Popover.Content>
+        </Popover.Portal>
+      </Popover.Root>
+    </div>
   );
 }
 
+/** Плавающая стеклянная панель вкладок; в центре — кнопка «Спросить». */
 function TabBar() {
   const today = useToday();
   const sheets = useSheets();
@@ -127,47 +182,56 @@ function TabBar() {
   ];
 
   return (
-    <nav
-      className="fixed inset-x-0 bottom-0 z-40 border-t border-line/70 bg-background/85 pb-safe backdrop-blur-xl supports-[backdrop-filter]:bg-background/75"
-      aria-label="Разделы"
-    >
-      <div className="mx-auto grid h-[var(--tabbar-height)] max-w-[680px] grid-cols-5 items-center px-2">
-        {tabs.map((t) =>
-          t ? (
-            <NavLink
-              key={t.to}
-              to={t.to}
-              end={t.end}
-              className={({ isActive }) =>
-                cn(
-                  "relative flex h-full flex-col items-center justify-center gap-0.5 text-[11px] font-medium",
-                  isActive ? "text-tint" : "text-ink-3",
-                )
-              }
-            >
-              <span className="relative">
-                <t.icon className="h-6 w-6" strokeWidth={2} aria-hidden />
-                <CountBadge
-                  count={t.badge}
-                  className={cn("absolute -right-2.5 -top-1.5", t.to === "/app/agenda" && "bg-tint")}
-                />
-              </span>
-              {t.label}
-            </NavLink>
-          ) : (
-            <div key="ask" className="flex justify-center">
-              <button
-                type="button"
-                onClick={() => sheets.open("ask")}
-                className="press -mt-5 flex h-[58px] w-[58px] items-center justify-center rounded-full bg-tint text-white shadow-float ring-4 ring-background"
-                aria-label="Спросить"
+    <>
+      <div className="scroll-edge scroll-edge-bottom" aria-hidden />
+      <nav
+        className="pointer-events-none fixed inset-x-0 bottom-0 z-40 flex justify-center px-3 pb-[max(14px,env(safe-area-inset-bottom))]"
+        aria-label="Разделы"
+      >
+        <div className="glass-bar pointer-events-auto flex h-[64px] w-full max-w-[580px] items-center gap-0.5 rounded-full px-[6px] sm:h-[70px] sm:px-[7px]">
+          {tabs.map((t) =>
+            t ? (
+              <NavLink
+                key={t.to}
+                to={t.to}
+                end={t.end}
+                className={({ isActive }) =>
+                  cn(
+                    "press relative flex h-[52px] min-w-0 flex-1 flex-col items-center justify-center gap-[3px] rounded-full text-[10.5px] font-semibold sm:h-14 sm:text-[11px]",
+                    isActive ? "bg-tint/12 text-tint dark:bg-tint/20" : "text-ink-2 hover:text-foreground",
+                  )
+                }
               >
-                <Mic className="h-7 w-7" aria-hidden />
-              </button>
-            </div>
-          ),
-        )}
-      </div>
-    </nav>
+                <span className="relative">
+                  <t.icon className="h-[23px] w-[23px]" strokeWidth={2} aria-hidden />
+                  <CountBadge
+                    count={t.badge}
+                    className={cn("absolute -right-3 -top-1.5", t.to === "/app/agenda" && "bg-tint")}
+                  />
+                </span>
+                <span className="max-w-full truncate">{t.label}</span>
+              </NavLink>
+            ) : (
+              <AskOrb key="ask" onClick={() => sheets.open("ask")} />
+            ),
+          )}
+        </div>
+      </nav>
+    </>
+  );
+}
+
+/** Голосовой вопрос: шар с радужным ореолом, как у Siri. */
+function AskOrb({ onClick }: { onClick: () => void }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="press relative mx-1 flex h-[54px] w-[54px] shrink-0 items-center justify-center rounded-full sm:mx-1.5 sm:h-[58px] sm:w-[58px]"
+      aria-label="Спросить"
+    >
+      <OrbLayers />
+      <Mic className="relative h-[26px] w-[26px] text-white" strokeWidth={2.2} aria-hidden />
+    </button>
   );
 }

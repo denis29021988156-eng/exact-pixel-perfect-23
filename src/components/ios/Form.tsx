@@ -22,7 +22,7 @@ export function FormGroup({
 }) {
   return (
     <div className={cn("min-w-0", className)}>
-      {title && <div className="px-4 pb-2 text-footnote uppercase tracking-wide text-ink-2">{title}</div>}
+      {title && <div className="px-4 pb-2 text-[15px] font-semibold text-ink-2">{title}</div>}
       <div className="surface rows overflow-hidden">{children}</div>
       {footer && <p className="px-4 pt-2 text-footnote text-ink-2">{footer}</p>}
     </div>

@@ -1,6 +1,5 @@
 import { ChevronRight, Pause, RefreshCw, Sparkles, Volume2 } from "lucide-react";
 import { toast } from "sonner";
-import { Badge } from "@/components/ios/Badge";
 import { Button } from "@/components/ios/Button";
 import { fmtTime } from "@/lib/format";
 import { useRefreshBrief } from "@/lib/queries";
@@ -33,22 +32,29 @@ export function BriefCard({ brief, onOpenSignal }: { brief: Brief | null; onOpen
   const listenText = `${brief.headline}. ${brief.summary}`;
 
   return (
-    <section className="surface p-5" aria-label="Сводка дня">
-      <div className="flex items-center justify-between gap-3">
+    <section className="surface relative overflow-hidden p-5 md:p-6" aria-label="Сводка дня">
+      <span
+        className="pointer-events-none absolute -left-24 -top-28 h-72 w-72 rounded-full"
+        style={{ background: "radial-gradient(closest-side, hsl(var(--ai) / 0.16), transparent)" }}
+        aria-hidden
+      />
+      <div className="relative flex items-center justify-between gap-3">
         <Label />
         <span className="text-footnote text-ink-3">
-          {brief.source === "ai" ? "ИИ" : brief.source === "rules" ? "По данным" : "Сводка"} ·{" "}
+          {brief.source === "ai" ? "Собрал ИИ в " : brief.source === "rules" ? "Собрано по данным в " : "Готова в "}
           {fmtTime(brief.generated_at)}
         </span>
       </div>
 
-      <h2 className="mt-2 text-title2 text-balance">{brief.headline}</h2>
-      <p className="mt-2 text-body text-pretty">{brief.summary}</p>
+      <h2 className="relative mt-3 text-[24px] font-bold leading-[29px] tracking-[-0.02em] text-balance md:text-[26px] md:leading-[31px]">
+        {brief.headline}
+      </h2>
+      <p className="relative mt-2.5 text-[16.5px] leading-[23px] text-ink-2 text-pretty">{brief.summary}</p>
 
       {brief.items.length > 0 && (
-        <ul className="mt-4 overflow-hidden rounded-[12px] bg-background/70 dark:bg-elevated/50">
+        <ul className="relative mt-4 overflow-hidden rounded-[18px] border border-[var(--inner-edge)] bg-[var(--inner)]">
           {brief.items.map((it, i) => (
-            <li key={i} className={i ? "border-t border-line/70" : undefined}>
+            <li key={i} className={i ? "border-t border-line" : undefined}>
               {it.signal_id ? (
                 <button
                   type="button"
@@ -70,7 +76,7 @@ export function BriefCard({ brief, onOpenSignal }: { brief: Brief | null; onOpen
         </ul>
       )}
 
-      <div className="mt-4 flex flex-wrap items-center gap-2">
+      <div className="relative mt-4 flex flex-wrap items-center gap-2">
         {speaker.supported && (
           <Button
             variant="tinted"
@@ -97,8 +103,9 @@ export function BriefCard({ brief, onOpenSignal }: { brief: Brief | null; onOpen
 
 function Label() {
   return (
-    <Badge tone="ai" icon={<Sparkles className="h-3.5 w-3.5" aria-hidden />}>
+    <span className="inline-flex items-center gap-1.5 text-[14px] font-semibold text-ai-ink">
+      <Sparkles className="h-4 w-4" aria-hidden />
       Сводка дня
-    </Badge>
+    </span>
   );
 }

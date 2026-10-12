@@ -3,6 +3,21 @@ import animate from "tailwindcss-animate";
 
 // Цвета задаются переменными в src/index.css (светлая и тёмная тема).
 const token = (name: string) => `hsl(var(--${name}) / <alpha-value>)`;
+// Полупрозрачные цвета стекла: своя прозрачность умножается на модификатор (bg-fill/60).
+const glassToken = (name: string) => `hsl(var(--${name}) / calc(var(--${name}-a) * <alpha-value>))`;
+
+const systemSans = [
+  "-apple-system",
+  "BlinkMacSystemFont",
+  '"SF Pro Text"',
+  '"SF Pro Display"',
+  "Inter",
+  '"Segoe UI"',
+  "Roboto",
+  '"Helvetica Neue"',
+  "Arial",
+  "sans-serif",
+];
 
 export default {
   darkMode: ["class"],
@@ -16,25 +31,15 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: [
-          "-apple-system",
-          "BlinkMacSystemFont",
-          '"SF Pro Text"',
-          '"SF Pro Display"',
-          '"Segoe UI"',
-          "Roboto",
-          "Inter",
-          '"Helvetica Neue"',
-          "Arial",
-          "sans-serif",
-        ],
+        sans: systemSans,
+        rounded: ["ui-rounded", '"SF Pro Rounded"', ...systemSans],
       },
-      // Шкала текста как в iOS.
+      // Шкала текста как в iOS; крупные заголовки — плотнее и жирнее, как в iPadOS 26.
       fontSize: {
-        "large-title": ["34px", { lineHeight: "41px", fontWeight: "700", letterSpacing: "0.01em" }],
-        title1: ["28px", { lineHeight: "34px", fontWeight: "700" }],
-        title2: ["22px", { lineHeight: "28px", fontWeight: "700" }],
-        title3: ["20px", { lineHeight: "25px", fontWeight: "600" }],
+        "large-title": ["34px", { lineHeight: "40px", fontWeight: "800", letterSpacing: "-0.025em" }],
+        title1: ["28px", { lineHeight: "33px", fontWeight: "750", letterSpacing: "-0.02em" }],
+        title2: ["22px", { lineHeight: "27px", fontWeight: "700", letterSpacing: "-0.015em" }],
+        title3: ["20px", { lineHeight: "25px", fontWeight: "650", letterSpacing: "-0.01em" }],
         headline: ["17px", { lineHeight: "22px", fontWeight: "600" }],
         body: ["17px", { lineHeight: "22px" }],
         callout: ["16px", { lineHeight: "21px" }],
@@ -43,20 +48,20 @@ export default {
         caption: ["12px", { lineHeight: "16px" }],
       },
       colors: {
-        border: token("border"),
-        input: token("border"),
+        border: glassToken("border"),
+        input: glassToken("border"),
         ring: token("primary"),
         background: token("background"),
         foreground: token("foreground"),
         canvas: token("background"),
-        elevated: token("elevated"),
+        elevated: glassToken("elevated"),
         ink: {
           DEFAULT: token("foreground"),
           2: token("ink-2"),
           3: token("ink-3"),
         },
-        line: token("border"),
-        fill: token("fill"),
+        line: glassToken("border"),
+        fill: glassToken("fill"),
         tint: token("primary"),
         critical: { DEFAULT: token("critical"), ink: token("critical-ink") },
         warning: { DEFAULT: token("warning"), ink: token("warning-ink") },
@@ -67,7 +72,7 @@ export default {
           foreground: token("primary-foreground"),
         },
         secondary: {
-          DEFAULT: token("fill"),
+          DEFAULT: glassToken("fill"),
           foreground: token("foreground"),
         },
         destructive: {
@@ -75,19 +80,19 @@ export default {
           foreground: token("primary-foreground"),
         },
         muted: {
-          DEFAULT: token("fill"),
+          DEFAULT: glassToken("fill"),
           foreground: token("ink-2"),
         },
         accent: {
-          DEFAULT: token("fill"),
+          DEFAULT: glassToken("fill"),
           foreground: token("foreground"),
         },
         popover: {
-          DEFAULT: token("elevated"),
+          DEFAULT: glassToken("elevated"),
           foreground: token("foreground"),
         },
         card: {
-          DEFAULT: token("card"),
+          DEFAULT: glassToken("card"),
           foreground: token("foreground"),
         },
       },
@@ -101,13 +106,14 @@ export default {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 4px)",
         sm: "calc(var(--radius) - 6px)",
-        card: "14px",
-        sheet: "16px",
+        card: "26px",
+        sheet: "32px",
+        panel: "32px",
       },
       boxShadow: {
-        card: "0 1px 2px rgb(0 0 0 / 0.04), 0 1px 1px rgb(0 0 0 / 0.02)",
-        float: "0 8px 30px rgb(0 0 0 / 0.12)",
-        tab: "0 -0.5px 0 hsl(var(--border))",
+        card: "var(--glass-shadow)",
+        float: "0 24px 60px -18px rgb(10 20 50 / 0.35), 0 2px 8px rgb(10 20 50 / 0.08)",
+        glow: "0 10px 26px -8px hsl(var(--primary) / 0.55)",
       },
       keyframes: {
         "accordion-down": {
@@ -148,6 +154,20 @@ export default {
           "0%": { boxShadow: "0 0 0 0 hsl(var(--critical) / 0.45)" },
           "100%": { boxShadow: "0 0 0 14px hsl(var(--critical) / 0)" },
         },
+        // Кольцо вокруг критичного сигнала на карте.
+        "map-ping": {
+          "0%": { transform: "scale(0.6)", opacity: "0.55" },
+          "80%, 100%": { transform: "scale(2.2)", opacity: "0" },
+        },
+        "orb-spin": {
+          from: { transform: "rotate(0deg)" },
+          to: { transform: "rotate(360deg)" },
+        },
+        // Точки карты «расцветают» от центра сигнала при открытии экрана.
+        "dot-bloom": {
+          from: { opacity: "0", transform: "scale(0.2)" },
+          to: { opacity: "1", transform: "scale(1)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -161,6 +181,9 @@ export default {
         "rise-in": "rise-in 0.28s ease-out both",
         "pulse-soft": "pulse-soft 1.6s ease-in-out infinite",
         "listen-ring": "listen-ring 1.2s ease-out infinite",
+        "map-ping": "map-ping 2.4s cubic-bezier(0.2, 0.6, 0.3, 1) infinite",
+        "orb-spin": "orb-spin 6s linear infinite",
+        "dot-bloom": "dot-bloom 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both",
       },
     },
   },

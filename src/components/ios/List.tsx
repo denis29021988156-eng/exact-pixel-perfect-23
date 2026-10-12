@@ -1,5 +1,6 @@
-import type { ReactNode } from "react";
+import { useContext, type ReactNode } from "react";
 import { Link } from "react-router-dom";
+import { HeaderAccessoryContext } from "@/contexts/headerAccessory";
 import { ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -24,7 +25,7 @@ export function Section({
     <section className={cn("min-w-0", className)}>
       {(title || action) && (
         <div className="flex items-end justify-between gap-3 px-4 pb-2">
-          {title ? <h2 className="text-footnote uppercase tracking-wide text-ink-2">{title}</h2> : <span />}
+          {title ? <h2 className="text-[15px] font-semibold text-ink-2">{title}</h2> : <span />}
           {action}
         </div>
       )}
@@ -108,7 +109,7 @@ export function Row({
   return <div className={cls}>{body}</div>;
 }
 
-/** Крупный заголовок экрана. */
+/** Крупный заголовок экрана; справа — действия экрана и профиль (его подставляет раскладка). */
 export function PageHeader({
   title,
   subtitle,
@@ -120,13 +121,21 @@ export function PageHeader({
   right?: ReactNode;
   className?: string;
 }) {
+  const accessory = useContext(HeaderAccessoryContext);
   return (
-    <div className={cn("flex items-end justify-between gap-4 pb-4 pt-2", className)}>
-      <div className="min-w-0">
-        <h1 className="text-large-title">{title}</h1>
-        {subtitle && <p className="mt-0.5 text-subhead text-ink-2">{subtitle}</p>}
+    <div className={cn("pb-5 pt-3 md:pb-6 md:pt-7", className)}>
+      <div className="flex items-center justify-between gap-3">
+        <h1 className="min-w-0 truncate text-large-title md:text-[44px] md:leading-[52px]">{title}</h1>
+        {(right || accessory) && (
+          <div className="flex shrink-0 items-center gap-2">
+            {right}
+            {accessory}
+          </div>
+        )}
       </div>
-      {right && <div className="flex shrink-0 items-center gap-2 pb-1">{right}</div>}
+      {subtitle && (
+        <p className="mt-0.5 text-[16px] leading-[21px] text-ink-2 md:text-[17px] md:leading-[22px]">{subtitle}</p>
+      )}
     </div>
   );
 }
