@@ -44,6 +44,80 @@ export type Database = {
         }
         Relationships: []
       }
+      agenda_items: {
+        Row: {
+          channel: string
+          created_at: string
+          day: string
+          decided_at: string | null
+          decided_by: string | null
+          decision_note: string | null
+          description: string | null
+          expected_effect: string | null
+          id: string
+          municipality_id: string | null
+          status: string
+          title: string
+        }
+        Insert: {
+          channel: string
+          created_at?: string
+          day: string
+          decided_at?: string | null
+          decided_by?: string | null
+          decision_note?: string | null
+          description?: string | null
+          expected_effect?: string | null
+          id?: string
+          municipality_id?: string | null
+          status?: string
+          title: string
+        }
+        Update: {
+          channel?: string
+          created_at?: string
+          day?: string
+          decided_at?: string | null
+          decided_by?: string | null
+          decision_note?: string | null
+          description?: string | null
+          expected_effect?: string | null
+          id?: string
+          municipality_id?: string | null
+          status?: string
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agenda_items_municipality_id_fkey"
+            columns: ["municipality_id"]
+            isOneToOne: false
+            referencedRelation: "municipalities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ai_calls: {
+        Row: {
+          at: string
+          id: number
+          kind: string
+          user_id: string
+        }
+        Insert: {
+          at?: string
+          id?: number
+          kind: string
+          user_id: string
+        }
+        Update: {
+          at?: string
+          id?: number
+          kind?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       ai_conversations: {
         Row: {
           content: string
@@ -169,22 +243,55 @@ export type Database = {
           city_lat: number | null
           city_lng: number | null
           city_name: string
+          demo_mode: boolean
           id: number
+          region_name: string | null
           updated_at: string
         }
         Insert: {
           city_lat?: number | null
           city_lng?: number | null
           city_name?: string
+          demo_mode?: boolean
           id: number
+          region_name?: string | null
           updated_at?: string
         }
         Update: {
           city_lat?: number | null
           city_lng?: number | null
           city_name?: string
+          demo_mode?: boolean
           id?: number
+          region_name?: string | null
           updated_at?: string
+        }
+        Relationships: []
+      }
+      ask_log: {
+        Row: {
+          answer: Json | null
+          at: string
+          id: string
+          ok: boolean
+          question: string
+          user_id: string
+        }
+        Insert: {
+          answer?: Json | null
+          at?: string
+          id?: string
+          ok?: boolean
+          question: string
+          user_id: string
+        }
+        Update: {
+          answer?: Json | null
+          at?: string
+          id?: string
+          ok?: boolean
+          question?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -298,6 +405,27 @@ export type Database = {
           },
         ]
       }
+      comms_settings: {
+        Row: {
+          avoid: Json
+          id: number
+          tone: Json
+          updated_at: string
+        }
+        Insert: {
+          avoid?: Json
+          id?: number
+          tone?: Json
+          updated_at?: string
+        }
+        Update: {
+          avoid?: Json
+          id?: number
+          tone?: Json
+          updated_at?: string
+        }
+        Relationships: []
+      }
       contracts: {
         Row: {
           amount: number | null
@@ -343,6 +471,33 @@ export type Database = {
           risk_of_non_execution?: number | null
           status?: string | null
           updated_at?: string
+        }
+        Relationships: []
+      }
+      daily_briefs: {
+        Row: {
+          day: string
+          generated_at: string
+          headline: string
+          items: Json
+          source: string
+          summary: string
+        }
+        Insert: {
+          day: string
+          generated_at?: string
+          headline: string
+          items?: Json
+          source: string
+          summary: string
+        }
+        Update: {
+          day?: string
+          generated_at?: string
+          headline?: string
+          items?: Json
+          source?: string
+          summary?: string
         }
         Relationships: []
       }
@@ -435,6 +590,41 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      executors: {
+        Row: {
+          created_at: string
+          id: string
+          kind: string
+          municipality_id: string | null
+          name: string
+          short_name: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          kind: string
+          municipality_id?: string | null
+          name: string
+          short_name: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          kind?: string
+          municipality_id?: string | null
+          name?: string
+          short_name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "executors_municipality_id_fkey"
+            columns: ["municipality_id"]
+            isOneToOne: false
+            referencedRelation: "municipalities"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       feature_flags: {
         Row: {
@@ -627,6 +817,136 @@ export type Database = {
           },
         ]
       }
+      instruction_events: {
+        Row: {
+          actor: string | null
+          at: string
+          id: string
+          instruction_id: string
+          kind: string
+          note: string | null
+        }
+        Insert: {
+          actor?: string | null
+          at?: string
+          id?: string
+          instruction_id: string
+          kind: string
+          note?: string | null
+        }
+        Update: {
+          actor?: string | null
+          at?: string
+          id?: string
+          instruction_id?: string
+          kind?: string
+          note?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "instruction_events_instruction_id_fkey"
+            columns: ["instruction_id"]
+            isOneToOne: false
+            referencedRelation: "instructions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      instructions: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          details: string | null
+          done_at: string | null
+          due_date: string
+          effect: string | null
+          effect_positive: boolean | null
+          executor_id: string
+          id: string
+          last_reminded_at: string | null
+          municipality_id: string | null
+          postponed: number
+          promise_id: string | null
+          reminders: number
+          signal_id: string | null
+          source: string
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          details?: string | null
+          done_at?: string | null
+          due_date: string
+          effect?: string | null
+          effect_positive?: boolean | null
+          executor_id: string
+          id?: string
+          last_reminded_at?: string | null
+          municipality_id?: string | null
+          postponed?: number
+          promise_id?: string | null
+          reminders?: number
+          signal_id?: string | null
+          source?: string
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          details?: string | null
+          done_at?: string | null
+          due_date?: string
+          effect?: string | null
+          effect_positive?: boolean | null
+          executor_id?: string
+          id?: string
+          last_reminded_at?: string | null
+          municipality_id?: string | null
+          postponed?: number
+          promise_id?: string | null
+          reminders?: number
+          signal_id?: string | null
+          source?: string
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "instructions_executor_id_fkey"
+            columns: ["executor_id"]
+            isOneToOne: false
+            referencedRelation: "executors"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "instructions_municipality_id_fkey"
+            columns: ["municipality_id"]
+            isOneToOne: false
+            referencedRelation: "municipalities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "instructions_promise_id_fkey"
+            columns: ["promise_id"]
+            isOneToOne: false
+            referencedRelation: "promises"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "instructions_signal_id_fkey"
+            columns: ["signal_id"]
+            isOneToOne: false
+            referencedRelation: "signals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       media_mentions: {
         Row: {
           created_at: string
@@ -681,6 +1001,30 @@ export type Database = {
           id?: string
           metric?: string
           value?: number
+        }
+        Relationships: []
+      }
+      municipalities: {
+        Row: {
+          center: string | null
+          created_at: string
+          id: string
+          name: string
+          sort: number
+        }
+        Insert: {
+          center?: string | null
+          created_at?: string
+          id?: string
+          name: string
+          sort?: number
+        }
+        Update: {
+          center?: string | null
+          created_at?: string
+          id?: string
+          name?: string
+          sort?: number
         }
         Relationships: []
       }
@@ -770,6 +1114,44 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      promises: {
+        Row: {
+          created_at: string
+          due_date: string | null
+          id: string
+          municipality_id: string | null
+          occasion: string
+          said_on: string
+          text: string
+        }
+        Insert: {
+          created_at?: string
+          due_date?: string | null
+          id?: string
+          municipality_id?: string | null
+          occasion: string
+          said_on: string
+          text: string
+        }
+        Update: {
+          created_at?: string
+          due_date?: string | null
+          id?: string
+          municipality_id?: string | null
+          occasion?: string
+          said_on?: string
+          text?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "promises_municipality_id_fkey"
+            columns: ["municipality_id"]
+            isOneToOne: false
+            referencedRelation: "municipalities"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       public_complaints: {
         Row: {
@@ -917,6 +1299,100 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      signals: {
+        Row: {
+          ai_cause: string | null
+          ai_forecast: string | null
+          ai_recommendation: string | null
+          created_at: string
+          created_by: string | null
+          detected_at: string
+          id: string
+          instruction_id: string | null
+          kind: string
+          mentions: number | null
+          municipality_id: string | null
+          severity: string
+          source: string | null
+          status: string
+          status_note: string | null
+          suggested_due: string | null
+          suggested_executor_id: string | null
+          suggested_title: string | null
+          summary: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          ai_cause?: string | null
+          ai_forecast?: string | null
+          ai_recommendation?: string | null
+          created_at?: string
+          created_by?: string | null
+          detected_at?: string
+          id?: string
+          instruction_id?: string | null
+          kind: string
+          mentions?: number | null
+          municipality_id?: string | null
+          severity: string
+          source?: string | null
+          status?: string
+          status_note?: string | null
+          suggested_due?: string | null
+          suggested_executor_id?: string | null
+          suggested_title?: string | null
+          summary?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          ai_cause?: string | null
+          ai_forecast?: string | null
+          ai_recommendation?: string | null
+          created_at?: string
+          created_by?: string | null
+          detected_at?: string
+          id?: string
+          instruction_id?: string | null
+          kind?: string
+          mentions?: number | null
+          municipality_id?: string | null
+          severity?: string
+          source?: string | null
+          status?: string
+          status_note?: string | null
+          suggested_due?: string | null
+          suggested_executor_id?: string | null
+          suggested_title?: string | null
+          summary?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "signals_instruction_fk"
+            columns: ["instruction_id"]
+            isOneToOne: false
+            referencedRelation: "instructions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "signals_municipality_id_fkey"
+            columns: ["municipality_id"]
+            isOneToOne: false
+            referencedRelation: "municipalities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "signals_suggested_executor_id_fkey"
+            columns: ["suggested_executor_id"]
+            isOneToOne: false
+            referencedRelation: "executors"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       sla_matrix_draft: {
         Row: {
@@ -1144,6 +1620,39 @@ export type Database = {
           },
         ]
       }
+      trust_index: {
+        Row: {
+          appeals_resolved: number | null
+          day: string
+          event_kind: string | null
+          event_label: string | null
+          media_tone: number | null
+          response_speed: number | null
+          survey: number | null
+          value: number
+        }
+        Insert: {
+          appeals_resolved?: number | null
+          day: string
+          event_kind?: string | null
+          event_label?: string | null
+          media_tone?: number | null
+          response_speed?: number | null
+          survey?: number | null
+          value: number
+        }
+        Update: {
+          appeals_resolved?: number | null
+          day?: string
+          event_kind?: string | null
+          event_label?: string | null
+          media_tone?: number | null
+          response_speed?: number | null
+          survey?: number | null
+          value?: number
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           id: string
@@ -1277,8 +1786,125 @@ export type Database = {
       }
     }
     Functions: {
+      _demo_after: {
+        Args: { _a: number; _c: number; _k: number; _w: number }
+        Returns: number
+      }
+      _demo_bump: {
+        Args: { _a: number; _c: number; _k: number; _w: number }
+        Returns: number
+      }
+      _demo_num: { Args: { _signed?: boolean; _v: number }; Returns: string }
+      _demo_seed: { Args: never; Returns: undefined }
+      _demo_step: {
+        Args: { _a: number; _c: number; _k: number }
+        Returns: number
+      }
+      _gov_agenda_payload: { Args: { _today: string }; Returns: Json }
+      _gov_context_payload: { Args: { _today: string }; Returns: Json }
+      _gov_instructions_payload: { Args: { _today: string }; Returns: Json }
+      _gov_signals_payload: { Args: { _today: string }; Returns: Json }
+      _gov_today_payload: { Args: { _today: string }; Returns: Json }
+      _instruction_json: {
+        Args: {
+          _today: string
+          i: Database["public"]["Tables"]["instructions"]["Row"]
+        }
+        Returns: Json
+      }
+      _promise_json: {
+        Args: {
+          _today: string
+          p: Database["public"]["Tables"]["promises"]["Row"]
+        }
+        Returns: Json
+      }
+      _severity_rank: { Args: { _s: string }; Returns: number }
+      _signal_json: {
+        Args: { s: Database["public"]["Tables"]["signals"]["Row"] }
+        Returns: Json
+      }
+      _trust_series: { Args: { _days: number; _today: string }; Returns: Json }
+      _trust_summary: { Args: { _today: string }; Returns: Json }
+      admin_list_users: { Args: never; Returns: Json }
+      admin_set_role: {
+        Args: { _role: string; _user_id: string }
+        Returns: undefined
+      }
+      demo_reset: { Args: never; Returns: undefined }
       detect_complaint_surge: { Args: never; Returns: undefined }
       get_user_department: { Args: { _user_id: string }; Returns: string }
+      gov_agenda: { Args: never; Returns: Json }
+      gov_agenda_decide: {
+        Args: { _decision: string; _id: string; _note?: string }
+        Returns: Json
+      }
+      gov_ai_quota: {
+        Args: { _kind: string; _limit: number }
+        Returns: boolean
+      }
+      gov_assign_signal: {
+        Args: {
+          _due?: string
+          _executor_id?: string
+          _note?: string
+          _signal_id: string
+          _title?: string
+        }
+        Returns: Json
+      }
+      gov_call_report: { Args: { _id: string }; Returns: Json }
+      gov_cancel_instruction: { Args: { _id: string }; Returns: Json }
+      gov_context: { Args: never; Returns: Json }
+      gov_create_instruction: {
+        Args: {
+          _details?: string
+          _due: string
+          _executor_id: string
+          _municipality_id?: string
+          _promise_id?: string
+          _source?: string
+          _title: string
+        }
+        Returns: Json
+      }
+      gov_instructions: { Args: never; Returns: Json }
+      gov_log_ask: {
+        Args: { _answer: Json; _ok: boolean; _question: string }
+        Returns: undefined
+      }
+      gov_my_role: { Args: never; Returns: string }
+      gov_postpone: {
+        Args: { _due: string; _id: string; _note?: string }
+        Returns: Json
+      }
+      gov_remind: { Args: { _id: string }; Returns: Json }
+      gov_require: {
+        Args: { _roles: Database["public"]["Enums"]["app_role"][] }
+        Returns: undefined
+      }
+      gov_signal_status: {
+        Args: { _note?: string; _signal_id: string; _status: string }
+        Returns: Json
+      }
+      gov_signals: { Args: never; Returns: Json }
+      gov_store_brief: {
+        Args: {
+          _headline: string
+          _items: Json
+          _source: string
+          _summary: string
+        }
+        Returns: Json
+      }
+      gov_today: { Args: never; Returns: Json }
+      has_any_role: {
+        Args: {
+          _roles: Database["public"]["Enums"]["app_role"][]
+          _uid: string
+        }
+        Returns: boolean
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -1287,11 +1913,21 @@ export type Database = {
         Returns: boolean
       }
       is_deputy_of_department: { Args: { _dept: string }; Returns: boolean }
+      msk_today: { Args: never; Returns: string }
       normalize_department: { Args: { _raw: string }; Returns: string }
       refresh_public_metrics: { Args: never; Returns: undefined }
+      team_set_instruction_status: {
+        Args: {
+          _effect?: string
+          _effect_positive?: boolean
+          _id: string
+          _status: string
+        }
+        Returns: Json
+      }
     }
     Enums: {
-      app_role: "mayor" | "deputy" | "employee" | "admin"
+      app_role: "mayor" | "deputy" | "employee" | "admin" | "governor" | "team"
       data_source_status: "active" | "warning" | "error" | "disabled"
       data_source_type: "email" | "excel" | "telegram" | "manual" | "db" | "api"
       escalation_status: "active" | "acknowledged" | "resolved"
@@ -1335,12 +1971,12 @@ export type Tables<
   DefaultSchemaTableNameOrOptions extends
     | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
         DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -1364,11 +2000,11 @@ export type TablesInsert<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -1389,11 +2025,11 @@ export type TablesUpdate<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -1414,11 +2050,11 @@ export type Enums<
   DefaultSchemaEnumNameOrOptions extends
     | keyof DefaultSchema["Enums"]
     | { schema: keyof DatabaseWithoutInternals },
-  EnumName extends DefaultSchemaEnumNameOrOptions extends {
+  EnumName extends (DefaultSchemaEnumNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaEnumNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -1431,11 +2067,11 @@ export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
     | keyof DefaultSchema["CompositeTypes"]
     | { schema: keyof DatabaseWithoutInternals },
-  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+  CompositeTypeName extends (PublicCompositeTypeNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
-    : never = never,
+    : never) = never,
 > = PublicCompositeTypeNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -1447,7 +2083,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["mayor", "deputy", "employee", "admin"],
+      app_role: ["mayor", "deputy", "employee", "admin", "governor", "team"],
       data_source_status: ["active", "warning", "error", "disabled"],
       data_source_type: ["email", "excel", "telegram", "manual", "db", "api"],
       escalation_status: ["active", "acknowledged", "resolved"],
