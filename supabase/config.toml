@@ -1,34 +1,12 @@
 project_id = "ackkitknwdjntrhwasqm"
 
-[functions.city-briefing]
+# Вход в демо: открытая функция, работает только при включённом демо-режиме.
+[functions.demo-login]
 verify_jwt = false
 
-[functions.city-copilot]
+# Сводка дня и ответы ИИ: доступ проверяет база по токену пользователя (роль и лимиты).
+[functions.gov-brief]
 verify_jwt = false
 
-[functions.send-notification]
-verify_jwt = false
-
-[functions.what-if-analyzer]
-verify_jwt = false
-
-[functions.budget-forecast]
-verify_jwt = false
-
-[functions.fetch-complaints]
-verify_jwt = false
-
-[functions.ingest-manual]
-verify_jwt = false
-
-[functions.ingest-excel]
-verify_jwt = false
-
-[functions.ai-extract-incident]
-verify_jwt = false
-
-[functions.telegram-poll]
-verify_jwt = false
-
-[functions.weather-check]
+[functions.gov-ask]
 verify_jwt = false
