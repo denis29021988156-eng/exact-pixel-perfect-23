@@ -4,6 +4,7 @@ import { LogOut, Tablet } from "lucide-react";
 import { AppMark } from "@/components/gov/AppMark";
 import { TabletSheets } from "@/components/gov/TabletSheets";
 import { Badge } from "@/components/ios/Badge";
+import { ThemeToggle } from "@/components/ios/Theme";
 import { useAuth } from "@/contexts/auth";
 import { useToday } from "@/lib/queries";
 import { cn } from "@/lib/utils";
@@ -37,7 +38,8 @@ export default function TeamLayout() {
               <span className="truncate text-headline">Кабинет команды</span>
               {today.data?.demo && <Badge tone="warning">Демо</Badge>}
             </Link>
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-1.5">
+              <ThemeToggle className="h-[38px] w-[38px] border-0 bg-fill shadow-none" />
               <Link
                 to="/app"
                 className="press inline-flex min-h-[38px] items-center gap-1.5 rounded-full bg-tint/12 px-3.5 text-[15px] font-semibold text-tint dark:bg-tint/20"

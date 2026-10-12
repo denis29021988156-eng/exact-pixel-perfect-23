@@ -9,7 +9,7 @@ import { TrustGlance } from "@/components/gov/TrustCard";
 import { PageHeader } from "@/components/ios/List";
 import { EmptyState, ErrorState, ScreenSkeleton } from "@/components/ios/States";
 import { useSheets } from "@/hooks/useSheetParam";
-import { capitalize, fmtLongDate, plural } from "@/lib/format";
+import { capitalize, fmtLongDate, fmtTime, plural } from "@/lib/format";
 import { useSignals, useToday } from "@/lib/queries";
 import type { Signal } from "@/lib/types";
 import { cn } from "@/lib/utils";
@@ -55,20 +55,48 @@ export default function Today() {
   )[0]?.id;
   const selectedId = has(picked) ? picked : (headline ?? firstDecision ?? sharpest ?? null);
 
+  // Выноска на карте берёт короткую формулировку из сводки: «Удомля: три дома без отопления, 410 жителей…».
+  const describeSignal = (s: Signal) => {
+    const item = t.brief?.items.find((i) => i.signal_id === s.id)?.text;
+    const cut = item ? item.indexOf(", ") : -1;
+    if (item && cut > 0) return { title: item.slice(0, cut), sub: capitalize(item.slice(cut + 2)) };
+    return { title: item ?? s.title, sub: s.municipality?.name ?? null };
+  };
+
   const decisionIds = new Set(t.decisions.filter((d) => d.type === "signal").map((d) => d.id));
   const others = t.top.filter((s) => !decisionIds.has(s.id));
 
   return (
     <div>
-      <PageHeader title="Сегодня" subtitle={capitalize(fmtLongDate(t.date, t.date))} />
+      <PageHeader
+        title="Сегодня"
+        subtitle={
+          <>
+            {capitalize(fmtLongDate(t.date, t.date))}
+            {/* На телефоне область не помещается в строку — её видно на карте ниже. */}
+            {t.region && <span className="hidden sm:inline"> · {t.region}</span>}
+            {t.demo && <span className="text-warning-ink"> · демо</span>}
+          </>
+        }
+        right={
+          t.brief ? (
+            <span className="glass hidden h-[34px] items-center gap-2 rounded-full px-3.5 text-[15px] font-semibold sm:inline-flex">
+              <span className="h-2 w-2 rounded-full bg-good shadow-[0_0_0_4px_hsl(var(--good)/0.22)]" aria-hidden />
+              Сводка в {fmtTime(t.brief.generated_at)}
+            </span>
+          ) : undefined
+        }
+      />
 
       {/* На широком экране две колонки: карта и цифры слева, сводка и решения справа.
           На телефоне и в портрете — одна лента: сводка, карта, решения, цифры. */}
-      <div className="grid grid-cols-1 gap-5 lg:grid-cols-12 lg:items-start lg:gap-6">
-        <div className="contents lg:col-span-7 lg:flex lg:flex-col lg:gap-5">
+      {/* Пропорции как на макете: карта ≈ 1,65 к колонке сводки и решений. */}
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1.65fr_1fr] lg:items-start">
+        <div className="contents lg:flex lg:min-w-0 lg:flex-col lg:gap-4">
           <RegionMap
             className="order-2 lg:order-none"
-            title={t.region ?? "Карта области"}
+            title="Пульс области"
+            describe={describeSignal}
             signals={open}
             selectedId={selectedId}
             onSelect={setPicked}
@@ -147,9 +175,9 @@ export default function Today() {
           )}
         </div>
 
-        <div className="contents lg:col-span-5 lg:flex lg:flex-col lg:gap-5">
+        <div className="contents lg:flex lg:min-w-0 lg:flex-col lg:gap-3">
           <div className="order-1 min-w-0 lg:order-none">
-            <BriefCard brief={t.brief} onOpenSignal={openSignal} />
+            <BriefCard brief={t.brief} />
           </div>
 
           <section aria-label="Ждут решения" className="order-3 min-w-0 lg:order-none">
@@ -181,12 +209,9 @@ export default function Today() {
 
 function SectionHead({ title, count, action }: { title: string; count?: number; action?: ReactNode }) {
   return (
-    <div className="flex items-end justify-between px-1 pb-3">
-      <h2 className="text-title2">
-        {title}
-        {count ? <span className="ml-2 font-semibold text-ink-3 tabular-nums">{count}</span> : null}
-      </h2>
-      {action}
+    <div className="flex items-baseline justify-between px-1.5 pb-3">
+      <h2 className="text-[20px] font-bold leading-[25px] tracking-[-0.01em]">{title}</h2>
+      {action ?? (count ? <span className="text-[15px] font-semibold text-ink-3 tabular-nums">{count}</span> : null)}
     </div>
   );
 }

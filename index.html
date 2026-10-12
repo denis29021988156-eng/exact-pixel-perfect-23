@@ -43,10 +43,12 @@
       href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400..800&display=swap"
     />
 
-    <!-- Тёмная тема до первой отрисовки, чтобы экран не мигал светлым. -->
+    <!-- Тема до первой отрисовки, чтобы экран не мигал: выбор в приложении или как на устройстве. -->
     <script>
       try {
-        if (window.matchMedia("(prefers-color-scheme: dark)").matches) document.documentElement.classList.add("dark");
+        var pref = localStorage.getItem("theme");
+        var dark = pref === "dark" || (pref !== "light" && window.matchMedia("(prefers-color-scheme: dark)").matches);
+        if (dark) document.documentElement.classList.add("dark");
       } catch (e) {}
     </script>
   </head>

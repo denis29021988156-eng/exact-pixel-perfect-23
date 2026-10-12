@@ -1,6 +1,6 @@
 import { memo, useLayoutEffect, useMemo, useRef, useState, type KeyboardEvent, type ReactNode } from "react";
 import { ChevronRight } from "lucide-react";
-import { fmtWhen, plural, severityLabel } from "@/lib/format";
+import { fmtAgo, fmtTime, fmtWhen, mskDay, mskToday, plural, severityLabel } from "@/lib/format";
 import type { Severity, Signal } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { DOTS, MAP_H, MAP_W, OUTLINE, PLACES, type Place } from "./tverGeo";
@@ -53,14 +53,38 @@ interface RegionMapProps {
   onOpen: (id: string) => void;
   /** Виджет поверх карты в свободном северо-западном углу (на узкой карте — под ней). */
   renderOverlay?: (placement: "over" | "below") => ReactNode;
+  /** Короткий текст выноски на карте: что случилось и подробность. */
+  describe?: (s: Signal) => { title: string; sub: string | null };
   className?: string;
+}
+
+/** «с ночи», «с утра», «с 14:20», «вчера» — давно ли горит. */
+function sinceLabel(iso: string): string {
+  if (mskDay(iso) === mskToday()) {
+    const time = fmtTime(iso);
+    const h = Number(time.slice(0, 2));
+    if (h < 6) return "с ночи";
+    if (h < 12) return "с утра";
+    return `с ${time}`;
+  }
+  return fmtAgo(iso);
 }
 
 /**
  * «Пульс области»: точки области окрашиваются вокруг округов с открытыми сигналами.
- * Нажатие на округ показывает его главный сигнал внизу карты, повторное — открывает сигнал.
+ * Нажатие на округ показывает его главный сигнал в выноске (на узкой карте — под ней),
+ * повторное нажатие или нажатие на выноску открывает сигнал.
  */
-export function RegionMap({ title, signals, selectedId, onSelect, onOpen, renderOverlay, className }: RegionMapProps) {
+export function RegionMap({
+  title,
+  signals,
+  selectedId,
+  onSelect,
+  onOpen,
+  renderOverlay,
+  describe,
+  className,
+}: RegionMapProps) {
   const boxRef = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState(0);
 
@@ -81,23 +105,59 @@ export function RegionMap({ title, signals, selectedId, onSelect, onOpen, render
     return c;
   }, [signals]);
 
-  // Широкая карта: виджет ложится на пустой северо-запад, для него слева добавляем поле.
-  const wide = width >= 560 && Boolean(renderOverlay);
-  const padL = wide ? 46 : 0;
+  // Широкая карта: виджет ложится на пустой северо-запад, выбранный сигнал — выноской на карте.
+  const wide = width >= 560;
+  const padL = 0;
   const vbW = MAP_W + padL;
   const scale = width > 0 ? width / vbW : 1;
   const px = (v: number) => v / scale;
-  // Свободный угол карты — до x ≈ 205 при y < 200 (в единицах карты).
-  const overlayWidth = Math.min(256, Math.round((padL + 204) * scale) - 8);
+  // Свободный северо-западный угол карты; виджет чуть заходит на кончик области, как на макете.
+  const overlayWidth = Math.min(252, Math.round((padL + 236) * scale));
 
   const dots = useMemo(() => paintDots(spots), [spots]);
   const selected = signals.find((s) => s.id === selectedId) ?? null;
   const selectedKey = selected?.municipality?.name ?? null;
-  const minRank = width >= 640 ? 3 : width >= 460 ? 2 : 1;
+  const minRank = width >= 760 ? 3 : width >= 460 ? 2 : 1;
   const labels = useMemo(
     () => placeLabels(spots, scale, minRank, padL, width < 460),
     [spots, scale, minRank, padL, width],
   );
+
+  // Выноска: пробуем вверх-вправо от округа (как на макете), затем остальные углы;
+  // она не должна закрывать сам округ и виджет индекса.
+  const callout = useMemo(() => {
+    if (!wide || !selected) return null;
+    const spot = spots.find((s) => s.key === selectedKey);
+    if (!spot) return null;
+    const text = describe?.(selected) ?? { title: selected.title, sub: selected.municipality?.name ?? null };
+    const W = Math.round(Math.min(300, width * 0.46));
+    const lines = Math.min(2, Math.max(1, Math.ceil((text.title.length * 8.2) / (W - 28))));
+    const H = 44 + 19 * lines + (text.sub ? 18 : 0);
+    const mx = (spot.place.x + padL) * scale;
+    const my = spot.place.y * scale;
+    const boxH = MAP_H * scale;
+    const trustBox: Box = [8, 4, 8 + overlayWidth, 168];
+    const marker: Box = [mx - 18, my - 18, mx + 18, my + 18];
+    const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
+    const dx = 18 * scale;
+    const dy = 52 * scale;
+    for (const c of [
+      { ax: mx + dx, ay: my - dy, up: true, right: true },
+      { ax: mx - dx, ay: my - dy, up: true, right: false },
+      { ax: mx + dx, ay: my + dy, up: false, right: true },
+      { ax: mx - dx, ay: my + dy, up: false, right: false },
+    ]) {
+      const left = clamp(c.right ? c.ax - 16 : c.ax - W + 16, 8, width - W - 8);
+      const top = c.up ? c.ay - H : c.ay;
+      if (top < 6 || top + H > boxH - 6) continue;
+      const rect: Box = [left, top, left + W, top + H];
+      if (overlaps(rect, marker)) continue;
+      if (renderOverlay && overlaps(rect, trustBox)) continue;
+      const ax = clamp(c.ax, left + 14, left + W - 14);
+      return { left, top, W, text, from: spot.place, to: { x: ax / scale - padL, y: (c.up ? top + H : top) / scale } };
+    }
+    return null;
+  }, [wide, selected, spots, selectedKey, describe, width, padL, scale, overlayWidth, renderOverlay]);
 
   const activate = (spot: MapSpot) => {
     const top = spot.signals[0];
@@ -113,8 +173,8 @@ export function RegionMap({ title, signals, selectedId, onSelect, onOpen, render
 
   return (
     <section className={cn("glass relative overflow-hidden rounded-panel", className)} aria-label={title}>
-      <header className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 px-5 pb-1 pt-4 md:px-6 md:pt-5">
-        <h2 className="text-title3">{title}</h2>
+      <header className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 px-5 pb-2 pt-4 md:px-[26px] md:pt-5">
+        <h2 className="text-[20px] font-bold leading-[25px] tracking-[-0.01em]">{title}</h2>
         <ul
           className="flex flex-wrap items-center gap-x-3.5 gap-y-1 text-[13px] text-ink-2"
           aria-label="Открытые сигналы"
@@ -124,7 +184,7 @@ export function RegionMap({ title, signals, selectedId, onSelect, onOpen, render
               <li key={sev} className="flex items-center gap-1.5">
                 <span className="h-2 w-2 rounded-full" style={{ background: sevColor[sev] }} aria-hidden />
                 {severityLabel[sev]}
-                <span className="font-semibold tabular-nums text-foreground">{counts[sev]}</span>
+                <span className="tabular-nums">{counts[sev]}</span>
               </li>
             ) : null,
           )}
@@ -132,7 +192,7 @@ export function RegionMap({ title, signals, selectedId, onSelect, onOpen, render
         </ul>
       </header>
 
-      <div ref={boxRef} className="relative mx-3 md:mx-4">
+      <div ref={boxRef} className="relative mx-3 md:mx-[22px]">
         {width > 0 && (
           <svg
             viewBox={`${-padL} 0 ${vbW} ${MAP_H}`}
@@ -145,6 +205,16 @@ export function RegionMap({ title, signals, selectedId, onSelect, onOpen, render
             <path d={OUTLINE} style={{ fill: "var(--map-land)", stroke: "var(--map-edge)" }} strokeWidth={px(1.1)} />
 
             <DotsLayer dots={dots} />
+
+            {callout && selected && (
+              <path
+                d={`M ${callout.from.x} ${callout.from.y} L ${callout.to.x} ${callout.to.y}`}
+                style={{ fill: "none", stroke: sevColor[selected.severity] }}
+                strokeWidth={px(1.6)}
+                strokeDasharray={`${px(2)} ${px(3)}`}
+                aria-hidden
+              />
+            )}
 
             {/* Города без сигналов — для ориентира. */}
             {labels.towns.map((l) => (
@@ -226,43 +296,69 @@ export function RegionMap({ title, signals, selectedId, onSelect, onOpen, render
         {!width && <div style={{ aspectRatio: `${MAP_W} / ${MAP_H}` }} aria-hidden />}
 
         {renderOverlay && wide && (
-          <div className="absolute left-2 top-1" style={{ width: overlayWidth }}>
+          <div className="absolute left-0 top-2" style={{ width: overlayWidth }}>
             {renderOverlay("over")}
           </div>
+        )}
+
+        {callout && selected && (
+          <button
+            type="button"
+            onClick={() => onOpen(selected.id)}
+            className="glass press absolute rounded-[18px] px-3.5 pb-[11px] pt-2.5 text-left"
+            style={{ left: callout.left, top: callout.top, width: callout.W }}
+          >
+            <span className={cn("flex items-center gap-1.5 text-[12px] font-bold", sevInk[selected.severity])}>
+              <span
+                className="h-[7px] w-[7px] shrink-0 rounded-full"
+                style={{ background: sevColor[selected.severity] }}
+                aria-hidden
+              />
+              {severityLabel[selected.severity]} · {sinceLabel(selected.detected_at)}
+            </span>
+            <span className="mt-[3px] line-clamp-2 text-[15px] font-[650] leading-[19px]">{callout.text.title}</span>
+            {callout.text.sub && (
+              <span className="mt-0.5 block truncate text-[13px] leading-[17px] text-ink-2">{callout.text.sub}</span>
+            )}
+          </button>
         )}
       </div>
 
       {renderOverlay && !wide && width > 0 && <div className="px-3 pt-2 md:px-4">{renderOverlay("below")}</div>}
 
-      <div className="p-3 md:px-4 md:pb-4">
-        {selected ? (
-          <button
-            type="button"
-            onClick={() => onOpen(selected.id)}
-            className="tap-row flex w-full items-center gap-3 rounded-[20px] border border-[var(--inner-edge)] bg-[var(--inner)] px-4 py-3 text-left"
-          >
-            <span
-              className="h-2.5 w-2.5 shrink-0 rounded-full"
-              style={{ background: sevColor[selected.severity] }}
-              aria-hidden
-            />
-            <span className="min-w-0 flex-1">
-              <span className="flex min-w-0 items-baseline gap-2 text-footnote">
-                <span className={cn("shrink-0 font-semibold", sevInk[selected.severity])}>
-                  {severityLabel[selected.severity]}
+      {wide && (callout || !selected) ? (
+        <div className="h-[22px]" aria-hidden />
+      ) : (
+        <div className="p-3 md:px-4 md:pb-4">
+          {selected ? (
+            <button
+              type="button"
+              onClick={() => onOpen(selected.id)}
+              className="tap-row flex w-full items-center gap-3 rounded-[20px] border border-[var(--inner-edge)] bg-[var(--inner)] px-4 py-3 text-left"
+            >
+              <span
+                className="h-2.5 w-2.5 shrink-0 rounded-full"
+                style={{ background: sevColor[selected.severity] }}
+                aria-hidden
+              />
+              <span className="min-w-0 flex-1">
+                <span className="flex min-w-0 items-baseline gap-2 text-footnote">
+                  <span className={cn("shrink-0 font-semibold", sevInk[selected.severity])}>
+                    {severityLabel[selected.severity]}
+                  </span>
+                  <span className="truncate text-ink-2">
+                    {[selected.municipality?.name, fmtWhen(selected.detected_at)].filter(Boolean).join(", ")}
+                  </span>
                 </span>
-                <span className="truncate text-ink-2">
-                  {[selected.municipality?.name, fmtWhen(selected.detected_at)].filter(Boolean).join(", ")}
-                </span>
+                <span className="mt-0.5 line-clamp-2 text-headline">{selected.title}</span>
               </span>
-              <span className="mt-0.5 line-clamp-2 text-headline">{selected.title}</span>
-            </span>
-            <ChevronRight className="h-5 w-5 shrink-0 text-ink-3" aria-hidden />
-          </button>
-        ) : (
-          <p className="px-2 py-2 text-subhead text-ink-2">Нажмите на округ, чтобы увидеть сигнал.</p>
-        )}
-      </div>
+              <ChevronRight className="h-5 w-5 shrink-0 text-ink-3" aria-hidden />
+            </button>
+          ) : (
+            <p className="px-2 py-2 text-subhead text-ink-2">Нажмите на округ, чтобы увидеть сигнал.</p>
+          )}
+        </div>
+      )}
     </section>
   );
 }

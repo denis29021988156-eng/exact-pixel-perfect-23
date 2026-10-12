@@ -1,4 +1,3 @@
-import { ChevronRight, Sparkles } from "lucide-react";
 import { Button } from "@/components/ios/Button";
 import { channelLabel, fmtDueShort, fmtRelDay, fmtWeekdayShort, mskToday, severityLabel } from "@/lib/format";
 import type { Decision, Severity } from "@/lib/types";
@@ -36,49 +35,37 @@ export function DecisionCard({
   if (d.type === "signal") {
     const due = d.due && d.due >= today ? d.due : null;
     return (
-      <article className="surface relative flex min-w-0 flex-col overflow-hidden p-5">
+      <article className="surface relative flex min-w-0 flex-col overflow-hidden rounded-[26px] px-[18px] py-3.5">
         <span
-          className="pointer-events-none absolute -right-20 -top-24 h-64 w-64 rounded-full"
+          className="pointer-events-none absolute -right-14 -top-24 h-56 w-56 rounded-full"
           style={{ background: `radial-gradient(closest-side, ${sevGlow[d.severity]}, transparent)` }}
           aria-hidden
         />
-        <div className="relative flex items-start justify-between gap-3">
-          <p className="flex min-w-0 items-center gap-2 pt-0.5 text-footnote">
+        {/* Карточка говорит, что сделать; нажатие открывает сам сигнал. */}
+        <button type="button" onClick={() => onOpenSignal(d.id)} className="relative block w-full text-left">
+          <span className={cn("flex min-w-0 items-center gap-1.5 text-[13px] font-bold", sevInk[d.severity])}>
             <span className={cn("h-2 w-2 shrink-0 rounded-full", sevDot[d.severity])} aria-hidden />
-            <span className={cn("shrink-0 font-semibold", sevInk[d.severity])}>{severityLabel[d.severity]}</span>
-            {d.subtitle && <span className="truncate text-ink-2">{d.subtitle}</span>}
-          </p>
-          <button
-            type="button"
-            onClick={() => onOpenSignal(d.id)}
-            className="press -mr-1 -mt-1 inline-flex shrink-0 items-center gap-0.5 rounded-full px-2 py-1 text-[14px] font-semibold text-tint"
-          >
-            Подробнее
-            <ChevronRight className="h-4 w-4" aria-hidden />
-          </button>
-        </div>
-        <h3 className="relative mt-1.5 text-[18px] font-semibold leading-[23px] tracking-[-0.01em]">
-          <button type="button" onClick={() => onOpenSignal(d.id)} className="text-left">
-            {d.title}
-          </button>
-        </h3>
-        {d.recommendation && (
-          <p className="relative mt-2 flex gap-2 text-subhead text-ink-2">
-            <Sparkles className="mt-0.5 h-4 w-4 shrink-0 text-ai" aria-hidden />
-            <span>{d.recommendation}</span>
-          </p>
-        )}
-        <div className="relative mt-auto pt-4">
+            <span className="truncate">
+              {severityLabel[d.severity]}
+              {d.subtitle ? ` · ${d.subtitle}` : ""}
+            </span>
+          </span>
+          <span className="mt-1 block text-[16.5px] font-[680] leading-[21px] tracking-[-0.01em]">
+            {d.suggested_title || d.title}
+          </span>
+        </button>
+        <div className="relative mt-auto pt-2.5">
           {d.executor ? (
             <Button
               block
-              className="min-h-[48px] flex-wrap gap-x-2 gap-y-0 py-2"
+              className="min-h-[44px] gap-x-1.5 gap-y-0 py-1.5 text-[15.5px] max-sm:flex-col sm:flex-wrap"
               loading={assign.pending}
               onClick={() => assign.run({ signalId: d.id })}
             >
               <span>Поручить: {d.executor.short_name}</span>
-              <span className="text-[13px] font-medium opacity-80">
-                {due ? `срок ${fmtDueShort(due, today)}` : "срок через 3 дня"}
+              <span className="text-[13px] font-medium opacity-85">
+                <span className="max-sm:hidden">· </span>
+                {due ? fmtDueShort(due, today) : "через 3 дня"}
               </span>
             </Button>
           ) : (
@@ -93,7 +80,7 @@ export function DecisionCard({
 
   const when = fmtRelDay(d.day, today);
   return (
-    <article className="surface flex min-w-0 flex-col p-5">
+    <article className="surface flex min-w-0 flex-col rounded-[26px] px-[18px] py-3.5">
       <div className="flex items-center gap-3">
         <ChannelIcon channel={d.channel} />
         <p className="text-footnote text-ink-2">
@@ -105,13 +92,13 @@ export function DecisionCard({
           {d.subtitle ? ` · ${d.subtitle}` : ""}
         </p>
       </div>
-      <h3 className="mt-3 text-[18px] font-semibold leading-[23px] tracking-[-0.01em]">
+      <h3 className="mt-2.5 text-[16.5px] font-[680] leading-[21px] tracking-[-0.01em]">
         <button type="button" onClick={onOpenAgenda} className="text-left hover:underline">
           {d.title}
         </button>
       </h3>
       {d.expected_effect && <p className="mt-1 text-subhead text-ink-2">Зачем: {d.expected_effect}</p>}
-      <div className="mt-auto flex gap-2 pt-4">
+      <div className="mt-auto flex gap-2 pt-3">
         <Button
           className="flex-1"
           loading={agenda.pending && agenda.pendingId === d.id}

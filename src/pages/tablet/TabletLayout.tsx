@@ -5,6 +5,7 @@ import { Bell, CalendarDays, ClipboardCheck, LogOut, Mic, Sun, UsersRound } from
 import { OrbLayers } from "@/components/gov/Orb";
 import { TabletSheets } from "@/components/gov/TabletSheets";
 import { CountBadge } from "@/components/ios/Badge";
+import { ThemePicker, ThemeToggle } from "@/components/ios/Theme";
 import { useAuth } from "@/contexts/auth";
 import { HeaderAccessoryContext } from "@/contexts/headerAccessory";
 import { useSheets } from "@/hooks/useSheetParam";
@@ -32,7 +33,7 @@ export default function TabletLayout() {
     <HeaderAccessoryContext.Provider value={<ProfileButton />}>
       <div className="min-h-dvh">
         <CompactTitle pathname={pathname} />
-        <main className="mx-auto w-full max-w-[1240px] px-4 pb-[var(--tabbar-space)] pt-safe md:px-8">
+        <main className="mx-auto w-full max-w-[1240px] px-4 pb-[var(--tabbar-space)] pt-safe md:px-7">
           <Outlet />
         </main>
         <TabBar />
@@ -87,6 +88,9 @@ function ProfileButton() {
   const { user, role, signOut } = useAuth();
   const today = useToday();
   const navigate = useNavigate();
+  const { pathname } = useLocation();
+  // На «Сегодня» пометка «демо» стоит в подзаголовке, на остальных экранах — капсулой.
+  const demoChip = today.data?.demo && pathname !== "/app";
   const [open, setOpen] = useState(false);
   const name = (user?.user_metadata?.full_name as string | undefined) || user?.email || "";
   const initials =
@@ -100,14 +104,15 @@ function ProfileButton() {
 
   return (
     <div className="flex items-center gap-2">
-      {today.data?.demo && (
+      {demoChip && (
         <span
-          className="glass inline-flex h-9 items-center rounded-full px-3.5 text-[13px] font-semibold text-warning-ink"
+          className="glass hidden h-9 items-center rounded-full px-3.5 text-[13px] font-semibold text-warning-ink sm:inline-flex"
           title="Учебные события на реальной карте области"
         >
           Демо
         </span>
       )}
+      <ThemeToggle />
       <Popover.Root open={open} onOpenChange={setOpen}>
         <Popover.Trigger
           className="glass press flex h-11 w-11 items-center justify-center rounded-full text-[15px] font-bold"
@@ -127,6 +132,10 @@ function ProfileButton() {
                 {role ? roleLabel[role] : ""}
                 {today.data?.region ? `, ${today.data.region}` : ""}
               </p>
+            </div>
+            <div className="border-t border-line px-4 pb-3 pt-3">
+              <p className="pb-2 text-footnote font-semibold text-ink-2">Оформление</p>
+              <ThemePicker />
             </div>
             <div className="border-t border-line px-2 py-2">
               {(role === "team" || role === "admin") && (

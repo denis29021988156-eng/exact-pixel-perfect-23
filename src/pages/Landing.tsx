@@ -6,6 +6,7 @@ import { AppMark } from "@/components/gov/AppMark";
 import { RegionMap } from "@/components/gov/map/RegionMap";
 import { TrustGlance } from "@/components/gov/TrustCard";
 import { Button } from "@/components/ios/Button";
+import { ThemeToggle } from "@/components/ios/Theme";
 import { homeFor, useAuth } from "@/contexts/auth";
 import { addDays, mskToday } from "@/lib/format";
 import type { Severity, Signal, TrustSummary } from "@/lib/types";
@@ -64,15 +65,18 @@ export default function Landing() {
           <AppMark size={32} />
           <span className="text-headline">Планшет губернатора</span>
         </div>
-        {signedIn ? (
-          <Link to={homeFor(role)} className="press text-[16px] font-semibold text-tint">
-            Открыть
-          </Link>
-        ) : (
-          <Link to="/login" className="press text-[16px] font-semibold text-tint">
-            Войти
-          </Link>
-        )}
+        <div className="flex items-center gap-4">
+          <ThemeToggle />
+          {signedIn ? (
+            <Link to={homeFor(role)} className="press text-[16px] font-semibold text-tint">
+              Открыть
+            </Link>
+          ) : (
+            <Link to="/login" className="press text-[16px] font-semibold text-tint">
+              Войти
+            </Link>
+          )}
+        </div>
       </header>
 
       <main className="mx-auto max-w-[1180px] px-5 pb-16">
