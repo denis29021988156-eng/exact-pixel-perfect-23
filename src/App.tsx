@@ -1,104 +1,96 @@
-import { lazy, Suspense, type ReactNode } from "react";
+import { Toaster } from "@/components/ui/toaster";
+import { Toaster as Sonner } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Navigate, Route, Routes, useLocation } from "react-router-dom";
-import { AuthProvider } from "@/contexts/AuthContext";
-import { homeFor, useAuth } from "@/contexts/auth";
-import { Toaster } from "@/components/ios/Toaster";
-import { Splash, FullScreenError } from "@/components/gov/Splash";
-import type { Role } from "@/lib/types";
-import { ApiError } from "@/lib/api";
-import Landing from "./pages/Landing";
-import Login from "./pages/Login";
-import NoAccess from "./pages/NoAccess";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { AuthProvider, useAuth } from "@/contexts/AuthContext";
+import AppLayout from "./components/AppLayout";
+import LandingPage from "./pages/LandingPage";
+import AuthPage from "./pages/AuthPage";
+import TodayPage from "./pages/TodayPage";
+import IncidentsPage from "./pages/IncidentsPage";
+import ProgramPage from "./pages/ProgramPage";
+import TasksPage from "./pages/TasksPage";
+import CheatsheetPage from "./pages/CheatsheetPage";
+import MapPage from "./pages/MapPage";
+import ReputationPage from "./pages/ReputationPage";
+import DataQualityPage from "./pages/DataQualityPage";
+import ExcelUploadPage from "./pages/ExcelUploadPage";
+import ModerationPage from "./pages/ModerationPage";
+import AIExtractPage from "./pages/AIExtractPage";
+import TelegramInboxPage from "./pages/TelegramInboxPage";
+import PublicDashboard from "./pages/PublicDashboard";
+import SlaMatrixPage from "./pages/SlaMatrixPage";
+import UsersPage from "./pages/UsersPage";
+import AuditLogPage from "./pages/AuditLogPage";
+import FeatureFlagsPage from "./pages/FeatureFlagsPage";
 import NotFound from "./pages/NotFound";
 
-const TabletLayout = lazy(() => import("./pages/tablet/TabletLayout"));
-const Today = lazy(() => import("./pages/tablet/Today"));
-const Signals = lazy(() => import("./pages/tablet/Signals"));
-const Instructions = lazy(() => import("./pages/tablet/Instructions"));
-const Agenda = lazy(() => import("./pages/tablet/Agenda"));
+const queryClient = new QueryClient();
 
-const TeamLayout = lazy(() => import("./pages/team/TeamLayout"));
-const TeamSignals = lazy(() => import("./pages/team/TeamSignals"));
-const TeamInstructions = lazy(() => import("./pages/team/TeamInstructions"));
-const TeamAgenda = lazy(() => import("./pages/team/TeamAgenda"));
-const TeamSettings = lazy(() => import("./pages/team/TeamSettings"));
-const TeamUsers = lazy(() => import("./pages/team/TeamUsers"));
+function ProtectedRoute({ children }: { children: React.ReactNode }) {
+  const { user, loading } = useAuth();
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      // Нет доступа или сессия истекла — повторять бессмысленно.
-      retry: (count, err) => count < 2 && !(err instanceof ApiError && (err.code === "42501" || err.status === 401)),
-      refetchOnWindowFocus: true,
-    },
-  },
-});
-
-function RequireRole({ roles, children }: { roles: Role[]; children: ReactNode }) {
-  const { status, role, roleError, reloadRole } = useAuth();
-  const location = useLocation();
-
-  if (status === "loading") return <Splash />;
-  if (status === "signed_out") {
-    const next = encodeURIComponent(location.pathname + location.search);
-    return <Navigate to={`/login?next=${next}`} replace />;
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="animate-pulse text-muted-foreground">Загрузка...</div>
+      </div>
+    );
   }
-  if (roleError) return <FullScreenError message={roleError} onRetry={reloadRole} />;
-  if (!role) return <Navigate to="/no-access" replace />;
-  if (!roles.includes(role)) return <Navigate to={homeFor(role)} replace />;
+
+  if (!user) {
+    return <Navigate to="/auth" replace />;
+  }
+
   return <>{children}</>;
+}
+
+function AppRoutes() {
+  return (
+    <ProtectedRoute>
+      <AppLayout>
+        <Routes>
+          <Route path="/" element={<TodayPage />} />
+          <Route path="/incidents" element={<IncidentsPage />} />
+          <Route path="/program" element={<ProgramPage />} />
+          <Route path="/tasks" element={<TasksPage />} />
+          <Route path="/map" element={<MapPage />} />
+          <Route path="/reputation" element={<ReputationPage />} />
+          <Route path="/data-quality" element={<DataQualityPage />} />
+          <Route path="/excel-upload" element={<ExcelUploadPage />} />
+          <Route path="/moderation" element={<ModerationPage />} />
+          <Route path="/ai-extract" element={<AIExtractPage />} />
+          <Route path="/telegram-inbox" element={<TelegramInboxPage />} />
+          <Route path="/cheatsheet" element={<CheatsheetPage />} />
+          <Route path="/sla-matrix" element={<SlaMatrixPage />} />
+          <Route path="/users" element={<UsersPage />} />
+          <Route path="/audit-log" element={<AuditLogPage />} />
+          <Route path="/feature-flags" element={<FeatureFlagsPage />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </AppLayout>
+    </ProtectedRoute>
+  );
 }
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <BrowserRouter>
-      <AuthProvider>
-        <Toaster />
-        <Suspense fallback={<Splash />}>
+    <TooltipProvider>
+      <Toaster />
+      <Sonner />
+      <BrowserRouter>
+        <AuthProvider>
           <Routes>
-            <Route path="/" element={<Landing />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/auth" element={<Navigate to="/login" replace />} />
-            <Route path="/no-access" element={<NoAccess />} />
-
-            <Route
-              path="/app"
-              element={
-                <RequireRole roles={["governor", "team", "admin"]}>
-                  <TabletLayout />
-                </RequireRole>
-              }
-            >
-              <Route index element={<Today />} />
-              <Route path="signals" element={<Signals />} />
-              <Route path="instructions" element={<Instructions />} />
-              <Route path="agenda" element={<Agenda />} />
-              <Route path="*" element={<Navigate to="/app" replace />} />
-            </Route>
-
-            <Route
-              path="/team"
-              element={
-                <RequireRole roles={["team", "admin"]}>
-                  <TeamLayout />
-                </RequireRole>
-              }
-            >
-              <Route index element={<Navigate to="signals" replace />} />
-              <Route path="signals" element={<TeamSignals />} />
-              <Route path="instructions" element={<TeamInstructions />} />
-              <Route path="agenda" element={<TeamAgenda />} />
-              <Route path="settings" element={<TeamSettings />} />
-              <Route path="users" element={<TeamUsers />} />
-              <Route path="*" element={<Navigate to="/team" replace />} />
-            </Route>
-
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/auth" element={<AuthPage />} />
+            <Route path="/public" element={<PublicDashboard />} />
+            <Route path="/app/*" element={<AppRoutes />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
-        </Suspense>
-      </AuthProvider>
-    </BrowserRouter>
+        </AuthProvider>
+      </BrowserRouter>
+    </TooltipProvider>
   </QueryClientProvider>
 );
 

@@ -18,16 +18,4 @@ export default defineConfig(({ mode }) => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
-  build: {
-    rollupOptions: {
-      output: {
-        // Библиотеки отдельно: меняются редко и кэшируются браузером.
-        manualChunks: {
-          react: ["react", "react-dom", "react-router-dom"],
-          supabase: ["@supabase/supabase-js"],
-          query: ["@tanstack/react-query"],
-        },
-      },
-    },
-  },
 }));

@@ -1,17 +1,16 @@
 {
-  "name": "Планшет губернатора",
-  "short_name": "Планшет",
-  "description": "Главное за день, сигналы, поручения и повестка в одном экране.",
-  "lang": "ru",
-  "start_url": "/app",
+  "name": "Планшет Мэра — Цифровая платформа",
+  "short_name": "Планшет Мэра",
+  "description": "Платформа управления городом: проекты, инциденты, аналитика и AI-копилот.",
+  "start_url": "/",
   "scope": "/",
   "display": "standalone",
-  "orientation": "any",
-  "background_color": "#F2F2F7",
-  "theme_color": "#F2F2F7",
+  "orientation": "portrait",
+  "background_color": "#0A0A0F",
+  "theme_color": "#0A0A0F",
   "icons": [
     { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
     { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
-    { "src": "/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
   ]
 }
