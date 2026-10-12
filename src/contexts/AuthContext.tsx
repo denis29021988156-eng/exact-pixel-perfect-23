@@ -1,92 +1,144 @@
-import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { User, Session } from '@supabase/supabase-js';
-import { supabase } from '@/integrations/supabase/client';
-
-interface AuthContextType {
-  user: User | null;
-  session: Session | null;
-  loading: boolean;
-  userRole: string | null;
-  userDepartment: string | null;
-  signOut: () => Promise<void>;
-}
-
-const AuthContext = createContext<AuthContextType>({
-  user: null,
-  session: null,
-  loading: true,
-  userRole: null,
-  userDepartment: null,
-  signOut: async () => {},
-});
+import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
+import type { Session } from "@supabase/supabase-js";
+import { useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { callFunction, humanError, rpc } from "@/lib/api";
+import type { Role } from "@/lib/types";
+import { AuthContext, type AuthContextValue, type AuthStatus } from "./auth";
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
+  const qc = useQueryClient();
   const [session, setSession] = useState<Session | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [userRole, setUserRole] = useState<string | null>(null);
-  const [userDepartment, setUserDepartment] = useState<string | null>(null);
+  const [sessionReady, setSessionReady] = useState(false);
+  const [role, setRole] = useState<Role | null>(null);
+  const [roleFor, setRoleFor] = useState<string | null>(null);
+  const [roleError, setRoleError] = useState<string | null>(null);
+  const [roleNonce, setRoleNonce] = useState(0);
 
+  // Сессия: сначала подписка, потом текущее состояние.
   useEffect(() => {
-    const fetchRoleAndDept = (uid: string) => {
-      supabase
-        .from('user_roles')
-        .select('role')
-        .eq('user_id', uid)
-        .then(({ data, error }) => {
-          if (error) {
-            console.error('[Auth] failed to load user_roles:', error);
-            setUserRole('employee');
-            return;
-          }
-          const roles = (data ?? []).map((r: any) => r.role as string);
-          const priority = ['admin', 'mayor', 'deputy', 'employee'];
-          const best = priority.find((p) => roles.includes(p)) ?? 'employee';
-          setUserRole(best);
-        });
-      supabase
-        .from('profiles')
-        .select('department')
-        .eq('user_id', uid)
-        .maybeSingle()
-        .then(({ data }) => {
-          setUserDepartment((data?.department as string | null) ?? null);
-        });
-    };
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-
-      if (session?.user) {
-        setTimeout(() => fetchRoleAndDept(session.user.id), 0);
-      } else {
-        setUserRole(null);
-        setUserDepartment(null);
-      }
-
-      setLoading(false);
+    const { data } = supabase.auth.onAuthStateChange((_event, next) => {
+      setSession(next);
+      setSessionReady(true);
     });
-
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      if (session?.user) fetchRoleAndDept(session.user.id);
-      if (!session) setLoading(false);
+    supabase.auth.getSession().then(({ data: { session: current } }) => {
+      setSession(current);
+      setSessionReady(true);
     });
-
-    return () => subscription.unsubscribe();
+    return () => data.subscription.unsubscribe();
   }, []);
 
-  const signOut = async () => {
-    await supabase.auth.signOut();
-  };
+  const userId = session?.user?.id ?? null;
 
-  return (
-    <AuthContext.Provider value={{ user, session, loading, userRole, userDepartment, signOut }}>
-      {children}
-    </AuthContext.Provider>
+  // Роль загружаем отдельно от обработчика сессии, чтобы не блокировать клиент.
+  useEffect(() => {
+    if (!userId) {
+      setRole(null);
+      setRoleFor(null);
+      setRoleError(null);
+      return;
+    }
+    let cancelled = false;
+    setRoleError(null);
+    rpc<Role | null>("gov_my_role")
+      .then((r) => {
+        if (cancelled) return;
+        setRole(r ?? null);
+        setRoleFor(userId);
+      })
+      .catch((err) => {
+        if (cancelled) return;
+        setRole(null);
+        setRoleFor(userId);
+        setRoleError(humanError(err));
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [userId, roleNonce]);
+
+  const status: AuthStatus = !sessionReady
+    ? "loading"
+    : !userId
+      ? "signed_out"
+      : roleFor === userId
+        ? "ready"
+        : "loading";
+
+  const signIn = useCallback(async (email: string, password: string) => {
+    const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
+    if (error) {
+      throw new Error(
+        /invalid login credentials/i.test(error.message)
+          ? "Неверная почта или пароль."
+          : /email not confirmed/i.test(error.message)
+            ? "Почта не подтверждена. Откройте письмо и перейдите по ссылке."
+            : humanError(error),
+      );
+    }
+  }, []);
+
+  const signUp = useCallback(async (email: string, password: string, fullName: string) => {
+    const { data, error } = await supabase.auth.signUp({
+      email: email.trim(),
+      password,
+      options: { data: { full_name: fullName.trim() }, emailRedirectTo: `${window.location.origin}/login` },
+    });
+    if (error) {
+      throw new Error(
+        /already registered|already exists/i.test(error.message)
+          ? "Такая почта уже зарегистрирована. Войдите."
+          : /password/i.test(error.message)
+            ? "Пароль слишком простой: нужно не меньше 8 символов."
+            : humanError(error),
+      );
+    }
+    return { needsConfirmation: !data.session };
+  }, []);
+
+  const demoLogin = useCallback(
+    async (as: "governor" | "team") => {
+      const tokens = await callFunction<{ access_token: string; refresh_token: string }>("demo-login", { role: as });
+      qc.clear();
+      const { data, error } = await supabase.auth.setSession(tokens);
+      if (error || !data.session) throw new Error("Не удалось открыть демо. Попробуйте ещё раз.");
+      const r = await rpc<Role | null>("gov_my_role");
+      setRole(r ?? null);
+      setRoleFor(data.session.user.id);
+      return r ?? null;
+    },
+    [qc],
   );
-}
 
-export const useAuth = () => useContext(AuthContext);
+  const signOut = useCallback(async () => {
+    try {
+      window.speechSynthesis?.cancel();
+    } catch {
+      /* нет синтеза речи */
+    }
+    await supabase.auth.signOut();
+    qc.clear();
+    setRole(null);
+    setRoleFor(null);
+  }, [qc]);
+
+  const reloadRole = useCallback(() => setRoleNonce((n) => n + 1), []);
+
+  const value = useMemo<AuthContextValue>(
+    () => ({
+      status,
+      session,
+      user: session?.user ?? null,
+      role,
+      roleError,
+      signIn,
+      signUp,
+      demoLogin,
+      signOut,
+      reloadRole,
+    }),
+    [status, session, role, roleError, signIn, signUp, demoLogin, signOut, reloadRole],
+  );
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+}

@@ -1,73 +1,52 @@
-# Welcome to your Lovable project
+# Планшет губернатора
 
-## Project info
+Приложение для руководителя региона: главное за день на одном экране, сигналы с разбором ИИ, поручения в одно касание и повестка, которая двигает индекс доверия. Сделано в духе iOS — для iPad, но работает и на телефоне, и на компьютере.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+Демо собрано на примере Тверской области: округа настоящие, события и цифры придуманы, имён реальных людей нет.
 
-## How can I edit this code?
+## Что внутри
 
-There are several ways of editing your application.
+**Планшет губернатора** (`/app`) — четыре вкладки и кнопка «Спросить» по центру:
 
-**Use Lovable**
+- **Сегодня** — сводка дня от ИИ (можно прослушать), индекс доверия с событиями, вопросы, которые ждут решения: «Поручить: ЖКХ и энергетика, срок до завтра» — одним касанием, с возможностью отменить.
+- **Сигналы** — ЕДДС, ЦУР, соцсети, СМИ и контроль поручений. У каждого сигнала: почему случилось, что будет, если не реагировать, и что советует ИИ.
+- **Поручения** — просроченные, в работе и выполненные с результатом; обещания с прямых линий и выездов; рейтинг исполнителей по срокам. Напомнить, перенести срок, вызвать на доклад.
+- **Повестка** — СМИ, PR, GR и мероприятия на три недели: согласовать или вернуть с комментарием. Рядом график индекса доверия и правила тона коммуникаций.
+- **Спросить** — голосом или текстом: «Что горит сегодня?», «Кто срывает сроки?». Ответ по данным планшета со ссылками и готовым поручением.
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+**Кабинет команды** (`/team`) — здесь аппарат готовит то, что видит губернатор: сигналы с разбором и готовым поручением, ход и результат поручений, предложения в повестку, сводка и тон. Администратор выдаёт доступ.
 
-Changes made via Lovable will be committed automatically to this repo.
+## Роли
 
-**Use your preferred IDE**
+| Роль | Что доступно |
+| --- | --- |
+| `governor` | Планшет: смотреть и принимать решения |
+| `team` | Планшет и кабинет команды |
+| `admin` | Всё, плюс выдача ролей |
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+Новые пользователи регистрируются на странице входа без роли и ничего не видят, пока администратор не выдаст доступ.
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+## Демо
 
-Follow these steps:
+На главной странице — «Открыть демо» (губернатор) и «Кабинет команды». Вход без пароля выдаёт серверная функция `demo-login`, только пока включён демо-режим (`app_settings.demo_mode`). Демо-данные пересобираются каждую ночь в 03:30 по Москве и все даты считаются от сегодняшнего дня; в кабинете команды есть кнопка «Сбросить демо».
+
+## Как устроено
+
+- **Интерфейс:** Vite, React, TypeScript, Tailwind. Цвета и шрифты в стиле iOS, светлая и тёмная темы по настройке устройства.
+- **Данные:** Lovable Cloud (Supabase). Каждый экран получает данные одной функцией базы: `gov_today`, `gov_signals`, `gov_instructions`, `gov_agenda`. Действия — тоже функции базы (`gov_assign_signal`, `gov_remind`, `gov_postpone`, `gov_agenda_decide` и др.), каждая проверяет роль.
+- **Доступ:** RLS на всех таблицах. Губернатор читает данные и меняет их только через функции; команда редактирует напрямую.
+- **ИИ:** серверные функции `gov-brief` (сводка дня) и `gov-ask` (ответы) через шлюз Lovable AI. Ответ ИИ проверяется: ссылки и исполнители только из данных, сроки не в прошлом. Если ИИ недоступен, ответ собирается по правилам. Есть лимит запросов.
+- **Голос:** чтение вслух и диктовка — встроенные возможности браузера, без внешних сервисов.
+
+Схема базы и демо-данные — в `supabase/migrations/20261012*_governor_*.sql`.
+
+## Разработка
 
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+npm install
+npm run dev     # локальный сервер
+npm run build   # сборка
+npm run lint
 ```
 
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+Секреты (ключ ИИ, служебный ключ базы) хранятся в Lovable Cloud и в репозиторий не попадают.
